@@ -19,7 +19,7 @@ namespace AppData
                 optionsBuilder.UseSqlServer("Data Source=hoangthanhgiang\\sqlexpress;Initial Catalog=T7M;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
             }
         }
-
+        //asdfgfds
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
