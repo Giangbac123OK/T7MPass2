@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,39 +12,62 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class TraHangService : ITraHangRepo
+    public class TraHangService : ITraHangService
     {
-        private readonly AppDbContext _context;
+        private readonly ITraHangRepo _repo;
 
-        public TraHangService(AppDbContext context)
+        public TraHangService(ITraHangRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        public async Task Create(Trahang trahang)
+        public async Task Create(TrahangDTO dto)
         {
-            _context.trahangs.Add(trahang);
-            await _context.SaveChangesAsync();
+            var item = new Trahang
+            {
+                Idnv = dto.Idnv,
+                Idkh = dto.Idkh,
+                Tenkhachhang = dto.Tenkhachhang,
+                Sotienhoan = dto.Sotienhoan,
+                Lydotrahang = dto.Lydotrahang,
+                Trangthai = dto.Trangthai,
+                Phuongthuchoantien = dto.Phuongthuchoantien,
+                Ngaytrahangdukien = dto.Ngaytrahangdukien,
+                Ngaytrahangthucte = dto.Ngaytrahangthucte,
+                Chuthich = dto.Chuthich,
+                Hinhthucxuly = dto.Hinhthucxuly,
+            };
+            await _repo.Create(item);                                                                               
         }
 
         public async Task Delete(int id)
         {
-            var trahang = await GetById(id);
-            if (trahang != null)
-            {
-                _context.trahangs.Remove(trahang);
-                await _context.SaveChangesAsync();
-            }
+           await _repo.Delete(id);
         }
 
-        public async Task<List<Trahang>> GetAll() => await _context.trahangs.ToListAsync();
+        public async Task<List<Trahang>> GetAll() => await _repo.GetAll();
 
-        public async Task<Trahang> GetById(int id) => await _context.trahangs.FindAsync(id);
+        public async Task<Trahang> GetById(int id) => await _repo.GetById(id);
 
-        public async Task Update(Trahang trahang)
+      
+
+        public async Task Update(TrahangDTO dto)
         {
-            _context.trahangs.Update(trahang);
-            await _context.SaveChangesAsync();
+            var item = await _repo.GetById(dto.Id);
+
+            item.Idnv = dto.Idnv;
+            item.Idkh = dto.Idkh;
+            item.Tenkhachhang = dto.Tenkhachhang;                
+            item.Sotienhoan = dto.Sotienhoan;
+            item.Lydotrahang = dto.Lydotrahang;
+            item.Trangthai = dto.Trangthai;
+            item.Phuongthuchoantien = dto.Phuongthuchoantien;
+            item.Ngaytrahangdukien = dto.Ngaytrahangdukien;
+            item.Ngaytrahangthucte = dto.Ngaytrahangthucte;
+            item.Chuthich = dto.Chuthich;
+            item.Hinhthucxuly = dto.Hinhthucxuly;
+
+            await _repo.Update(item);
         }
     }
 }

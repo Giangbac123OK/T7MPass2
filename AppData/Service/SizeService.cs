@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,39 +12,43 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class SizeService : ISizeRepo
+    public class SizeService : ISizeService
     {
-        private readonly AppDbContext _context;
+        private readonly ISizeRepo _repo;
 
-        public SizeService(AppDbContext context)
+        public SizeService(ISizeRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        public async Task Create(Models.Size size)
+        public async Task Create(SizeDTO dto)
         {
-            _context.sizes.Add(size);
-            await _context.SaveChangesAsync();
+            var item = new Models.Size
+            {
+                Sosize = dto.Sosize,
+                Trangthai = dto.Trangthai,
+            };
+            await _repo.Create(item);
         }
 
         public async Task Delete(int id)
         {
-            var size = await GetById(id);
-            if (size != null)
-            {
-                _context.sizes.Remove(size);
-                await _context.SaveChangesAsync();
-            }
+           await _repo.Delete(id);
         }
 
-        public async Task<List<Models.Size>> GetAll() => await _context.sizes.ToListAsync();
+        public async Task<List<Models.Size>> GetAll() => await _repo.GetAll();
 
-        public async Task<Models.Size> GetById(int id) => await _context.sizes.FindAsync(id);
+        public async Task<Models.Size> GetById(int id) => await _repo.GetById(id);
 
-        public async Task Update(Models.Size size)
+     
+
+        public async Task Update(SizeDTO dto)
         {
-            _context.sizes.Update(size);
-            await _context.SaveChangesAsync();
+           var item = await _repo.GetById(dto.Id);
+            item.Sosize = dto.Sosize;
+            item.Trangthai = dto.Trangthai;
+            await _repo.Update(item);
+                                                                
         }
     }
 }

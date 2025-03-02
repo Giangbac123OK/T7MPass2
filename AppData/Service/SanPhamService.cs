@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,40 +12,61 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class SanPhamService : ISanPhamRepo
+    public class SanPhamService : ISanPhamService
     {
 
-        private readonly AppDbContext _context;
+        private readonly ISanPhamRepo _repo;
 
-        public SanPhamService(AppDbContext context)
+        public SanPhamService(ISanPhamRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        public async Task Create(Sanpham sanpham)
+        public async Task Create(SanphamDTO dto)
         {
-            _context.sanphams.Add(sanpham);
-            await _context.SaveChangesAsync();
+            var item = new Sanpham
+            {
+                TenSanpham = dto.TenSanpham,
+                Mota = dto.Mota,
+                Trangthai = dto.Trangthai,
+                Soluong = dto.Soluong,
+                GiaBan = dto.GiaBan,
+                NgayThemMoi = dto.NgayThemMoi,
+                Chieudai = dto.Chieudai,
+                Chieurong = dto.Chieurong,
+                Trongluong = dto.Trongluong,
+                Idth = dto.Idth,
+            };
+            await _repo.Create(item);
         }
 
         public async Task Delete(int id)
         {
-            var sanpham = await GetById(id);
-            if (sanpham != null)
-            {
-                _context.sanphams.Remove(sanpham);
-                await _context.SaveChangesAsync();
-            }
+           await _repo.Delete(id);
         }
 
-        public async Task<List<Sanpham>> GetAll() => await _context.sanphams.ToListAsync();
+        public async Task<List<Sanpham>> GetAll() => await _repo.GetAll();
 
-        public async Task<Sanpham> GetById(int id) => await _context.sanphams.FindAsync(id);
+        public async Task<Sanpham> GetById(int id) => await _repo.GetById(id);
 
-        public async Task Update(Sanpham sanpham)
+    
+
+        public async Task Update(SanphamDTO dto)
         {
-            _context.sanphams.Update(sanpham);
-            await _context.SaveChangesAsync();
+            var item = await _repo.GetById(dto.Id);
+
+            item.TenSanpham = dto.TenSanpham;
+            item.Mota = dto.Mota;
+            item.Trangthai = dto.Trangthai;
+            item.Soluong = dto.Soluong;
+            item.GiaBan = dto.GiaBan;
+            item.NgayThemMoi = dto.NgayThemMoi;
+            item.Chieudai = dto.Chieudai;
+            item.Chieurong = dto.Chieurong;
+            item.Trongluong = dto.Trongluong;
+            item.Idth = dto.Idth;
+
+            await _repo.Update(item);
         }
     }
 }

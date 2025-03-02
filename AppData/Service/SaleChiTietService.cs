@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,39 +12,50 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class SaleChiTietService : ISaleChiTietRepo
+    public class SaleChiTietService : ISaleChiTietService
     {
-        private readonly AppDbContext _context;
+        private readonly ISaleChiTietRepo _repo;
 
-        public SaleChiTietService(AppDbContext context)
+        public SaleChiTietService(ISaleChiTietRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        public async Task Create(Salechitiet salechitiet)
+        public async Task Create(SalechitietDTO salechitiet)
         {
-            _context.salechitiets.Add(salechitiet);
-            await _context.SaveChangesAsync();
+            var item = new Salechitiet
+            {
+                Idspct = salechitiet.Idspct,
+                Idsale = salechitiet.Idsale,
+                Donvi = salechitiet.Donvi,
+                Soluong = salechitiet.Soluong,
+                Giatrigiam = salechitiet.Giatrigiam,
+
+            };
+            await _repo.Create(item);
         }
 
         public async Task Delete(int id)
         {
-            var salechitiet = await GetById(id);
-            if (salechitiet != null)
-            {
-                _context.salechitiets.Remove(salechitiet);
-                await _context.SaveChangesAsync();
-            }
+            await _repo.Delete(id);
         }
 
-        public async Task<List<Salechitiet>> GetAll() => await _context.salechitiets.ToListAsync();
+        public async Task<List<Salechitiet>> GetAll() => await _repo.GetAll();
 
-        public async Task<Salechitiet> GetById(int id) => await _context.salechitiets.FindAsync(id);
+        public async Task<Salechitiet> GetById(int id) => await _repo.GetById(id);
 
-        public async Task Update(Salechitiet salechitiet)
+        public async Task Update(SalechitietDTO dto)
         {
-            _context.salechitiets.Update(salechitiet);
-            await _context.SaveChangesAsync();
+            var item = await _repo.GetById(dto.Id);
+
+            item.Soluong = dto.Soluong;
+            item.Idsale = dto.Idsale;
+            item.Donvi = dto.Donvi;
+            item.Soluong = dto.Soluong;
+            item.Giatrigiam = dto.Giatrigiam;
+
+            await _repo.Update(item);
+            
         }
     }
 }
