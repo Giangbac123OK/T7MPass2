@@ -52,7 +52,13 @@ builder.Services.AddScoped<IColorRepo, ColorRepo>();
 builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<ISizeRepo,SizeRepo>();
 builder.Services.AddScoped<ISizeService, SizeService>();
-
+builder.Services.AddScoped<ISizeService, SizeService>();
+builder.Services.AddScoped<ITraHangChiTietRepo, TraHangChiTietRepo>();
+builder.Services.AddScoped<ITraHangChiTietService, TraHangChiTietService>();
+builder.Services.AddScoped<ITraHangRepo, TraHangRepo>();
+builder.Services.AddScoped<ITraHangService, TraHangService>();
+builder.Services.AddScoped<IThuongHieuRepo, ThuongHieuRepo>();
+builder.Services.AddScoped<IThuongHieuService, ThuongHieuService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
