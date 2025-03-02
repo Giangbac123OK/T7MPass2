@@ -38,9 +38,7 @@ namespace AppData.Models
 
 		public string? Password { get; set; }
 
-		[Required(ErrorMessage = "Ngày tạo tài khoản là bắt buộc.")]
-		[DataType(DataType.Date, ErrorMessage = "Ngày tạo tài khoản không hợp lệ.")]
-		public DateTime Ngaytaotaikhoan { get; set; }
+		public DateTime? Ngaytaotaikhoan { get; set; }
 
 		[Required(ErrorMessage = "Điểm sử dụng là bắt buộc.")]
 		[Range(0, int.MaxValue, ErrorMessage = "Điểm sử dụng phải là số dương.")]

@@ -39,8 +39,6 @@ namespace AppData.Models
 
         public int Trongluong { get; set; }
 
-		public string? UrlHinhanh { get; set; }
-
 		public int Idth { get; set; }
 		[ForeignKey("Idth")]
 		public virtual Thuonghieu Thuonghieu { get; set; }
