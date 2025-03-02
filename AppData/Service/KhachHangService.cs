@@ -1,4 +1,5 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,38 +11,74 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class KhachHangService : IKhachHangRepo
+    public class KhachHangService : IKhachHangService
     {
-        private readonly AppDbContext _context;
-
-        public KhachHangService(AppDbContext context)
+        private readonly IKhachHangRepo _repository;
+        private readonly IRankRepo _Rankrepository;
+        public KhachHangService(IKhachHangRepo repository, IRankRepo rankrepository)
         {
-            _context = context;
-        }
-        public async Task Create(Khachhang khachhang)
-        {
-            _context.khachhangs.Add(khachhang);
-            await _context.SaveChangesAsync();
+            _repository = repository;
+            _Rankrepository = rankrepository;
         }
 
-        public async Task Delete(int id)
+        public async Task Create(KhachhangDTO dto)
         {
-            var khachhang = await GetById(id);
-            if (khachhang != null)
+            var rank = await _Rankrepository.GetById(dto.Idrank);
+            if (rank == null) return;
+
+            var khachhang = new Khachhang
             {
-                _context.khachhangs.Remove(khachhang);
-                await _context.SaveChangesAsync();
-            }
+                Ten = dto.Ten,
+                Sdt = dto.Sdt,
+                Ngaysinh = dto.Ngaysinh,
+                Tichdiem = dto.Tichdiem,
+                Email = dto.Email,
+                Diachi = dto.Diachi,
+                Password = dto.Password,
+                Ngaytaotaikhoan = dto.Ngaytaotaikhoan,
+                Diemsudung = dto.Diemsudung,
+                Trangthai = dto.Trangthai,
+                Idrank = dto.Idrank,
+                Gioitinh = dto.Gioitinh
+            };
+
+            await _repository.Create(khachhang);
         }
 
-        public async Task<List<Khachhang>> GetAll() => await _context.khachhangs.ToListAsync();
+        public async Task Delete(int id) => await _repository.Delete(id);
 
-        public async Task<Khachhang> GetById(int id) => await _context.khachhangs.FindAsync(id);
-
-        public async Task Update(Khachhang khachhang)
+        public async Task<List<Khachhang>> GetAll()
         {
-            _context.khachhangs.Update(khachhang);
-            await _context.SaveChangesAsync();
+            return await _repository.GetAll();
+        }
+
+        public async Task<Khachhang> GetById(int id)
+        {
+            return await _repository.GetById(id);
+        }
+
+        public async Task Update(KhachhangDTO dto)
+        {
+            var khachhang = await _repository.GetById(dto.Id);
+            if (khachhang == null) return;
+
+            var rank = await _Rankrepository.GetById(dto.Idrank);
+            if (rank == null) return;
+
+            khachhang.Ten = dto.Ten;
+            khachhang.Sdt = dto.Sdt;
+            khachhang.Ngaysinh = dto.Ngaysinh;
+            khachhang.Tichdiem = dto.Tichdiem;
+            khachhang.Email = dto.Email;
+            khachhang.Diachi = dto.Diachi;
+            khachhang.Password = dto.Password;
+            khachhang.Ngaytaotaikhoan = dto.Ngaytaotaikhoan;
+            khachhang.Diemsudung = dto.Diemsudung;
+            khachhang.Trangthai = dto.Trangthai;
+            khachhang.Idrank = dto.Idrank;
+            khachhang.Trangthai = dto.Trangthai;
+
+            await _repository.Update(khachhang);
         }
     }
 }

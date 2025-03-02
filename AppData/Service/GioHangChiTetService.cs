@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,39 +12,61 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class GioHangChiTetService : IGioHangChiTetRepo
+    public class GioHangChiTetService : IGioHangChiTetService
     {
-        private readonly AppDbContext _context;
-
-        public GioHangChiTetService(AppDbContext context)
+        private readonly IGioHangChiTetRepo _repository;
+        private readonly IGioHangRepo _GHrepository;
+        private readonly ISanPhamChiTietRepo _SPCTrepository;
+        public GioHangChiTetService(IGioHangChiTetRepo repository, IGioHangRepo GHrepository, ISanPhamChiTietRepo SPCTrepository)
         {
-            _context = context;
+            _repository = repository;
+            _GHrepository = GHrepository;
+            _SPCTrepository = SPCTrepository;
         }
 
-        public async Task Create(Giohangchitiet giohangchitiet)
+        public async Task Create(GiohangchitietDTO dto)
         {
-            _context.giohangchitiets.Add(giohangchitiet);
-            await _context.SaveChangesAsync();
-        }
+            var giohang = await _GHrepository.GetById(dto.Idgh);
+            if (giohang == null) return;
 
-        public async Task Delete(int id)
-        {
-            var giohangchitiet = await GetById(id);
-            if (giohangchitiet != null)
+            var giohangchitiet = new Giohangchitiet
             {
-                _context.giohangchitiets.Remove(giohangchitiet);
-                await _context.SaveChangesAsync();
-            }
+                Idgh = dto.Idgh,
+                Idspct = dto.Idspct,
+                Soluong = dto.Soluong
+            };
+
+            await _repository.Create(giohangchitiet);
         }
 
-        public async Task<List<Giohangchitiet>> GetAll() => await _context.giohangchitiets.ToListAsync();
+        public async Task Delete(int id) => await _repository.Delete(id);
 
-        public async Task<Giohangchitiet> GetById(int id) => await _context.giohangchitiets.FindAsync(id);
-
-        public async Task Update(Giohangchitiet giohangchitiet)
+        public async Task<List<Giohangchitiet>> GetAll()
         {
-            _context.giohangchitiets.Update(giohangchitiet);
-            await _context.SaveChangesAsync();
+            return await _repository.GetAll();
+        }
+
+        public async Task<Giohangchitiet> GetById(int id)
+        {
+            return await _repository.GetById(id);
+        }
+
+        public async Task Update(GiohangchitietDTO dto)
+        {
+            var giohangchitiet = await _repository.GetById(dto.Id);
+            if (giohangchitiet == null) return;
+
+            var giohang = await _GHrepository.GetById(dto.Idgh);
+            if (giohang == null) return;
+
+            var sanphamchitiet = await _SPCTrepository.GetById(dto.Idspct);
+            if (sanphamchitiet == null) return;
+
+            giohangchitiet.Idgh = dto.Idgh;
+            giohangchitiet.Idspct = dto.Idspct;
+            giohangchitiet.Soluong = dto.Soluong;
+
+            await _repository.Update(giohangchitiet);
         }
     }
 }

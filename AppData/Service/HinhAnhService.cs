@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,38 +12,80 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class HinhAnhService : IHinhAnhRepo
+    public class HinhAnhService : IHinhAnhService
     {
-        private readonly AppDbContext _context;
-
-        public HinhAnhService(AppDbContext context)
+        private readonly IHinhAnhRepo _repository;
+        private readonly ITraHangRepo _THrepository;
+        private readonly IDanhGiaRepo _DGrepository;
+        public HinhAnhService(IHinhAnhRepo repository, ITraHangRepo tHrepository, IDanhGiaRepo dGrepository)
         {
-            _context = context;
-        }
-        public async Task Create(Hinhanh hinhanh)
-        {
-            _context.hinhanhs.Add(hinhanh);
-            await _context.SaveChangesAsync();
+            _repository = repository;
+            _THrepository = tHrepository;
+            _DGrepository = dGrepository;
         }
 
-        public async Task Delete(int id)
+        public async Task Create(HinhanhDTO dto)
         {
-            var hinhanh = await GetById(id);
-            if (hinhanh != null)
+            if(dto.Iddanhgia != null)
             {
-                _context.hinhanhs.Remove(hinhanh);
-                await _context.SaveChangesAsync();
+                int iddanhgia = (int)dto.Iddanhgia;
+                var danhgia = await _DGrepository.GetById(iddanhgia);
+                if (danhgia == null) return;
             }
+
+            if (dto.Idtrahang != null)
+            {
+                int idtrahang = (int)dto.Idtrahang;
+                var trahang = await _THrepository.GetById(idtrahang);
+                if (trahang == null) return;
+            }
+
+            var hinhanh = new Hinhanh
+            {
+                Urlhinhanh = dto.Urlhinhanh,
+                Idtrahang = dto.Idtrahang,
+                Iddanhgia = dto.Iddanhgia
+            };
+
+            await _repository.Create(hinhanh);
         }
 
-        public async Task<List<Hinhanh>> GetAll() => await _context.hinhanhs.ToListAsync();
+        public async Task Delete(int id) => await _repository.Delete(id);
 
-        public async Task<Hinhanh> GetById(int id) => await _context.hinhanhs.FindAsync(id);
-
-        public async Task Update(Hinhanh hinhanh)
+        public async Task<List<Hinhanh>> GetAll()
         {
-            _context.hinhanhs.Update(hinhanh);
-            await _context.SaveChangesAsync();
+            return await _repository.GetAll();
+        }
+
+        public async Task<Hinhanh> GetById(int id)
+        {
+            return await _repository.GetById(id);
+        }
+
+        public async Task Update(HinhanhDTO dto)
+        {
+            var hinhanh = await _repository.GetById(dto.Id);
+            if (hinhanh == null) return;
+
+            if (dto.Iddanhgia != null)
+            {
+                int iddanhgia = (int)dto.Iddanhgia;
+                var danhgia = await _DGrepository.GetById(iddanhgia);
+                if (danhgia == null) return;
+            }
+
+            if (dto.Idtrahang != null)
+            {
+                int idtrahang = (int)dto.Idtrahang;
+                var trahang = await _THrepository.GetById(idtrahang);
+                if (trahang == null) return;
+            }
+
+            hinhanh.Urlhinhanh = dto.Urlhinhanh;
+            hinhanh.Idtrahang = dto.Idtrahang;
+            hinhanh.Iddanhgia = dto.Iddanhgia;
+
+            await _repository.Update(hinhanh);
         }
     }
 }
