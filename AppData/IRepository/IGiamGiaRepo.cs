@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace AppData.IRepository
 {
-    public interface IGiamGiaRepo
+    public interface IGiamGia
     {
-        Task<List<giamgia_rank>> GetAll();
-        Task<giamgia_rank> GetById(int id);
-        Task Create(giamgia_rank giamgia_Rank);
-        Task Update(giamgia_rank giamgia_Rank);
+        Task<List<Giamgia>> GetAll();
+        Task<Giamgia> GetById(int id);
+        Task Create(Giamgia giamgia);
+        Task Update(Giamgia giamgia);
         Task Delete(int id);
     }
 }
