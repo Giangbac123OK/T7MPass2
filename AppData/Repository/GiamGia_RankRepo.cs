@@ -38,10 +38,5 @@ namespace AppData.Repository
 
         public async Task<giamgia_rank> GetById(int id) => await _context.giamgia_Ranks.FindAsync(id);
 
-        public async Task Update(giamgia_rank giamgia_Rank)
-        {
-            _context.giamgia_Ranks.Update(giamgia_Rank);
-            await _context.SaveChangesAsync();
-        }
     }
 }

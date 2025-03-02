@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AppData.Repository
 {
-    public class GiamGiaRepo : IGiamGia
+    public class GiamGiaRepo : IGiamGiaRepo
     {
         private readonly AppDbContext _context;
 

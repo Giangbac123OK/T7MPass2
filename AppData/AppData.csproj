@@ -1,22 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="DTO\**" />
-    <Compile Remove="IService\**" />
-    <Compile Remove="Service\**" />
-    <EmbeddedResource Remove="DTO\**" />
-    <EmbeddedResource Remove="IService\**" />
-    <EmbeddedResource Remove="Service\**" />
-    <None Remove="DTO\**" />
-    <None Remove="IService\**" />
-    <None Remove="Service\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.36" />
