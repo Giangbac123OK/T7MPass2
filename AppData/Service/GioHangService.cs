@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,39 +12,56 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class GioHangService : IGioHangRepo
+    public class GioHangService : IGioHangService
     {
-        private readonly AppDbContext _context;
+        private readonly IGioHangRepo _repository;
+        private readonly IKhachHangRepo _KHrepository;
 
-        public GioHangService(AppDbContext context)
+        public GioHangService(IGioHangRepo repository, IKhachHangRepo KHrepository)
         {
-            _context = context;
+            _repository = repository;
+            _KHrepository = KHrepository;
+
         }
 
-        public async Task Create(Giohang giohang)
+        public async Task Create(GiohangDTO dto)
         {
-            _context.giohangs.Add(giohang);
-            await _context.SaveChangesAsync();
-        }
+            var khachhang = await _KHrepository.GetById(dto.Idkh);
+            if (khachhang == null) return;
 
-        public async Task Delete(int id)
-        {
-            var giohang = await GetById(id);
-            if (giohang != null)
+            var giohang = new Giohang
             {
-                _context.giohangs.Remove(giohang);
-                await _context.SaveChangesAsync();
-            }
+                Soluong = dto.Soluong,
+                Idkh = dto.Idkh
+            };
+
+            await _repository.Create(giohang);
         }
 
-        public async Task<List<Giohang>> GetAll() => await _context.giohangs.ToListAsync();
+        public async Task Delete(int id) => await _repository.Delete(id);
 
-        public async Task<Giohang> GetById(int id) => await _context.giohangs.FindAsync(id);
-
-        public async Task Update(Giohang giohang)
+        public async Task<List<Giohang>> GetAll()
         {
-            _context.giohangs.Update(giohang);
-            await _context.SaveChangesAsync();
+            return await _repository.GetAll();
+        }
+
+        public async Task<Giohang> GetById(int id)
+        {
+            return await _repository.GetById(id);
+        }
+
+        public async Task Update(GiohangDTO dto)
+        {
+            var giohang = await _repository.GetById(dto.id);
+            if (giohang == null) return;
+
+            var khachhang = await _KHrepository.GetById(dto.Idkh);
+            if (khachhang == null) return;
+
+            giohang.Soluong = dto.Soluong;
+            giohang.Idkh = dto.Idkh;
+
+            await _repository.Update(giohang);
         }
     }
 }

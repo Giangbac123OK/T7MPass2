@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,39 +12,63 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class NhanVienService : INhanVienRepo
+    public class NhanVienService : INhanVienService
     {
-        private readonly AppDbContext _context;
-
-        public NhanVienService(AppDbContext context)
+        private readonly INhanVienRepo _repository;
+        public NhanVienService(INhanVienRepo repository)
         {
-            _context = context;
+            _repository = repository;
+
         }
 
-        public async Task Create(Nhanvien nhanvien)
+        public async Task Create(NhanvienDTO dto)
         {
-            _context.nhanviens.Add(nhanvien);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task Delete(int id)
-        {
-            var nhanvien = await GetById(id);
-            if (nhanvien != null)
+            var nhanvien = new Nhanvien
             {
-                _context.nhanviens.Remove(nhanvien);
-                await _context.SaveChangesAsync();
-            }
+                Hovaten = dto.Hovaten,
+                Ngaysinh = dto.Ngaysinh,
+                Diachi = dto.Diachi,
+                Gioitinh = dto.Gioitinh,
+                Sdt = dto.Sdt,
+                Email = dto.Email,
+                Trangthai = dto.Trangthai,
+                Password = dto.Password,
+                Role = dto.Role,
+                Ngaytaotaikhoan = dto.Ngaytaotaikhoan
+            };
+
+            await _repository.Create(nhanvien);
         }
 
-        public async Task<List<Nhanvien>> GetAll() => await _context.nhanviens.ToListAsync();
+        public async Task Delete(int id) => await _repository.Delete(id);
 
-        public async Task<Nhanvien> GetById(int id) => await _context.nhanviens.FindAsync(id);
-
-        public async Task Update(Nhanvien nhanvien)
+        public async Task<List<Nhanvien>> GetAll()
         {
-            _context.nhanviens.Update(nhanvien);
-            await _context.SaveChangesAsync();
+            return await _repository.GetAll();
+        }
+
+        public async Task<Nhanvien> GetById(int id)
+        {
+            return await _repository.GetById(id);
+        }
+
+        public async Task Update(NhanvienDTO dto)
+        {
+            var nhanvien = await _repository.GetById(dto.Id);
+            if (nhanvien == null) return;
+
+            nhanvien.Hovaten = dto.Hovaten;
+            nhanvien.Ngaysinh = dto.Ngaysinh;
+            nhanvien.Diachi = dto.Diachi;
+            nhanvien.Gioitinh = dto.Gioitinh;
+            nhanvien.Sdt = dto.Sdt;
+            nhanvien.Email = dto.Email;
+            nhanvien.Trangthai = dto.Trangthai;
+            nhanvien.Password = dto.Password;
+            nhanvien.Role = dto.Role;
+            nhanvien.Ngaytaotaikhoan = dto.Ngaytaotaikhoan;
+
+            await _repository.Update(nhanvien);
         }
     }
 }

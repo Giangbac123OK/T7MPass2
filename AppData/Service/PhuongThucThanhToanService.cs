@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,39 +12,47 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class PhuongThucThanhToanService : IPhuongThucThanhToanRepo
+    public class PhuongThucThanhToanService : IPhuongThucThanhToanService
     {
-        private readonly AppDbContext _context;
-
-        public PhuongThucThanhToanService(AppDbContext context)
+        private readonly IPhuongThucThanhToanRepo _repository;
+        public PhuongThucThanhToanService(IPhuongThucThanhToanRepo repository)
         {
-            _context = context;
+            _repository = repository;
+
         }
 
-        public async Task Create(Phuongthucthanhtoan phuongthucthanhtoan)
+        public async Task Create(PhuongthucthanhtoanDTO dto)
         {
-            _context.phuongthucthanhtoans.Add(phuongthucthanhtoan);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task Delete(int id)
-        {
-            var phuongthucthanhtoan = await GetById(id);
-            if (phuongthucthanhtoan != null)
+            var phuongthucthanhtoan = new Phuongthucthanhtoan
             {
-                _context.phuongthucthanhtoans.Remove(phuongthucthanhtoan);
-                await _context.SaveChangesAsync();
-            }
+                Tenpttt = dto.Tenpttt,
+                Trangthai = dto.Trangthai
+            };
+
+            await _repository.Create(phuongthucthanhtoan);
         }
 
-        public async Task<List<Phuongthucthanhtoan>> GetAll() => await _context.phuongthucthanhtoans.ToListAsync();
+        public async Task Delete(int id) => await _repository.Delete(id);
 
-        public async Task<Phuongthucthanhtoan> GetById(int id) => await _context.phuongthucthanhtoans.FindAsync(id);
-
-        public async Task Update(Phuongthucthanhtoan phuongthucthanhtoan)
+        public async Task<List<Phuongthucthanhtoan>> GetAll()
         {
-            _context.phuongthucthanhtoans.Update(phuongthucthanhtoan);
-            await _context.SaveChangesAsync();
+            return await _repository.GetAll();
+        }
+
+        public async Task<Phuongthucthanhtoan> GetById(int id)
+        {
+            return await _repository.GetById(id);
+        }
+
+        public async Task Update(PhuongthucthanhtoanDTO dto)
+        {
+            var phuongthucthanhtoan = await _repository.GetById(dto.Id);
+            if (phuongthucthanhtoan == null) return;
+
+            phuongthucthanhtoan.Tenpttt = dto.Tenpttt;
+            phuongthucthanhtoan.Trangthai = dto.Trangthai;
+
+            await _repository.Update(phuongthucthanhtoan);
         }
     }
 }
