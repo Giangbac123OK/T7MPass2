@@ -52,7 +52,7 @@ namespace AppData.Models
 
         public string? Hinhthucxuly { get; set; }
 
-        public virtual ICollection<Hinhanhtrahang> Hinhanhtrahangs { get; set; }
+        public virtual ICollection<Hinhanh> Hinhanhs { get; set; }
 		public virtual ICollection<Trahangchitiet> Trahangchitiets { get; set; }
 
         // Trạng thái hiển thị dưới dạng chuỗi

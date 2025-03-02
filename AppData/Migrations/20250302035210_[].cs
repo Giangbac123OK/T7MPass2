@@ -411,26 +411,6 @@ namespace AppData.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "hinhanhtrahangs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Urlhinhanh = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Idth = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_hinhanhtrahangs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_hinhanhtrahangs_trahangs_Idth",
-                        column: x => x.Idth,
-                        principalTable: "trahangs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "giohangchitiets",
                 columns: table => new
                 {
@@ -575,23 +555,28 @@ namespace AppData.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "hinhanhdanhgias",
+                name: "hinhanhs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Urlhinhanh = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Iddg = table.Column<int>(type: "int", nullable: false)
+                    Idtrahang = table.Column<int>(type: "int", nullable: true),
+                    Iddanhgia = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_hinhanhdanhgias", x => x.Id);
+                    table.PrimaryKey("PK_hinhanhs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_hinhanhdanhgias_danhgias_Iddg",
-                        column: x => x.Iddg,
+                        name: "FK_hinhanhs_danhgias_Iddanhgia",
+                        column: x => x.Iddanhgia,
                         principalTable: "danhgias",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_hinhanhs_trahangs_Idtrahang",
+                        column: x => x.Idtrahang,
+                        principalTable: "trahangs",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -632,14 +617,14 @@ namespace AppData.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_hinhanhdanhgias_Iddg",
-                table: "hinhanhdanhgias",
-                column: "Iddg");
+                name: "IX_hinhanhs_Iddanhgia",
+                table: "hinhanhs",
+                column: "Iddanhgia");
 
             migrationBuilder.CreateIndex(
-                name: "IX_hinhanhtrahangs_Idth",
-                table: "hinhanhtrahangs",
-                column: "Idth");
+                name: "IX_hinhanhs_Idtrahang",
+                table: "hinhanhs",
+                column: "Idtrahang");
 
             migrationBuilder.CreateIndex(
                 name: "IX_hoadonchitiets_Idhd",
@@ -745,10 +730,7 @@ namespace AppData.Migrations
                 name: "giohangchitiets");
 
             migrationBuilder.DropTable(
-                name: "hinhanhdanhgias");
-
-            migrationBuilder.DropTable(
-                name: "hinhanhtrahangs");
+                name: "hinhanhs");
 
             migrationBuilder.DropTable(
                 name: "salechitiets");

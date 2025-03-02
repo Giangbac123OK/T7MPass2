@@ -27,7 +27,6 @@ namespace AppData.Models
 		public  Hoadonchitiet Hoadonchitiet {  get; set; }
 
         public int Sosao { get; set; }
-
-        public virtual ICollection<Hinhanhdanhgia> Hinhanhdanhgias { get; set; }
+        public virtual ICollection<Hinhanh> Hinhanhs { get; set; }
     }
 }

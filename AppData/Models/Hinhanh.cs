@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 
 namespace AppData.Models
 {
-	public class Hinhanhdanhgia
-
-    {
+	public class Hinhanh
+	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id {  get; set; }
 
 		public string Urlhinhanh { get; set; }
-
-		public int Iddg { get; set; }
-		[ForeignKey("Iddg")]
-		public virtual Danhgia Danhgia { get; set; }
-	}
+        public int? Idtrahang { get; set; }
+        [ForeignKey("Idtrahang")]
+        public virtual Trahang Trahang { get; set; }
+        public int? Iddanhgia { get; set; }
+        [ForeignKey("Iddanhgia")]
+        public virtual Danhgia Danhgia { get; set; }
+    }
 }

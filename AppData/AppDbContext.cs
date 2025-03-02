@@ -18,8 +18,7 @@ namespace AppData
         public DbSet<Giamgia> giamgias { get; set; }
         public DbSet<Giohang> giohangs { get; set; }
         public DbSet<Giohangchitiet> giohangchitiets { get; set; }
-        public DbSet<Hinhanhtrahang> hinhanhtrahangs { get; set; }
-        public DbSet<Hinhanhdanhgia> hinhanhdanhgias { get; set; }
+        public DbSet<Hinhanh> hinhanhs { get; set; }
         public DbSet<Hoadon> hoadons { get; set; }
         public DbSet<Hoadonchitiet> hoadonchitiets { get; set; }
         public DbSet<Khachhang> khachhangs { get; set; }
