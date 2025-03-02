@@ -9,10 +9,10 @@ namespace AppData.IRepository
 {
     public interface IDiaChiRepo
     {
-        Task<List<Danhgia>> GetAll();
-        Task<Danhgia> GetById(int id);
-        Task Create(Danhgia danhgia);
-        Task Update(Danhgia danhgia);
+        Task<List<Diachi>> GetAll();
+        Task<Diachi> GetById(int id);
+        Task Create(Diachi diachi);
+        Task Update(Diachi diachi);
         Task Delete(int id);
     }
 }
