@@ -13,6 +13,7 @@ namespace AppData.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }
+
 		[Required(ErrorMessage = "Tên khách hàng là bắt buộc.")]
 		[StringLength(50, ErrorMessage = "Tên khách hàng không được vượt quá 50 ký tự.")]
 		public string Ten { get; set; }
@@ -34,7 +35,9 @@ namespace AppData.Models
 
 		[Required(ErrorMessage = "Địa chỉ là bắt buộc.")]
 		public string Diachi { get; set; }
+
 		public string? Password { get; set; }
+
 		[Required(ErrorMessage = "Ngày tạo tài khoản là bắt buộc.")]
 		[DataType(DataType.Date, ErrorMessage = "Ngày tạo tài khoản không hợp lệ.")]
 		public DateTime Ngaytaotaikhoan { get; set; }
@@ -45,12 +48,15 @@ namespace AppData.Models
 
 		[Required(ErrorMessage = "Trạng thái là bắt buộc.")]
 		public int Trangthai { get; set; }
+
 		public int Idrank { get; set; }
 		[ForeignKey("Idrank")]
 		public virtual Rank Rank { get; set; }
-		
-		public  Giohang Giohang { get; set; }
-		public virtual ICollection<Danhgia> Danhgias { get; set; }
+
+        public bool Gioitinh { get; set; } // true: Nam, false: Nữ
+
+        public Giohang Giohang { get; set; }
+        public virtual ICollection<Danhgia> Danhgias { get; set; }
 		public virtual ICollection<Diachi> Diachis { get; set; }
 		public virtual ICollection<Hoadon> Hoadons { get; set; }
 	}

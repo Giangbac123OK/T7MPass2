@@ -14,22 +14,22 @@ namespace AppData.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id {  get; set; }
+
 		[StringLength(200, ErrorMessage = "Mô tả không được quá 200 ký tự")]
 		public string? Mota {  get; set; }
+
 		[Range(0, 3, ErrorMessage = "Trạng thái không hợp lệ")]
-		public int Trangthai
-		{
-			get; set;
-		}
-		[Range(0, int.MaxValue, ErrorMessage = "Giá phải lớn hơn hoặc bằng 0")]
-		public decimal Giathoidiemhientai
-		{
-			get; set;
-		}
-		[Required(ErrorMessage = "Số lượng không được để trống.")]
+		public int Trangthai { get; set; }
+
+        [Range(0, int.MaxValue, ErrorMessage = "Giá phải lớn hơn hoặc bằng 0")]
+		public decimal Giathoidiemhientai { get; set; }
+
+        [Required(ErrorMessage = "Số lượng không được để trống.")]
 		[Range(0, int.MaxValue, ErrorMessage = "Số lượng phải lớn hơn hoặc bằng 0")]
 		public int Soluong {  get; set; }
+
         public string? UrlHinhanh { get; set; }
+
         [Required(ErrorMessage = "Id sản phẩm là bắt buộc")]
 		public int Idsp { get; set; }
 		[ForeignKey("Idsp")]

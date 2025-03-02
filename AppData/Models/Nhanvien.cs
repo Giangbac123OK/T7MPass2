@@ -14,9 +14,10 @@ namespace AppData.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }
+
 		[Required(ErrorMessage = "Vui lòng nhập họ tên")]
 		[StringLength(50, ErrorMessage = "Họ tên không được vượt quá 50 ký tự")]
-		public string Hoten { get; set; }
+		public string Hovaten { get; set; }
 
 		[Required(ErrorMessage = "Vui lòng chọn ngày sinh")]
 		[DataType(DataType.Date, ErrorMessage = "Ngày sinh không hợp lệ")]
@@ -32,10 +33,10 @@ namespace AppData.Models
 		[Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
 		[RegularExpression(@"^(\d{10})$", ErrorMessage = "Số điện thoại phải có 10 chữ số")]
 		public string Sdt { get; set; }
+
 		[Required(ErrorMessage = "Vui lòng nhập email")]
 		[EmailAddress(ErrorMessage = "Email không hợp lệ")]
 		[StringLength(100, ErrorMessage = "Email không được vượt quá 100 ký tự")]
-
 		public string Email { get; set; }
 
 		[Required(ErrorMessage = "Trạng thái không được để trống")]
@@ -50,7 +51,10 @@ namespace AppData.Models
 		[Required(ErrorMessage = "Vai trò không được để trống")]
 		[Range(0, 1, ErrorMessage = "Vai trò là nhân viên hoặc quản lý")]
 		public int Role { get; set; }// 0: Quản lý, 1: Nhân viên
-		public virtual ICollection<Hoadon> Hoadons { get; set; }
+
+        public DateTime Ngaytaotaikhoan { get; set; }
+
+        public virtual ICollection<Hoadon> Hoadons { get; set; }
 		public virtual ICollection<Trahang> Trahangs { get; set; }
 	}
 }

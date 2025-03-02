@@ -18,11 +18,11 @@ namespace AppData
         public DbSet<Giamgia> giamgias { get; set; }
         public DbSet<Giohang> giohangs { get; set; }
         public DbSet<Giohangchitiet> giohangchitiets { get; set; }
-        public DbSet<Hinhanh> hinhanhs { get; set; }
+        public DbSet<Hinhanhtrahang> hinhanhtrahangs { get; set; }
+        public DbSet<Hinhanhdanhgia> hinhanhdanhgias { get; set; }
         public DbSet<Hoadon> hoadons { get; set; }
         public DbSet<Hoadonchitiet> hoadonchitiets { get; set; }
         public DbSet<Khachhang> khachhangs { get; set; }
-        public DbSet<Lichsuthanhtoan> lichsuthanhtoans { get; set; }
         public DbSet<Nhanvien> nhanviens { get; set; }
         public DbSet<Phuongthucthanhtoan> phuongthucthanhtoans { get; set; }
         public DbSet<Rank> ranks { get; set; }
@@ -40,14 +40,12 @@ namespace AppData
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=THANHTONG\\SQLEXPRESS01;Initial Catalog=T7M123;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
+                optionsBuilder.UseSqlServer("Data Source=MEO-U-PC;Initial Catalog=T7M123;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Lichsuthanhtoan>()
-            .HasKey(l => new { l.Idhoadon, l.idPttt });
             modelBuilder.Entity<giamgia_rank>()
             .HasKey(l => new { l.IDgiamgia, l.Idrank });
             modelBuilder.Entity<Giohang>()
@@ -82,9 +80,9 @@ namespace AppData
            .WithMany(p => p.Trahangchitiets)
            .HasForeignKey(s => s.Idth)
            .OnDelete(DeleteBehavior.Restrict);
-         
+
 
         }
-    
-}
+
+    }
 }

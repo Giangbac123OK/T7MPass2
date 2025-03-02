@@ -13,11 +13,13 @@ namespace AppData.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int id {  get; set; }
-		public int Soluong {  get; set; }
-		public int Idkh { get; set; }
 
+		public int Soluong {  get; set; }
+
+		public int Idkh { get; set; }
 		public  Khachhang Khachhang { get; set; }
+
 		public virtual ICollection<Giohangchitiet> Giohangchitiets { get; set; }
-	}
+    }
 
 }

@@ -13,8 +13,11 @@ namespace AppData.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string chatLieu { get; set; }
-        public int status { get; set; }
+
+        public string Tenchatlieu { get; set; }
+
+        public int Trangthai { get; set; }
+
         public virtual ICollection<Sanphamchitiet> Sanphamchitiets { get; set; }
 
     }

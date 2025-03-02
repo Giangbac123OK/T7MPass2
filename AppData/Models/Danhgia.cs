@@ -13,16 +13,21 @@ namespace AppData.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id {  get; set; }
+
 		public int Idkh { get; set; }
-		public int soSao { get; set; }
-		[ForeignKey("Idkh")]
+        [ForeignKey("Idkh")]
 		public virtual Khachhang Khachhang {  get; set; }
-		public int Trangthai {  get; set; }
+
 		public string? Noidungdanhgia {  get; set; }
+
 		public DateTime Ngaydanhgia { get; set; }
+
 		public int	Idhdct { get; set; }
+
 		public  Hoadonchitiet Hoadonchitiet {  get; set; }
 
-		public string? UrlHinhanh {  get; set; }
-	}
+        public int Sosao { get; set; }
+
+        public virtual ICollection<Hinhanhdanhgia> Hinhanhdanhgias { get; set; }
+    }
 }

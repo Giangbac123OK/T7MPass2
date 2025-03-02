@@ -13,14 +13,15 @@ namespace AppData.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id {  get; set; }
+
 		public int Idspct { get; set; }
 		[ForeignKey("Idspct")]
 		public virtual Sanphamchitiet spchitiet {  get; set; }
 
 		public int Idsale { get; set; }
 		[ForeignKey("Idsale")]
-
 		public virtual Sale Sale {  get; set; }
+
 		[Range(0, 1, ErrorMessage = "Đơn vị phải là 0 (VND) hoặc 1 (%)")]
 		public int Donvi { get; set; }  // Đổi kiểu về int
 

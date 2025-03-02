@@ -13,11 +13,12 @@ namespace AppData.Models
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }
+
 		[Required(ErrorMessage = "Tên phương thức thanh toán không được để trống")]
 		[MaxLength(50)]
 		public string Tenpttt { get; set; }
+
 		[Range(0, 1, ErrorMessage = "Trạng thái phải là sử dụng hoặc không sử dụng")]// 0: Đang sử dụng, 1: Không sử dụng
 		public int Trangthai { get; set; }
-		public virtual ICollection<Lichsuthanhtoan> Lichsuthanhtoans { get; set; }
 	}
 }

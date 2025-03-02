@@ -12,9 +12,13 @@ namespace AppData.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string NameColor { get; set; }
-        public string MaMau {  get; set; }
-        public int trangThai { get; set; }
+
+        public string Tenmau { get; set; }
+
+        public string Mamau {  get; set; }
+
+        public int Trangthai { get; set; }
+
         public virtual ICollection<Sanphamchitiet> Sanphamchitiets { get; set; }
 
     }
