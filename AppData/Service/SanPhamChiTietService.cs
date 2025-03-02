@@ -1,8 +1,11 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,39 +13,55 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class SanPhamChiTietService : ISanPhamChiTietRepo
+    public class SanPhamChiTietService : ISanPhamChiTietService
     {
-        private readonly AppDbContext _context;
+        private readonly ISanPhamChiTietRepo _repo;
 
-        public SanPhamChiTietService(AppDbContext context)
+        public SanPhamChiTietService(ISanPhamChiTietRepo repo)
         {
-            _context = context;
-        }
-
-        public async Task Create(Sanphamchitiet sanphamchitiet)
-        {
-            _context.Sanphamchitiets.Add(sanphamchitiet);
-            await _context.SaveChangesAsync();
+            _repo = repo;
         }
 
         public async Task Delete(int id)
         {
-            var sanphamchitiet = await GetById(id);
-            if (sanphamchitiet != null)
-            {
-                _context.Sanphamchitiets.Remove(sanphamchitiet);
-                await _context.SaveChangesAsync();
-            }
+            await _repo.Delete(id);
         }
 
-        public async Task<List<Sanphamchitiet>> GetAll() => await _context.Sanphamchitiets.ToListAsync();
+        public async Task<List<Sanphamchitiet>> GetAll() => await _repo.GetAll();
 
-        public async Task<Sanphamchitiet> GetById(int id) => await _context.Sanphamchitiets.FindAsync(id);
+        public async Task<Sanphamchitiet> GetById(int id) => await _repo.GetById(id);
 
-        public async Task Update(Sanphamchitiet sanphamchitiet)
+        public async Task Create(SanphamchitietDTO dto)
         {
-            _context.Sanphamchitiets.Update(sanphamchitiet);
-            await _context.SaveChangesAsync();
+            var item = new Sanphamchitiet
+            {
+                Mota = dto.Mota,
+                Trangthai = dto.Trangthai,
+                Giathoidiemhientai = dto.Giathoidiemhientai,
+                Soluong = dto.Soluong,
+                UrlHinhanh = dto.UrlHinhanh,
+                Idsp = dto.Idsp,
+                IdChatLieu = dto.IdChatLieu,
+                IdMau = dto.IdMau,
+                IdSize = dto.IdSize,
+
+            };
+            await _repo.Create(item);
+        }
+
+        public async Task Update(SanphamchitietDTO dto)
+        {
+            var item = await _repo.GetById(dto.Id);
+            item.Mota = dto.Mota;
+            item.Trangthai = dto.Trangthai;
+            item.Giathoidiemhientai = dto.Giathoidiemhientai;
+            item.Soluong = dto.Soluong;
+            item.UrlHinhanh = dto.UrlHinhanh;
+            item.Idsp = dto.Idsp;
+            item.IdChatLieu = dto.IdChatLieu;
+            item.IdMau = dto.IdMau;
+            item.IdSize = dto.IdSize;
+            await _repo.Update(item);
         }
     }
 }

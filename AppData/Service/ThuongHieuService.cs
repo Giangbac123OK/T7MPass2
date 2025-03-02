@@ -1,4 +1,6 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
+using AppData.IService;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,39 +12,41 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class ThuongHieuService : IThuongHieuRepo
+    public class ThuongHieuService : IThuongHieuService
     {
-        private readonly AppDbContext _context;
+        private readonly IThuongHieuRepo _repo;
 
-        public ThuongHieuService(AppDbContext context)
+        public ThuongHieuService(IThuongHieuRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        public async Task Create(Thuonghieu thuonghieu)
+
+        public async Task Create(ThuonghieuDTO dto)
         {
-            _context.thuonghieus.Add(thuonghieu);
-            await _context.SaveChangesAsync();
+            var item = new Thuonghieu
+            {
+                Tenthuonghieu = dto.Tenthuonghieu,
+                Tinhtrang = dto.Tinhtrang,
+            };
+            await _repo.Create(item);
         }
 
         public async Task Delete(int id)
         {
-            var thuonghieu = await GetById(id);
-            if (thuonghieu != null)
-            {
-                _context.thuonghieus.Remove(thuonghieu);
-                await _context.SaveChangesAsync();
-            }
+         await _repo.Delete(id);
         }
 
-        public async Task<List<Thuonghieu>> GetAll() => await _context.thuonghieus.ToListAsync();
+        public async Task<List<Thuonghieu>> GetAll() => await _repo.GetAll();
 
-        public async Task<Thuonghieu> GetById(int id) => await _context.thuonghieus.FindAsync(id);
+        public async Task<Thuonghieu> GetById(int id) => await  _repo.GetById(id);
 
-        public async Task Update(Thuonghieu thuonghieu)
+        public async Task Update(ThuonghieuDTO dto)
         {
-            _context.thuonghieus.Update(thuonghieu);
-            await _context.SaveChangesAsync();
+            var item = await _repo.GetById(dto.Id);
+            item.Tenthuonghieu = dto.Tenthuonghieu;
+            item.Tinhtrang = dto.Tinhtrang;
+            await _repo.Update(item);
         }
     }
 }

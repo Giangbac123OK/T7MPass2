@@ -10,8 +10,8 @@ namespace AppData.IService
 {
     public interface ISaleService
     {
-        Task<List<Sale>> GetAll();
-        Task<Sale> GetById(int id);
+        Task<List<SaleDTO>> GetAll();
+        Task<SaleDTO> GetById(int id);
         Task Create(SaleDTO dto);
         Task Update(SaleDTO dto);
         Task Delete(int id);
