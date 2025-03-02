@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace AppData.Service
 {
-    public class HoaDonChiTetRepo : IHoaDonChiTietService
+    public class HoaDonChiTietService : IHoaDonChiTietService
     {
         private readonly IHoaDonChiTietRepo _repository;
         private readonly IHoaDonRepo _HDrepository;
         private readonly ISanPhamChiTietRepo _SPCTrepository;
-        public HoaDonChiTetRepo(IHoaDonChiTietRepo repository, IHoaDonRepo HDrepository, ISanPhamChiTietRepo SPCTrepository)
+        public HoaDonChiTietService(IHoaDonChiTietRepo repository, IHoaDonRepo HDrepository, ISanPhamChiTietRepo SPCTrepository)
         {
             _repository = repository;
             _HDrepository = HDrepository;
