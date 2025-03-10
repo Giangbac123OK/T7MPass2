@@ -14,6 +14,8 @@ namespace AppData.IService
         Task<Sanpham> GetById(int id);
         Task Create(SanphamDTO dto);
         Task Update(SanphamDTO dto);
-        Task Delete(int id);
+        Task Delete(int id); 
+        Task<List<SanphamDTO>> SpNoiBat();
+        Task<List<SanphamDTO>> SpMoiNhat();
     }
 }

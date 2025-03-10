@@ -55,7 +55,30 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [HttpGet("sp-noi-bat")]
+        public async Task<IActionResult> SpNoiBat()
+        {
+            try
+            {
+                return Ok(await _services.SpNoiBat());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("sp-moi-nhat")]
+        public async Task<IActionResult> SpMoiNhat()
+        {
+            try
+            {
+                return Ok(await _services.SpMoiNhat());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> Create(SanphamDTO dto)
         {

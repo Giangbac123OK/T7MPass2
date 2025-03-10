@@ -49,8 +49,36 @@ namespace AppData.Service
 
         public async Task<Sanpham> GetById(int id) => await _repo.GetById(id);
 
-    
-
+        public async Task<List<SanphamDTO>> SpNoiBat()
+        {
+            var data = await _repo.SpNoiBat();
+            return data.Select(g => new SanphamDTO()
+            {
+                Id = g.Id,
+                TenSanpham = g.TenSanpham,
+                Trangthai = g.Trangthai,
+                Soluong = g.Soluong,
+                GiaBan = g.GiaBan,
+                Idth = g.Idth,
+                Mota = g.Mota,
+                NgayThemMoi = g.NgayThemMoi
+            }).ToList();
+        }
+        public async Task<List<SanphamDTO>> SpMoiNhat()
+        {
+            var data = await _repo.SpMoiNhat();
+            return data.Select(g => new SanphamDTO()
+            {
+                Id = g.Id,
+                TenSanpham = g.TenSanpham,
+                Trangthai = g.Trangthai,
+                Soluong = g.Soluong,
+                GiaBan = g.GiaBan,
+                Idth = g.Idth,
+                Mota = g.Mota,
+                NgayThemMoi = g.NgayThemMoi
+            }).ToList();
+        }
         public async Task Update(SanphamDTO dto)
         {
             var item = await _repo.GetById(dto.Id);

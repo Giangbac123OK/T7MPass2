@@ -14,5 +14,7 @@ namespace AppData.IRepository
         Task Create(Sanpham sanpham);
         Task Update(Sanpham sanpham);
         Task Delete(int id);
+        Task<List<Sanpham>> SpNoiBat();
+        Task<List<Sanpham>> SpMoiNhat();
     }
 }
