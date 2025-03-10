@@ -39,10 +39,10 @@ namespace AppData
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=MEO-U-PC;Initial Catalog=T7M123;Integrated Security=True;Trust Server Certificate=True");
+                optionsBuilder.UseSqlServer("Data Source=HOANGTHANHGIANG\\SQLEXPRESS;Initial Catalog=T7M123;Integrated Security=True;Trust Server Certificate=True");
             }
         }
-
+        //asdfgfds
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<giamgia_rank>()
