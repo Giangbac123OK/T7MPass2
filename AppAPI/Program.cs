@@ -69,13 +69,10 @@ builder.Services.AddScoped<ITraHangRepo, TraHangRepo>();
 builder.Services.AddScoped<ITraHangService, TraHangService>();
 builder.Services.AddScoped<ITraHangChiTietRepo, TraHangChiTietRepo>();
 builder.Services.AddScoped<ITraHangChiTietService, TraHangChiTietService>();
-<<<<<<< Updated upstream
-=======
 builder.Services.AddScoped<IThongKeSanPhamRepo, ThongKeSanPhamRepo>();
 builder.Services.AddScoped<IThongkeService, ThongkeService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
->>>>>>> Stashed changes
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -163,13 +163,9 @@ namespace AppAPI.Controllers
             }
         }
 
-<<<<<<< Updated upstream
-        [HttpGet("_KhachHang/GetByIdSPCT/{id}")]
-        public async Task<IActionResult> GetByIdSPCT(int id)
-=======
         [HttpGet("GetByIdSP/{id}")]
         public async Task<IActionResult> GetByIdSP(int id)
->>>>>>> Stashed changes
+
         {
             // Kiểm tra ID
             if (id <= 0)
