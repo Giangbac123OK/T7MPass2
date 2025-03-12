@@ -40,7 +40,7 @@ namespace AppAPI.Controllers
             }));
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -76,7 +76,7 @@ namespace AppAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = nhanvienDto.Hovaten }, nhanvienDto);
         }
 
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] NhanvienDTO nhanvienDto)
         {
             try
@@ -90,7 +90,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

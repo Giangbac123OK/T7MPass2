@@ -32,7 +32,7 @@ namespace AppAPI.Controllers
         }
 
         // GET: api/Diachis/5
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<DiachiDTO>> GetDiachi(int id)
         {
             try
@@ -47,7 +47,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpGet("/khachhang/{id}")]
+        [HttpGet("khachhang/{id}")]
         public async Task<IActionResult> GetDiaChiByIdKH(int id)
         {
             try
@@ -68,7 +68,7 @@ namespace AppAPI.Controllers
 
         // PUT: api/Diachis/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutDiachi(int id, DiachiDTO diachi)
         {
 
@@ -99,7 +99,7 @@ namespace AppAPI.Controllers
         }
 
         // DELETE: api/Diachis/5
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDiachi(int id)
         {
             try

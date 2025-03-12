@@ -20,7 +20,7 @@ namespace AppAPI.Controllers
             var a = await _Service.GetAllGiohangsAsync();
             return Ok(a);
         }
-        [HttpGet("_KhachHang/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             try
@@ -34,7 +34,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpGet("_KhachHang/idghctbygiohangangspct/{idgh}/{idspct}")]
+        [HttpGet("idghctbygiohangangspct/{idgh}/{idspct}")]
         public async Task<IActionResult> GetByIdspctToGiohangAsync(int idgh, int idspct)
         {
             try
@@ -79,7 +79,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpGet("_KhachHang/giohangchitietbygiohang/{id}")]
+        [HttpGet("giohangchitietbygiohang/{id}")]
         public async Task<IActionResult> GetDiaChiByIdKH(int id)
         {
             try
@@ -99,7 +99,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPut("_KhachHang/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] GiohangchitietDTO dto)
         {
             try
@@ -113,7 +113,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPut("_KhachHang/sanpham/{id}")]
+        [HttpPut("sanpham/{id}")]
         public async Task<IActionResult> Updatesanpham(int id, [FromBody] GiohangchitietDTO dto)
         {
             try
@@ -137,7 +137,7 @@ namespace AppAPI.Controllers
                 return StatusCode(500, new { Message = "Đã xảy ra lỗi: " + ex.Message });
             }
         }
-        [HttpDelete("_KhachHang/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

@@ -31,7 +31,7 @@ namespace AppAPI.Controllers
         }
 
         // API để lấy sản phẩm chi tiết theo Id
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var SanPhamCT = await _service.GetByIdAsync(id);
@@ -39,7 +39,7 @@ namespace AppAPI.Controllers
             return Ok(SanPhamCT);
         }
 
-        [HttpGet("/sanpham/{id}")]
+        [HttpGet("sanpham/{id}")]
         public async Task<IActionResult> GetByIdSPAsync(int id)
         {
             try
@@ -72,14 +72,14 @@ namespace AppAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = dto.Mota }, dto);
         }
         
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] SanphamchitietDTO dto)
         {
             await _service.UpdateAsync(id, dto);
             return NoContent();
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteAsync(id);

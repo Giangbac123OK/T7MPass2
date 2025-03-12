@@ -33,7 +33,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("_KhachHang/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             try
@@ -67,7 +67,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("_KhachHang/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, TrahangDTO dto)
         {
             try
@@ -80,7 +80,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("_KhachHang/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -93,7 +93,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("_KhachHang/tra-hang-qua-han")]
+        [HttpDelete("tra-hang-qua-han")]
         public async Task<IActionResult> DeleteTrahangQua15Days()
         {
             try
@@ -110,7 +110,7 @@ namespace AppAPI.Controllers
                 return StatusCode(500, new { message = "Lỗi hệ thống", details = ex.Message }); // HTTP 500 - Lỗi server
             }
         }
-        [HttpGet("_KhachHang/View-Hoa-Don-Tra-By-Idkh-{id}")]
+        [HttpGet("View-Hoa-Don-Tra-By-Idkh/{id}")]
         public async Task<IActionResult> ViewHoaDonTraByIdkh(int id)
         {
             try

@@ -27,7 +27,7 @@ namespace AppAPI.Controllers
             _context = context;
             _HDCTservice = HDCTservice;
         }
-        [HttpPut("/da-nhan-don-hang-{id}")]
+        [HttpPut("da-nhan-don-hang-{id}")]
         public async Task<IActionResult> Danhandonhang(int id)
         {
             try
@@ -49,7 +49,7 @@ namespace AppAPI.Controllers
         }
 
         // API để lấy hoá đơn theo Id
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var hoadon = await _Service.GetByIdAsync(id);
@@ -97,7 +97,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpGet("_KhachHang/voucher/{id}")]
+        [HttpGet("voucher/{id}")]
         public async Task<IActionResult> Checkvoucher(int id)
         {
             // Lấy dữ liệu hóa đơn từ service
@@ -113,7 +113,7 @@ namespace AppAPI.Controllers
 
 
         // API để cập nhật hoá đơn
-        [HttpPut("_KhachHang/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, HoadonDTO dto)
         {
             if (!ModelState.IsValid)
@@ -140,7 +140,7 @@ namespace AppAPI.Controllers
         }
 
         // API để cập nhật hoá đơn
-        [HttpPut("_KhachHang/trangthai/{id}")]
+        [HttpPut("trangthai/{id}")]
         public async Task<IActionResult> Updatetrangthai(int id, int trangthai)
         {
             if (!ModelState.IsValid)
@@ -222,7 +222,7 @@ namespace AppAPI.Controllers
         }
 
         // API để cập nhật hoá đơn
-        [HttpPut("_KhachHang/trangthaitrahang/{id}")]
+        [HttpPut("trangthaitrahang/{id}")]
         public async Task<IActionResult> Updatetrangthaitrahang(int id, int trangthai)
         {
             if (!ModelState.IsValid)
@@ -252,7 +252,7 @@ namespace AppAPI.Controllers
         }
 
         // API để cập nhật hoá đơn
-        [HttpPut("_KhachHang/CheckTraHang/{id}")]
+        [HttpPut("CheckTraHang/{id}")]
         public async Task<IActionResult> CheckTraHang(int id)
         {
             if (!ModelState.IsValid)
@@ -300,7 +300,7 @@ namespace AppAPI.Controllers
 
 
         // API để xóa hoá đơn
-        [HttpDelete("_KhachHang/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var existingHoadon = await _Service.GetByIdAsync(id);
@@ -320,7 +320,7 @@ namespace AppAPI.Controllers
                 return StatusCode(500, new { message = "Lỗi khi xóa hoá đơn", error = ex.Message });
             }
         }
-        [HttpGet("_KhachHang/hoa-don-theo-ma-kh-{id}")]
+        [HttpGet("hoa-don-theo-ma-kh-{id}")]
         public async Task<IActionResult> Hoadontheomakh(int id)
         {
             try

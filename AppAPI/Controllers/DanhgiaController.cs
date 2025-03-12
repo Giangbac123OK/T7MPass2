@@ -36,7 +36,7 @@ namespace AppAPI.Controllers
         }
 
         // GET: api/Danhgias/5
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<DanhgiaDTO>> GetDanhgia(int id)
         {
             try
@@ -60,7 +60,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("/byIDhdct/{id}")]
+        [HttpGet("byIDhdct/{id}")]
         public async Task<ActionResult<DanhgiaDTO>> GetDanhgiaByidHDCT(int id)
         {
             try
@@ -87,7 +87,7 @@ namespace AppAPI.Controllers
 
         // PUT: api/Danhgias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutDanhgia(int id, DanhgiaDTO danhgia)
         {
             if (id != danhgia.Id)
@@ -144,7 +144,7 @@ namespace AppAPI.Controllers
 
 
         // DELETE: api/Danhgias/5
-        [HttpDelete("_KhachHang/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDanhgia(int id)
         {
             if (await _services.GetAll() == null)
@@ -163,7 +163,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpGet("_KhachHang/GetByIdSPCT/{id}")]
+        [HttpGet("GetByIdSPCT/{id}")]
         public async Task<IActionResult> GetByIdSPCT(int id)
         {
             // Kiểm tra ID

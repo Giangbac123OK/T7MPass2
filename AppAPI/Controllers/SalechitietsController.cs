@@ -32,7 +32,7 @@ namespace AppAPI.Controllers
         }
 
         // API để lấy hoá đơn theo Id
-        [HttpGet("_KhachHang/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var hoadon = await _KhachHang_service.GetByIdAsync(id);
@@ -41,7 +41,7 @@ namespace AppAPI.Controllers
         }
 
         // API để lấy hoá đơn theo Id
-        [HttpGet("_KhachHang/SanPhamCT/{id}")]
+        [HttpGet("SanPhamCT/{id}")]
         public async Task<IActionResult> GetByIdSPCT(int id)
         {
             var hoadon = await _KhachHang_service.GetByIdAsyncSpct(id);
@@ -75,7 +75,7 @@ namespace AppAPI.Controllers
         }
 
         // API để cập nhật hoá đơn
-        [HttpPut("_KhachHang/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, SalechitietDTO dto)
         {
             if (!ModelState.IsValid)
@@ -102,7 +102,7 @@ namespace AppAPI.Controllers
         }
 
         // API để xóa hoá đơn
-        [HttpDelete("_KhachHang/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var existingHoadon = await _KhachHang_service.GetByIdAsync(id);

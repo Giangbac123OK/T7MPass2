@@ -66,7 +66,7 @@ namespace AppAPI.Controllers
         }
 
 
-        [HttpGet("_KhachHang/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var sale = await _KhachHang_service.GetByIdAsync(id);
@@ -114,14 +114,14 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPut("_KhachHang/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] SaleDTO saleDto)
         {
             await _KhachHang_service.UpdateAsync(id, saleDto);
             return NoContent();
         }
 
-        [HttpPut("_KhachHang/{id}/cancel")]
+        [HttpPut("{id}/cancel")]
         public async Task<IActionResult> UpdateStatusToCancelled(int id)
         {
             try
@@ -135,7 +135,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPut("_KhachHang/{id}/update-status")]
+        [HttpPut("{id}/update-status")]
         public async Task<IActionResult> UpdateStatusBasedOnDates(int id)
         {
             try
@@ -148,7 +148,7 @@ namespace AppAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
-        [HttpPut("_KhachHang/{id}/update-status-load")]
+        [HttpPut("{id}/update-status-load")]
         public async Task<IActionResult> UpdateStatusload(int id)
         {
             try
@@ -162,7 +162,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpDelete("_KhachHang/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _KhachHang_service.DeleteAsync(id);

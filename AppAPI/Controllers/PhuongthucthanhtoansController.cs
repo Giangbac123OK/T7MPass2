@@ -68,7 +68,7 @@ namespace AppAPI.Controllers
         }
 
 
-        [HttpGet("_Service/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<PhuongthucthanhtoanDTO>> GetById(int id)
         {
             var phuongthucthanhtoan = await _Service_service.GetByIdAsync(id);
@@ -98,7 +98,7 @@ namespace AppAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
         }
 
-        [HttpPut("_Service/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, PhuongthucthanhtoanDTO dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -110,7 +110,7 @@ namespace AppAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("_Service/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _Service_service.DeleteAsync(id);

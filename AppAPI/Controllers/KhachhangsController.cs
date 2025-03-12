@@ -44,7 +44,7 @@ namespace AppAPI.Controllers
                 kh.Idrank
             }));
         }
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -80,7 +80,7 @@ namespace AppAPI.Controllers
             return CreatedAtAction(nameof(Get), new { id = dto.Ten }, dto);
         }
 
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] KhachhangDTO dto)
         {
             try
@@ -104,7 +104,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPut("/diem/{id}")]
+        [HttpPut("diem/{id}")]
         public async Task<IActionResult> UpdateDiem(int id, int diemsudung)
         {
             try
@@ -131,7 +131,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPut("/UpdateThongTinKhachhangAsync/{id}")]
+        [HttpPut("UpdateThongTinKhachhangAsync/{id}")]
         public async Task<IActionResult> UpdateThongTinKhachhangAsync(int id, [FromBody] KhachhangDTO dto)
         {
             try
@@ -151,7 +151,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -164,7 +164,7 @@ namespace AppAPI.Controllers
                 return NotFound("Khách hàng không tồn tại.");
             }
         }
-        [HttpGet("/find-khachhang")]
+        [HttpGet("find-khachhang")]
         public async Task<IActionResult> FindByEmailAsync(string email)
         {
             var nhanVien = await _Service.FindByEmailAsync(email);
@@ -174,7 +174,7 @@ namespace AppAPI.Controllers
             return Ok(nhanVien);
         }
         // API gửi mã OTP cho quên mật khẩu
-        [HttpPost("/send-otp")]
+        [HttpPost("send-otp")]
         public async Task<IActionResult> SendOtpAsync(ForgotPasswordRequestKHDto dto)
         {
             var (isSent, otp) = await _Service.SendOtpAsync(dto.Email); // Nhận kết quả và OTP từ service
@@ -184,7 +184,7 @@ namespace AppAPI.Controllers
 
             return Ok(new { success = true, message = "Mã OTP đã được gửi.", otp }); // Trả OTP cho client (chỉ khi cần, thường dùng trong môi trường phát triển)
         }
-        [HttpPost("/doimatkhau")]
+        [HttpPost("doimatkhau")]
         public async Task<IActionResult> ChangePassword([FromBody] DoimkKhachhang changePasswordDto)
         {
             if (!ModelState.IsValid)
@@ -220,7 +220,7 @@ namespace AppAPI.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình đổi mật khẩu", error = ex.Message });
             }
         }
-        [HttpPost("/quenmatkhau")]
+        [HttpPost("quenmatkhau")]
         public async Task<IActionResult> quenmatkhau([FromBody] DoimkKhachhang changePasswordDto)
         {
             if (!ModelState.IsValid)
