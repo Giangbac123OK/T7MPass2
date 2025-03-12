@@ -163,8 +163,13 @@ namespace AppAPI.Controllers
             }
         }
 
+<<<<<<< Updated upstream
         [HttpGet("_KhachHang/GetByIdSPCT/{id}")]
         public async Task<IActionResult> GetByIdSPCT(int id)
+=======
+        [HttpGet("GetByIdSP/{id}")]
+        public async Task<IActionResult> GetByIdSP(int id)
+>>>>>>> Stashed changes
         {
             // Kiểm tra ID
             if (id <= 0)
@@ -182,6 +187,25 @@ namespace AppAPI.Controllers
             }
 
             return Ok(result); // Trả về kết quả nếu tìm thấy
+        }
+        [HttpGet("{idsp}/TinhTrungBinhDanhGia")]
+        public async Task<IActionResult> GetTBSaoDanhGia(int idsp)
+        {
+            // Kiểm tra ID
+            if (idsp <= 0)
+            {
+                return BadRequest(new { message = "ID sản phẩm chi tiết không hợp lệ." });
+            }
+            var danhGiaList = await _services.GetByidSP(idsp);
+
+            if (danhGiaList == null || !danhGiaList.Any())
+            {
+                return Ok(new { ProductId = idsp, AverageRating = 0 }); // Không có đánh giá, trả về 0
+            }
+
+            double averageRating = danhGiaList.Average(dg => dg.Sosao);
+
+            return Ok(new { ProductId = idsp, AverageRating = averageRating });
         }
     }
 }
