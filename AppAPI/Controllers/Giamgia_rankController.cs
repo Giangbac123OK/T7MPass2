@@ -24,7 +24,7 @@ namespace AppAPI.Controllers
         }
 
         // API để lấy hoá đơn theo Id
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var hoadon = await _Service.GetByIdAsync(id);
@@ -33,7 +33,7 @@ namespace AppAPI.Controllers
         }
 
         // API để lấy hoá đơn theo Id
-        [HttpGet("/rank/{id}")]
+        [HttpGet("rank/{id}")]
         public async Task<IActionResult> GetByIdSPCT(int id)
         {
             var hoadon = await _Service.GetByIdRankSPCTAsync(id);

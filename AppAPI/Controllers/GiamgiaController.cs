@@ -37,7 +37,7 @@ namespace AppAPI.Controllers
             }));
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -73,7 +73,7 @@ namespace AppAPI.Controllers
             await _Service.AddAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = dto.Mota }, dto);
         }
-        [HttpPost("_KhachHang/AddRankToGiamgia")]
+        [HttpPost("AddRankToGiamgia")]
         public async Task<IActionResult> AddRankToGiamgia([FromBody] GiamgiaDTO dto)
         {
             try
@@ -87,14 +87,14 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] GiamgiaDTO dto)
         {
             await _Service.UpdateAsync(id, dto);
             return NoContent();
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _Service.DeleteAsync(id);

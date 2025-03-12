@@ -19,7 +19,7 @@ namespace AppAPI.Controllers
             var a = await _Service.GetAllGiohangsAsync();
             return Ok(a);
         }
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             try
@@ -42,7 +42,7 @@ namespace AppAPI.Controllers
             return Ok("Thêm thành công!");
         }
 
-        [HttpGet("/giohangkhachhang/{id}")]
+        [HttpGet("giohangkhachhang/{id}")]
         public async Task<IActionResult> Giohangkhachhang(int id)
         {
             var hoadon = await _Service.GetByIdKHAsync(id);
@@ -53,7 +53,7 @@ namespace AppAPI.Controllers
             return Ok(hoadon);
         }
 
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] GiohangDTO dto)
         {
             try
@@ -66,7 +66,7 @@ namespace AppAPI.Controllers
                 return NotFound("Giỏ hàng không tồn tại.");
             }
         }
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

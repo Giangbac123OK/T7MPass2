@@ -22,7 +22,7 @@ namespace AppAPI.Controllers
             _service = service;
 
         }
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var x = await _service.GetRankByIdAsync(id);
@@ -53,7 +53,7 @@ namespace AppAPI.Controllers
         }
 
         // Cập nhật nhà cung cấp theo ID
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] RankDTO rankDTO)
         {
             if (!ModelState.IsValid)
@@ -71,7 +71,7 @@ namespace AppAPI.Controllers
         }
 
         // Xóa nhà cung cấp theo ID
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

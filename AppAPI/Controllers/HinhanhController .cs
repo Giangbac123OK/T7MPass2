@@ -40,7 +40,7 @@ namespace AppAPI.Controllers
             return Ok(hoadon);
         }
 
-        [HttpGet("DanhGia/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var hoadon = await _Service.GetByIdAsync(id);
@@ -72,7 +72,7 @@ namespace AppAPI.Controllers
 
 
         // API để cập nhật Hình ảnh trả hàng
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, HinhanhDTO dto)
         {
             if (!ModelState.IsValid)
@@ -99,7 +99,7 @@ namespace AppAPI.Controllers
         }
 
         // API để xóa Hình ảnh trả hàng
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var existingHoadon = await _Service.GetByIdAsync(id);

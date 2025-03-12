@@ -69,6 +69,7 @@ builder.Services.AddScoped<ITraHangRepo, TraHangRepo>();
 builder.Services.AddScoped<ITraHangService, TraHangService>();
 builder.Services.AddScoped<ITraHangChiTietRepo, TraHangChiTietRepo>();
 builder.Services.AddScoped<ITraHangChiTietService, TraHangChiTietService>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

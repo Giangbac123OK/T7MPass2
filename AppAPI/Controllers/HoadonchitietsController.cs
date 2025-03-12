@@ -42,7 +42,7 @@ namespace AppAPI.Controllers
         }
 
         // API để lấy hoá đơn chi tiết theo Id
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -75,7 +75,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPost("/ReturnProduct/{hoadonId}")]
+        [HttpPost("ReturnProduct/{hoadonId}")]
         public async Task<IActionResult> ReturnProductAsync(int hoadonId)
         {
             try
@@ -93,7 +93,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPost("/salespct/{idsale}")]
+        [HttpPost("salespct/{idsale}")]
         public async Task<IActionResult> salespct(int idsale)
         {
             try
@@ -133,7 +133,7 @@ namespace AppAPI.Controllers
         }
 
         // API để cập nhật hoá đơn chi tiết
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] HoadonchitietDTO dto)
         {
             if (!ModelState.IsValid)
@@ -155,7 +155,7 @@ namespace AppAPI.Controllers
         }
 
         // API để xóa hoá đơn chi tiết
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -172,7 +172,7 @@ namespace AppAPI.Controllers
                 return StatusCode(500, new { message = "Lỗi khi xóa hoá đơn chi tiết", error = ex.Message });
             }
         }
-        [HttpGet("/Hoa-don-chi-tiet-Theo-Ma-HD-{id}")]
+        [HttpGet("Hoa-don-chi-tiet-Theo-Ma-HD-{id}")]
         public async Task<IActionResult> HoadoncttheoMaHD(int id)
         {
             try
@@ -184,7 +184,7 @@ namespace AppAPI.Controllers
                 return StatusCode(500, new { message = "Lỗi khi lấy thông tin hoá đơn chi tiết", error = ex.Message });
             }
         }
-        [HttpGet("/Check-so-luong:{id}")]
+        [HttpGet("Check-so-luong:{id}")]
         public async Task<IActionResult> Checksoluong(int id)
         {
             try

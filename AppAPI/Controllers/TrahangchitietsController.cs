@@ -21,7 +21,8 @@ namespace AppAPI.Controllers
         {
             _service = ser;
         }
-        [HttpPut]
+
+        [HttpPut("Updatesoluongtra/{id}")]
         public async Task<IActionResult> Updatesoluongtra(int idhdct, int soluong)
         {
             try
@@ -46,7 +47,8 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("/{id}")]
+
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             try
@@ -60,7 +62,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("/Chi-tiet-ma-hoa-don:{id}")]
+        [HttpGet("Chi-tiet-ma-hoa-don/{id}")]
         public async Task<IActionResult> GetByMaHD(int id)
         {
             try
@@ -74,6 +76,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> Post(TrahangchitietDTO dto)
         {
@@ -95,7 +98,8 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("/{id}")]
+
+        [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, TrahangchitietDTO dto)
         {
             try
@@ -108,7 +112,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -121,7 +125,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("/View-Hoadonct-Theo-Idth-{id}")]
+        [HttpGet("View-Hoadonct-Theo-Idth-{id}")]
         public async Task<IActionResult> ViewHoadonctTheoIdth(int id)
         {
             try

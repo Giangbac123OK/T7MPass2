@@ -26,36 +26,13 @@ namespace AppAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll() => Ok(await _service.GetAllAsync());
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var sanpham = await _service.GetByIdAsync(id);
             return sanpham != null ? Ok(sanpham) : NotFound();
         }
-        [HttpGet("sp-noi-bat")]
-        public async Task<IActionResult> SpNoiBat()
-        {
-            try
-            {
-                return Ok(await _services.SpNoiBat());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-        [HttpGet("sp-moi-nhat")]
-        public async Task<IActionResult> SpMoiNhat()
-        {
-            try
-            {
-                return Ok(await _services.SpMoiNhat());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+
         [HttpPost]
         public async Task<IActionResult> Add(SanphamDTO sanphamDto)
         {
@@ -63,14 +40,14 @@ namespace AppAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = sanphamDto.Idth }, sanphamDto);
         }
 
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, SanphamDTO sanphamDto)
         {
             await _service.UpdateAsync(id, sanphamDto);
             return NoContent();
         }
 
-        [HttpPut("/{id}/cancel")]
+        [HttpPut("{id}/cancel")]
         public async Task<IActionResult> UpdateStatusToCancelled(int id)
         {
             try
@@ -84,7 +61,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPut("/{id}/update-status-load")]
+        [HttpPut("{id}/update-status-load")]
         public async Task<IActionResult> UpdateStatusload(int id)
         {
             try
@@ -98,17 +75,17 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteAsync(id);
             return NoContent();
         }
 
-        [HttpGet("/search")]
+        [HttpGet("search")]
         public async Task<IActionResult> SearchByName(string name) => Ok(await _service.SearchByNameAsync(name));
 
-        [HttpGet("/GetALLSanPham")]
+        [HttpGet("GetALLSanPham")]
         public async Task<IActionResult> GetAllSanphams()
         {
             try
@@ -127,7 +104,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpGet("/GetALLSanPham/{id}")]
+        [HttpGet("GetALLSanPham/{id}")]
         public async Task<IActionResult> GetAllSanphamsByIdSP(int id)
         {
             try
@@ -144,7 +121,7 @@ namespace AppAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet("/GetALLSanPhamGiamGia")]
+        [HttpGet("GetALLSanPhamGiamGia")]
         public async Task<IActionResult> GetAllSanphamsGiamGia()
         {
             try
@@ -162,7 +139,7 @@ namespace AppAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet("/GetALLSanPhamByThuongHieu/{id}")]
+        [HttpGet("GetALLSanPhamByThuongHieu/{id}")]
         public async Task<IActionResult> GetAllSanphamsByThuongHieu(int id)
         {
             try
@@ -180,7 +157,7 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpGet("/SanPhamChiTiet/search")]
+        [HttpGet("SanPhamChiTiet/search")]
         public async Task<IActionResult> SearchSanphams(
              [FromQuery] List<string> tenThuocTinhs,
             [FromQuery] decimal? giaMin = null,

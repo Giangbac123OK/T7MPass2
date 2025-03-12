@@ -22,7 +22,7 @@ namespace AppAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<SizeDTO>> GetById(int id)
         {
             var result = await _service.GetByIdAsync(id);
@@ -39,7 +39,7 @@ namespace AppAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { Sosize = result.Sosize }, result);
         }
 
-        [HttpPut("/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<SizeDTO>> Update(int id, SizeDTO dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -50,7 +50,7 @@ namespace AppAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DeleteAsync(id);
