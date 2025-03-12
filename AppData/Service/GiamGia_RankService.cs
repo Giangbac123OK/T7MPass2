@@ -15,43 +15,82 @@ namespace AppData.Service
     public class GiamGia_RankService : IGiamGia_RankService
     {
         private readonly IGiamGia_RankRepo _repository;
-        private readonly IGiamGiaRepo _GGrepository;
         private readonly IRankRepo _Rankrepository;
-        public GiamGia_RankService(IGiamGia_RankRepo repository, IGiamGiaRepo gGrepository, IRankRepo rankrepository)
+        private readonly IGiamGiaRepo _GGrepository;
+        public GiamGia_RankService(IGiamGia_RankRepo repository, IRankRepo Rankrepository, IGiamGiaRepo GGrepository)
         {
             _repository = repository;
-            _GGrepository = gGrepository;
-            _Rankrepository = rankrepository;
+            _Rankrepository = Rankrepository;
+            _GGrepository = GGrepository;
         }
 
-        public async Task Create(giamgia_rankDTO dto)
+        public async Task<IEnumerable<giamgia_rank>> GetAllAsync()
         {
-            var giamgia = await _GGrepository.GetById(dto.IDgiamgia);
-            if (giamgia == null) return;
 
-            var rank = await _Rankrepository.GetById(dto.Idrank);
-            if (giamgia == null) return;
+            var entities = await _repository.GetAllAsync();
 
-            var giamgia_Rank = new giamgia_rank
+            return entities.Select(hoaDon => new giamgia_rank
             {
-                IDgiamgia = dto.IDgiamgia,
-                Idrank = dto.Idrank
+                IDgiamgia = hoaDon.IDgiamgia,
+                Idrank = hoaDon.Idrank,
+            });
+        }
+
+        public async Task<giamgia_rank> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new giamgia_rank
+            {
+                IDgiamgia = entity.IDgiamgia,
+                Idrank = entity.Idrank,
+            };
+        }
+
+        public async Task<List<giamgia_rankDTO>> GetByIdRankSPCTAsync(int idspct)
+        {
+            try
+            {
+                // Gọi repository để lấy dữ liệu
+                var results = await _repository.GetByIdRankSPCTAsync(idspct);
+
+                if (results == null || !results.Any())
+                    throw new KeyNotFoundException("Không tìm thấy Sale-rank chi tiết với ID: " + idspct);
+
+                // Ánh xạ thủ công từ entity sang DTO
+                var dtoList = results.Select(result => new giamgia_rankDTO
+                {
+                    Idrank = result.Idrank,
+                    IDgiamgia = result.IDgiamgia,
+                }).ToList();
+
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi tìm thuộc tính sản phẩm chi tiết: " + ex.Message);
+            }
+        }
+
+        public async Task AddAsync(giamgia_rankDTO hoaDonDTO)
+        {
+            var rank = await _Rankrepository.GetByIdAsync(hoaDonDTO.Idrank);
+            if (rank == null) throw new ArgumentNullException("Rank không tồn tại");
+
+
+            var giamgia = await _GGrepository.GetByIdAsync(hoaDonDTO.IDgiamgia);
+            if (giamgia == null) throw new ArgumentNullException("Giảm giá không tồn tại");
+
+            // Tạo đối tượng Hoadon từ DTO
+            var hoaDon = new giamgia_rank
+            {
+                IDgiamgia = hoaDonDTO.IDgiamgia,
+                Idrank = hoaDonDTO.Idrank,
             };
 
-            await _repository.Create(giamgia_Rank);
+            // Thêm hóa đơn vào cơ sở dữ liệu
+            await _repository.AddAsync(hoaDon);
         }
-
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<giamgia_rank>> GetAll()
-        {
-            return await _repository.GetAll();
-        }
-
-        public async Task<giamgia_rank> GetById(int id)
-        {
-            return await _repository.GetById(id);
-        }
-
     }
 }

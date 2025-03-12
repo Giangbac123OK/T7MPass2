@@ -14,54 +14,84 @@ namespace AppData.Service
 {
     public class GioHangService : IGioHangService
     {
-        private readonly IGioHangRepo _repository;
-        private readonly IKhachHangRepo _KHrepository;
-
-        public GioHangService(IGioHangRepo repository, IKhachHangRepo KHrepository)
+        private readonly IGioHangRepo _repos;
+        private readonly IKhachHangRepo _KHrepos;
+        public GioHangService(IGioHangRepo repos, IKhachHangRepo kHrepos)
         {
-            _repository = repository;
-            _KHrepository = KHrepository;
-
+            _repos = repos;
+            _KHrepos = kHrepos;
         }
 
-        public async Task Create(GiohangDTO dto)
+        public async Task AddGiohangAsync(GiohangDTO dto)
         {
-            var khachhang = await _KHrepository.GetById(dto.Idkh);
-            if (khachhang == null) return;
+            // Kiểm tra xem khách hàng có tồn tại không
+            var khachhang = await _KHrepos.GetByIdAsync(dto.Idkh);
+            var idkh = await _repos.GetByIdKHAsync(dto.Idkh);
+            if (khachhang == null) throw new ArgumentNullException("Khách hàng không tồn tại");
+            else if (idkh != null) throw new ArgumentNullException("Khách hàng đã tồn tại trong sản phẩm");
 
-            var giohang = new Giohang
+            // Tạo đối tượng Hoadon từ DTO
+            var gh = new Giohang()
             {
                 Soluong = dto.Soluong,
                 Idkh = dto.Idkh
             };
 
-            await _repository.Create(giohang);
+            // Thêm hóa đơn vào cơ sở dữ liệu
+            await _repos.AddAsync(gh);
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Giohang>> GetAll()
+        public async Task DeleteGiohangAsync(int id)
         {
-            return await _repository.GetAll();
+            await _repos.DeleteAsync(id);
         }
 
-        public async Task<Giohang> GetById(int id)
+        public async Task<IEnumerable<GiohangDTO>> GetAllGiohangsAsync()
         {
-            return await _repository.GetById(id);
+            var a = await _repos.GetAllAsync();
+            return a.Select(g => new GiohangDTO()
+            {
+                Id = g.id,
+                Soluong = g.Soluong,
+                Idkh = g.Idkh
+            });
         }
 
-        public async Task Update(GiohangDTO dto)
+        public async Task<GiohangDTO> GetByIdKHAsync(int idspct)
         {
-            var giohang = await _repository.GetById(dto.id);
-            if (giohang == null) return;
+            try
+            {
+                var results = await _repos.GetByIdKHAsync(idspct);
 
-            var khachhang = await _KHrepository.GetById(dto.Idkh);
-            if (khachhang == null) return;
+                return new GiohangDTO()
+                {
+                    Id = results.id,
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi tìm giỏ hàng khách hàng: " + ex.Message);
+            }
+        }
 
-            giohang.Soluong = dto.Soluong;
-            giohang.Idkh = dto.Idkh;
+        public async Task<GiohangDTO> GetGiohangByIdAsync(int id)
+        {
+            var a = await _repos.GetByIdAsync(id);
+            return new GiohangDTO()
+            {
+                Id = a.id,
+                Soluong = a.Soluong,
+                Idkh = a.Idkh
+            };
+        }
 
-            await _repository.Update(giohang);
+        public async Task UpdateGiohangAsync(int id, GiohangDTO dto)
+        {
+            var a = await _repos.GetByIdAsync(id);
+            if (a == null) throw new KeyNotFoundException("Giỏ hàng không tồn tại.");
+            a.Soluong = dto.Soluong;
+            a.Idkh = dto.Idkh;
+            await _repos.UpdateAsync(a);
         }
     }
 }

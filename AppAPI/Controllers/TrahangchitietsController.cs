@@ -16,65 +16,122 @@ namespace AppAPI.Controllers
     [ApiController]
     public class TrahangchitietsController : ControllerBase
     {
-        private readonly ITraHangChiTietService _services;
-
-        public TrahangchitietsController(ITraHangChiTietService services)
+        private readonly ITraHangChiTietService _service;
+        public TrahangchitietsController(ITraHangChiTietService ser)
         {
-            _services = services;
+            _service = ser;
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpPut]
+        public async Task<IActionResult> Updatesoluongtra(int idhdct, int soluong)
         {
-            var trahangchitiets = await _services.GetAll();
-            return Ok(trahangchitiets);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var trahangchitiet = await _services.GetById(id);
-            if (trahangchitiet == null)
-                return NotFound("đơn trả hàng chi tiết không tồn tại.");
-
-            return Ok(trahangchitiet);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, TrahangchitietDTO dto)
-        {
-            dto.Id = id;
-
             try
             {
-                await _services.Update(dto);
-                return Ok(new { message = "Cập nhật thành công." });
+                await _service.UpdateSoluongTra(idhdct, soluong);
+                return Ok();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(TrahangchitietDTO dto)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _services.Create(dto);
-            return Ok(new { message = "Thêm thành công.", data = dto });
+            try
+            {
+                return Ok(await _service.GetAll());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+        [HttpGet("/{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                var a = await _service.GetById(id);
+                if (a == null) return BadRequest("Không tồn tại");
+                return Ok(a);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("/Chi-tiet-ma-hoa-don:{id}")]
+        public async Task<IActionResult> GetByMaHD(int id)
+        {
+            try
+            {
+                var a = await _service.GetByMaHD(id);
+                if (a == null) return BadRequest("Không tồn tại");
+                return Ok(a);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Post(TrahangchitietDTO dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    await _service.Add(dto);
 
-        [HttpDelete("{id}")]
+                    return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut("/{id}")]
+        public async Task<IActionResult> Put(int id, TrahangchitietDTO dto)
+        {
+            try
+            {
+                await _service.Update(id, dto);
+                return Ok("Sửa thành công!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var trahangchitiet = await _services.GetById(id);
-            if (trahangchitiet == null)
-                return NotFound(" không tồn tại.");
-
-            await _services.Delete(id);
-            return Ok(new { message = "Xóa  thành công." });
+            try
+            {
+                await _service.Delete(id);
+                return Ok("Xóa thành công!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("/View-Hoadonct-Theo-Idth-{id}")]
+        public async Task<IActionResult> ViewHoadonctTheoIdth(int id)
+        {
+            try
+            {
+                return Ok(await _service.ViewHoadonctTheoIdth(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

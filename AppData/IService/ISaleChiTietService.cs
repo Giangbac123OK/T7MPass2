@@ -10,10 +10,11 @@ namespace AppData.IService
 {
     public interface ISaleChiTietService
     {
-        Task<List<Salechitiet>> GetAll();
-        Task<Salechitiet> GetById(int id);
-        Task Create(SalechitietDTO dto);
-        Task Update(SalechitietDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<Salechitiet>> GetAllAsync();
+        Task<Salechitiet> GetByIdAsync(int id);
+        Task<Salechitiet> GetByIdAsyncSpct(int id);
+        Task AddAsync(SalechitietDTO entity);
+        Task UpdateAsync(SalechitietDTO entity, int id);
+        Task DeleteAsync(int id);
     }
 }

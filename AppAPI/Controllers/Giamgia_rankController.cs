@@ -8,49 +8,62 @@ namespace AppAPI.Controllers
     [Route("api/[controller]")]
     public class Giamgia_rankController : ControllerBase
     {
-        private readonly IGiamGia_RankService _service;
+        private readonly IGiamGia_RankService _Service;
 
         public Giamgia_rankController(IGiamGia_RankService service)
         {
-            _service = service;
+            _Service = service;
         }
 
+        // API để lấy tất cả hoá đơn
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var giamgia_Ranks = await _service.GetAll();
-            return Ok(giamgia_Ranks);
+            var hoadonList = await _Service.GetAllAsync();
+            return Ok(hoadonList);
         }
 
-        [HttpGet("{id}")]
+        // API để lấy hoá đơn theo Id
+        [HttpGet("/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var giamgia_Rank = await _service.GetById(id);
-            if (giamgia_Rank == null)
-                return NotFound("Giảm giá_Rank  không tồn tại.");
-
-            return Ok(giamgia_Rank);
+            var hoadon = await _Service.GetByIdAsync(id);
+            if (hoadon == null) return NotFound(new { message = "Sale không tìm thấy" });
+            return Ok(hoadon);
         }
 
+        // API để lấy hoá đơn theo Id
+        [HttpGet("/rank/{id}")]
+        public async Task<IActionResult> GetByIdSPCT(int id)
+        {
+            var hoadon = await _Service.GetByIdRankSPCTAsync(id);
+            if (hoadon == null) return NotFound(new { message = "Idspct không tìm thấy" });
+            return Ok(hoadon);
+        }
+
+        // API để thêm hoá đơn
         [HttpPost]
-        public async Task<IActionResult> Create(giamgia_rankDTO dto)
+        public async Task<IActionResult> Add(giamgia_rankDTO dto)
         {
+            // Kiểm tra tính hợp lệ của dữ liệu
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(ModelState); // Trả về lỗi nếu DTO không hợp lệ
+            }
 
-            await _service.Create(dto);
-            return Ok(new { message = "Thêm giảm giá_rank thành công.", data = dto });
-        }
+            try
+            {
+                // Thêm hóa đơn
+                await _Service.AddAsync(dto);
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var existinggiamgia_rank = await _service.GetById(id);
-            if (existinggiamgia_rank == null)
-                return NotFound("Giảm giá_Rank không tồn tại.");
-
-            await _service.Delete(id);
-            return Ok(new { message = "Xóa giảm giá_rank thành công." });
+                // Trả về ID của hóa đơn mới được tạo
+                return CreatedAtAction(nameof(GetById), new { id = dto.Idrank }, dto);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có khi thêm hoá đơn
+                return StatusCode(500, new { message = "Lỗi khi thêm hoá đơn", error = ex.Message });
+            }
         }
     }
 }

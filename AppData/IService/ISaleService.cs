@@ -10,10 +10,13 @@ namespace AppData.IService
 {
     public interface ISaleService
     {
-        Task<List<SaleDTO>> GetAll();
-        Task<SaleDTO> GetById(int id);
-        Task Create(SaleDTO dto);
-        Task Update(SaleDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<Sale>> GetAllWithIdAsync();
+        Task<SaleDTO> GetByIdAsync(int id);
+        Task AddAsync(SaleDTO saleDto);
+        Task UpdateStatusToCancelled(int id);
+        Task UpdateStatusBasedOnDates(int id);
+        Task UpdateStatusLoad(int id);
+        Task UpdateAsync(int id, SaleDTO saleDto);
+        Task DeleteAsync(int id);
     }
 }

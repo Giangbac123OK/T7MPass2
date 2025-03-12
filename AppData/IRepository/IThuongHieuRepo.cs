@@ -9,10 +9,10 @@ namespace AppData.IRepository
 {
     public interface IThuongHieuRepo
     {
-        Task<List<Thuonghieu>> GetAll();
-        Task<Thuonghieu> GetById(int id);
-        Task Create(Thuonghieu thuonghieu);
-        Task Update(Thuonghieu thuonghieu);
-        Task Delete(int id);
+        Task<IEnumerable<Thuonghieu>> GetAllAsync();
+        Task<Thuonghieu> GetByIdAsync(int id);
+        Task<Thuonghieu> AddAsync(Thuonghieu entity);
+        Task<Thuonghieu> UpdateAsync(Thuonghieu entity);
+        Task<bool> DeleteAsync(int id);
     }
 }

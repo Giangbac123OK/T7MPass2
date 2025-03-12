@@ -2,6 +2,7 @@
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Models;
+using AppData.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,41 +15,72 @@ namespace AppData.Service
 {
     public class SizeService : ISizeService
     {
-        private readonly ISizeRepo _repo;
+        private readonly ISizeRepo _repository;
 
-        public SizeService(ISizeRepo repo)
+        public SizeService(ISizeRepo repos)
         {
-            _repo = repo;
+            _repository = repos;
         }
 
-        public async Task Create(SizeDTO dto)
+
+        public async Task<IEnumerable<SizeDTO>> GetAllAsync()
         {
-            var item = new Models.Size
+            var entities = await _repository.GetAllAsync();
+            return entities.Select(e => new SizeDTO
+            {
+                Sosize = e.Sosize,
+                Trangthai = e.Trangthai
+            });
+        }
+
+        public async Task<SizeDTO> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new SizeDTO
+            {
+                Sosize = entity.Sosize,
+                Trangthai = entity.Trangthai
+            };
+        }
+
+        public async Task<SizeDTO> AddAsync(SizeDTO dto)
+        {
+            var entity = new Models.Size
             {
                 Sosize = dto.Sosize,
-                Trangthai = dto.Trangthai,
+                Trangthai = dto.Trangthai
             };
-            await _repo.Create(item);
+
+            var addedEntity = await _repository.AddAsync(entity);
+            return new SizeDTO
+            {
+                Sosize = addedEntity.Sosize,
+                Trangthai = addedEntity.Trangthai
+            };
         }
 
-        public async Task Delete(int id)
+        public async Task<SizeDTO> UpdateAsync(int id, SizeDTO dto)
         {
-           await _repo.Delete(id);
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            entity.Sosize = dto.Sosize;
+            entity.Trangthai = dto.Trangthai;
+
+            var updatedEntity = await _repository.UpdateAsync(entity);
+            return new SizeDTO
+            {
+                Sosize = updatedEntity.Sosize,
+                Trangthai = updatedEntity.Trangthai
+            };
         }
 
-        public async Task<List<Models.Size>> GetAll() => await _repo.GetAll();
-
-        public async Task<Models.Size> GetById(int id) => await _repo.GetById(id);
-
-     
-
-        public async Task Update(SizeDTO dto)
+        public async Task<bool> DeleteAsync(int id)
         {
-           var item = await _repo.GetById(dto.Id);
-            item.Sosize = dto.Sosize;
-            item.Trangthai = dto.Trangthai;
-            await _repo.Update(item);
-                                                                
+            return await _repository.DeleteAsync(id);
         }
+
     }
 }

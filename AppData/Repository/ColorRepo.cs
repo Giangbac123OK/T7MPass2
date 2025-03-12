@@ -12,36 +12,44 @@ namespace AppData.Repository
     public class ColorRepo : IColorRepo
     {
         private readonly AppDbContext _context;
-
         public ColorRepo(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task Create(Color color)
+
+        public async Task<IEnumerable<Models.Color>> GetAllAsync()
         {
-            _context.colors.Add(color);
-            await _context.SaveChangesAsync();
+            return await _context.Set<Models.Color>().ToListAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task<Models.Color> GetByIdAsync(int id)
         {
-            var color = await GetById(id);
-            if (color != null)
-            {
-                _context.colors.Remove(color);
-                await _context.SaveChangesAsync();
-            }
+            return await _context.Set<Models.Color>().FindAsync(id);
         }
 
-        public async Task<List<Color>> GetAll() => await _context.colors.ToListAsync();
-
-        public async Task<Color> GetById(int id) => await _context.colors.FindAsync(id);
-
-        public async Task Update(Color color)
+        public async Task<Models.Color> AddAsync(Models.Color entity)
         {
-            _context.colors.Update(color);
+            _context.Set<Models.Color>().Add(entity);
             await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<Models.Color> UpdateAsync(Models.Color entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity == null) return false;
+
+            _context.Set<Models.Color>().Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

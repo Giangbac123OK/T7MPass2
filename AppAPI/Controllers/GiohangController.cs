@@ -8,65 +8,76 @@ namespace AppAPI.Controllers
     [Route("api/[controller]")]
     public class GiohangController : ControllerBase
     {
-        private readonly IGioHangService _service;
-
-        public GiohangController(IGioHangService service)
+        private readonly IGioHangService _Service;
+        public GiohangController(IGioHangService ser)
         {
-            _service = service;
+            _Service = ser;
         }
-
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> Get()
         {
-            var giohangs = await _service.GetAll();
-            return Ok(giohangs);
+            var a = await _Service.GetAllGiohangsAsync();
+            return Ok(a);
         }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet("/{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            var giohang = await _service.GetById(id);
-            if (giohang == null)
-                return NotFound("Giỏ hàng không tồn tại.");
-
-            return Ok(giohang);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, GiohangDTO dto)
-        {
-            dto.id = id;
-
             try
             {
-                await _service.Update(dto);
-                return Ok(new { message = "Cập nhật giỏ hàng thành công." });
+                var a = await _Service.GetGiohangByIdAsync(id);
+                return Ok(a);
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException)
             {
-                return BadRequest(ex.Message);
+                return NotFound("Giỏ hàng không tồn tại.");
             }
         }
-
         [HttpPost]
-        public async Task<IActionResult> Create(GiohangDTO dto)
+        public async Task<IActionResult> Create(GiohangDTO gh)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            await _service.Create(dto);
-            return Ok(new { message = "Thêm giỏ hàng thành công.", data = dto });
+            gh.Soluong = 0;
+            await _Service.AddGiohangAsync(gh);
+            return Ok("Thêm thành công!");
         }
 
-        [HttpDelete("{id}")]
+        [HttpGet("/giohangkhachhang/{id}")]
+        public async Task<IActionResult> Giohangkhachhang(int id)
+        {
+            var hoadon = await _Service.GetByIdKHAsync(id);
+
+            if (hoadon == null)
+                return Ok(null);
+
+            return Ok(hoadon);
+        }
+
+        [HttpPut("/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] GiohangDTO dto)
+        {
+            try
+            {
+                await _Service.UpdateGiohangAsync(id, dto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Giỏ hàng không tồn tại.");
+            }
+        }
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existingGiohang = await _service.GetById(id);
-            if (existingGiohang == null)
+            try
+            {
+                await _Service.DeleteGiohangAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
                 return NotFound("Giỏ hàng không tồn tại.");
-
-            await _service.Delete(id);
-            return Ok(new { message = "Xóa giỏ hàng thành công." });
+            }
         }
     }
 }

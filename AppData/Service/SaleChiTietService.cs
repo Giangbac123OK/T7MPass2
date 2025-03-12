@@ -14,48 +14,139 @@ namespace AppData.Service
 {
     public class SaleChiTietService : ISaleChiTietService
     {
-        private readonly ISaleChiTietRepo _repo;
-
-        public SaleChiTietService(ISaleChiTietRepo repo)
+        private readonly ISaleChiTietRepo _repository;
+        private readonly ISanPhamChiTietRepo _SPCTrepository;
+        private readonly ISaleRepo _Salerepository;
+        public SaleChiTietService(ISaleChiTietRepo repository, ISanPhamChiTietRepo SPCTrepository, ISaleRepo Salerepository)
         {
-            _repo = repo;
+            _repository = repository;
+            _SPCTrepository = SPCTrepository;
+            _Salerepository = Salerepository;
         }
 
-        public async Task Create(SalechitietDTO salechitiet)
+        public async Task<IEnumerable<Salechitiet>> GetAllAsync()
         {
-            var item = new Salechitiet
+
+            var entities = await _repository.GetAllAsync();
+
+            return entities.Select(salect => new Salechitiet
             {
-                Idspct = salechitiet.Idspct,
-                Idsale = salechitiet.Idsale,
-                Donvi = salechitiet.Donvi,
-                Soluong = salechitiet.Soluong,
-                Giatrigiam = salechitiet.Giatrigiam,
+                Id = salect.Id,
+                Idsale = salect.Idsale,
+                Idspct = salect.Idspct,
+                Donvi = salect.Donvi,
+                Soluong = salect.Soluong,
+                Giatrigiam = salect.Giatrigiam
+            });
+        }
 
+        public async Task<Salechitiet> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new Salechitiet
+            {
+                Id = entity.Id,
+                Idsale = entity.Idsale,
+                Idspct = entity.Idspct,
+                Donvi = entity.Donvi,
+                Soluong = entity.Soluong,
+                Giatrigiam = entity.Giatrigiam
             };
-            await _repo.Create(item);
         }
 
-        public async Task Delete(int id)
+        public async Task<Salechitiet> GetByIdAsyncSpct(int id)
         {
-            await _repo.Delete(id);
+            // Lấy danh sách Salechitiet từ repository
+            var salechitiets = await _repository.GetByIdAsyncSpct(id);
+
+            // Kiểm tra nếu không có dữ liệu trả về
+            if (salechitiets == null || !salechitiets.Any())
+                return null;
+
+            // Lọc các sale đang hoạt động trong khoảng thời gian
+            var activeSales = salechitiets
+                              .Where(sale =>
+                                  sale.Sale.Trangthai == 0 && // Sale đang hoạt động
+                                  sale.Sale.Ngaybatdau <= DateTime.Now && // Ngày bắt đầu <= hiện tại
+                                  sale.Sale.Ngayketthuc >= DateTime.Now // Ngày kết thúc >= hiện tại
+                              );
+
+            // Ưu tiên lấy sale có Donvi == 0, sau đó chọn Giatrigiam lớn nhất
+            var prioritizedSale = activeSales
+                                  .OrderByDescending(sale => sale.Donvi == 1) // Đưa sale có Donvi == 0 lên đầu
+                                  .ThenByDescending(sale => sale.Giatrigiam)  // Ưu tiên Giatrigiam lớn nhất
+                                  .FirstOrDefault(); // Lấy bản ghi đầu tiên
+
+            // Nếu không tìm thấy sale thỏa mãn, trả về null
+            if (prioritizedSale == null) return null;
+
+            // Trả về đối tượng Salechitiet đã được tạo từ thông tin prioritizedSale
+            return new Salechitiet
+            {
+                Id = prioritizedSale.Id,
+                Idsale = prioritizedSale.Idsale,
+                Idspct = prioritizedSale.Idspct,
+                Donvi = prioritizedSale.Donvi,
+                Soluong = prioritizedSale.Soluong,
+                Giatrigiam = prioritizedSale.Giatrigiam
+            };
         }
 
-        public async Task<List<Salechitiet>> GetAll() => await _repo.GetAll();
-
-        public async Task<Salechitiet> GetById(int id) => await _repo.GetById(id);
-
-        public async Task Update(SalechitietDTO dto)
+        public async Task AddAsync(SalechitietDTO spctDTO)
         {
-            var item = await _repo.GetById(dto.Id);
+            var idspct = await _SPCTrepository.GetByIdAsync(spctDTO.Idspct);
+            if (idspct == null) throw new ArgumentNullException("Sản phẩm chi tiết không tồn tại");
 
-            item.Soluong = dto.Soluong;
-            item.Idsale = dto.Idsale;
-            item.Donvi = dto.Donvi;
-            item.Soluong = dto.Soluong;
-            item.Giatrigiam = dto.Giatrigiam;
+            var entity = await _Salerepository.GetByIdAsync(spctDTO.Idsale);
+            if (entity == null) throw new ArgumentNullException("Sale không tồn tại");
 
-            await _repo.Update(item);
-            
+
+            // Tạo đối tượng Hoadon từ DTO
+            var salect = new Salechitiet
+            {
+                Idsale = spctDTO.Idsale,
+                Idspct = spctDTO.Idspct,
+                Donvi = spctDTO.Donvi,
+                Soluong = spctDTO.Soluong,
+                Giatrigiam = spctDTO.Giatrigiam
+            };
+
+            // Thêm hóa đơn vào cơ sở dữ liệu
+            await _repository.AddAsync(salect);
+        }
+
+
+        // Phương thức cập nhật hoá đơn
+        public async Task UpdateAsync(SalechitietDTO dto, int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) throw new KeyNotFoundException("Hóa đơn không tồn tại");
+
+            var idspct = await _SPCTrepository.GetByIdAsync(dto.Idspct);
+            if (idspct == null) throw new ArgumentNullException("Sản phẩm chi tiết không tồn tại");
+
+            var sale = await _Salerepository.GetByIdAsync(dto.Idsale);
+            if (sale == null) throw new ArgumentNullException("Sale không tồn tại");
+
+
+            if (entity != null)
+            {
+                entity.Idsale = dto.Idsale;
+                entity.Idspct = dto.Idspct;
+                entity.Donvi = dto.Donvi;
+                entity.Soluong = dto.Soluong;
+                entity.Giatrigiam = dto.Giatrigiam;
+
+                await _repository.UpdateAsync(entity);
+            }
+        }
+
+        // Phương thức xóa hoá đơn
+        public async Task DeleteAsync(int id)
+        {
+            await _repository.DeleteAsync(id);
         }
     }
 }

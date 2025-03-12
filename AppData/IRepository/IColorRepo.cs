@@ -9,10 +9,10 @@ namespace AppData.IRepository
 {
     public interface IColorRepo
     {
-        Task<List<Color>> GetAll();
-        Task<Color> GetById(int id);
-        Task Create(Color color);
-        Task Update(Color color);
-        Task Delete(int id);
+        Task<IEnumerable<Color>> GetAllAsync();
+        Task<Color> GetByIdAsync(int id);
+        Task<Color> AddAsync(Color entity);
+        Task<Color> UpdateAsync(Color entity);
+        Task<bool> DeleteAsync(int id);
     }
 }

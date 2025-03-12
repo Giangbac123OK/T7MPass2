@@ -1,4 +1,5 @@
-﻿using AppData.Models;
+﻿using AppData.DTO;
+using AppData.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,11 @@ namespace AppData.IRepository
 {
     public interface IGioHangRepo
     {
-        Task<List<Giohang>> GetAll();
-        Task<Giohang> GetById(int id);
-        Task Create(Giohang giohang);
-        Task Update(Giohang giohang);
-        Task Delete(int id);
+        Task<IEnumerable<Giohang>> GetAllAsync();
+        Task<Giohang> GetByIdAsync(int id);
+        Task AddAsync(Giohang gh);
+        Task UpdateAsync(Giohang gh);
+        Task<Giohang> GetByIdKHAsync(int id);
+        Task DeleteAsync(int id);
     }
 }

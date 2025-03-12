@@ -14,39 +14,72 @@ namespace AppData.Service
 {
     public class ThuongHieuService : IThuongHieuService
     {
-        private readonly IThuongHieuRepo _repo;
+        private readonly IThuongHieuRepo _repository;
 
-        public ThuongHieuService(IThuongHieuRepo repo)
+        public ThuongHieuService(IThuongHieuRepo repos)
         {
-            _repo = repo;
+            _repository = repos;
         }
 
 
-        public async Task Create(ThuonghieuDTO dto)
+        public async Task<IEnumerable<ThuonghieuDTO>> GetAllAsync()
         {
-            var item = new Thuonghieu
+            var entities = await _repository.GetAllAsync();
+            return entities.Select(e => new ThuonghieuDTO
+            {
+                Id = e.Id,
+                Tenthuonghieu = e.Tenthuonghieu,
+                Tinhtrang = e.Tinhtrang
+            });
+        }
+
+        public async Task<ThuonghieuDTO> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new ThuonghieuDTO
+            {
+                Tenthuonghieu = entity.Tenthuonghieu,
+                Tinhtrang = entity.Tinhtrang
+            };
+        }
+
+        public async Task<ThuonghieuDTO> AddAsync(ThuonghieuDTO dto)
+        {
+            var entity = new Thuonghieu
             {
                 Tenthuonghieu = dto.Tenthuonghieu,
-                Tinhtrang = dto.Tinhtrang,
+                Tinhtrang = dto.Tinhtrang
             };
-            await _repo.Create(item);
+
+            var addedEntity = await _repository.AddAsync(entity);
+            return new ThuonghieuDTO
+            {
+                Tenthuonghieu = addedEntity.Tenthuonghieu,
+                Tinhtrang = addedEntity.Tinhtrang
+            };
         }
 
-        public async Task Delete(int id)
+        public async Task<ThuonghieuDTO> UpdateAsync(int id, ThuonghieuDTO dto)
         {
-         await _repo.Delete(id);
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            entity.Tenthuonghieu = dto.Tenthuonghieu;
+            entity.Tinhtrang = dto.Tinhtrang;
+
+            var updatedEntity = await _repository.UpdateAsync(entity);
+            return new ThuonghieuDTO
+            {
+                Tenthuonghieu = updatedEntity.Tenthuonghieu,
+                Tinhtrang = updatedEntity.Tinhtrang
+            };
         }
 
-        public async Task<List<Thuonghieu>> GetAll() => await _repo.GetAll();
-
-        public async Task<Thuonghieu> GetById(int id) => await  _repo.GetById(id);
-
-        public async Task Update(ThuonghieuDTO dto)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var item = await _repo.GetById(dto.Id);
-            item.Tenthuonghieu = dto.Tenthuonghieu;
-            item.Tinhtrang = dto.Tinhtrang;
-            await _repo.Update(item);
+            return await _repository.DeleteAsync(id);
         }
     }
 }

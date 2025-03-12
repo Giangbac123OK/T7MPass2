@@ -10,10 +10,12 @@ namespace AppData.IService
 {
     public interface IHinhAnhService
     {
-        Task<List<Hinhanh>> GetAll();
-        Task<Hinhanh> GetById(int id);
-        Task Create(HinhanhDTO dto);
-        Task Update(HinhanhDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<Hinhanh>> GetAllAsync();
+        Task<List<Hinhanh>> GetByIdDanhGiaAsync(int id);
+        Task<List<Hinhanh>> GetByIdTraHangAsync(int id);
+        Task<Hinhanh> GetByIdAsync(int id);
+        Task AddAsync(HinhanhDTO entity);
+        Task DeleteAsync(int id);
+        Task UpdateAsync(HinhanhDTO entity, int id);
     }
 }

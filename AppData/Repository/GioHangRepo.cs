@@ -13,35 +13,62 @@ namespace AppData.Repository
     public class GioHangRepo : IGioHangRepo
     {
         private readonly AppDbContext _context;
-
         public GioHangRepo(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task Create(Giohang giohang)
+        public async Task AddAsync(Giohang gh)
         {
-            _context.giohangs.Add(giohang);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task Delete(int id)
-        {
-            var giohang = await GetById(id);
-            if (giohang != null)
+            try
             {
-                _context.giohangs.Remove(giohang);
+                await _context.giohangs.AddAsync(gh);
                 await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new Exception("Lỗi khi thêm giỏ hàng vào cơ sở dữ liệu.", dbEx);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi không xác định khi thêm giỏ hàng.", ex);
             }
         }
 
-        public async Task<List<Giohang>> GetAll() => await _context.giohangs.ToListAsync();
-
-        public async Task<Giohang> GetById(int id) => await _context.giohangs.FindAsync(id);
-
-        public async Task Update(Giohang giohang)
+        public async Task DeleteAsync(int id)
         {
-            _context.giohangs.Update(giohang);
+            var a = await GetByIdAsync(id);
+            if (a != null)
+            {
+                _context.giohangs.Remove(a);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException("Không tìm thấy nhân viên");
+            }
+        }
+
+        public async Task<IEnumerable<Giohang>> GetAllAsync()
+        {
+            return await _context.giohangs.ToListAsync();
+        }
+
+        public async Task<Giohang> GetByIdAsync(int id)
+        {
+            return await _context.giohangs.FindAsync(id);
+        }
+
+        public async Task<Giohang> GetByIdKHAsync(int id)
+        {
+            return await _context.giohangs
+                                 .Include(h => h.Khachhang)
+                                 .FirstOrDefaultAsync(h => h.Idkh == id);
+        }
+
+        public async Task UpdateAsync(Giohang gh)
+        {
+            _context.giohangs.Update(gh);
             await _context.SaveChangesAsync();
         }
     }

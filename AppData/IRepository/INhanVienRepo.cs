@@ -9,10 +9,11 @@ namespace AppData.IRepository
 {
     public interface INhanVienRepo
     {
-        Task<List<Nhanvien>> GetAll();
-        Task<Nhanvien> GetById(int id);
-        Task Create(Nhanvien nhanvien);
-        Task Update(Nhanvien nhanvien);
-        Task Delete(int id);
+        Task<IEnumerable<Nhanvien>> GetAllAsync();
+        Task<Nhanvien> GetByIdAsync(int id);
+        Task AddAsync(Nhanvien nhanvien);
+        Task UpdateAsync(Nhanvien nhanvien);
+        Task DeleteAsync(int id);
+        Task<IEnumerable<Nhanvien>> TimKiemNhanvienAsync(string search);
     }
 }

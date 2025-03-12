@@ -13,33 +13,42 @@ namespace AppData.Repository
     public class SaleRepo : ISaleRepo
     {
         private readonly AppDbContext _context;
-
         public SaleRepo(AppDbContext context)
         {
             _context = context;
-        }
 
-        public async Task Create(Sale sale)
+        }
+        public async Task AddAsync(Sale sale)
         {
-            _context.sales.Add(sale);
+            await _context.sales.AddAsync(sale);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var sale = await GetById(id);
+            var sale = await _context.sales.FindAsync(id);
             if (sale != null)
             {
                 _context.sales.Remove(sale);
                 await _context.SaveChangesAsync();
             }
+            else
+            {
+                throw new KeyNotFoundException("Không tìm thấy chương trình Sale");
+            }
         }
 
-        public async Task<List<Sale>> GetAll() => await _context.sales.ToListAsync();
+        public async Task<IEnumerable<Sale>> GetAllAsync()
+        {
+            return await _context.sales.ToListAsync();
+        }
 
-        public async Task<Sale> GetById(int id) => await _context.sales.FindAsync(id);
+        public async Task<Sale> GetByIdAsync(int id)
+        {
+            return await _context.sales.FindAsync(id);
+        }
 
-        public async Task Update(Sale sale)
+        public async Task UpdateAsync(Sale sale)
         {
             _context.sales.Update(sale);
             await _context.SaveChangesAsync();

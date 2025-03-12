@@ -17,65 +17,91 @@ namespace AppAPI.Controllers
     [ApiController]
     public class NhanviensController : ControllerBase
     {
-        private readonly INhanVienService _services;
-
-        public NhanviensController(INhanVienService services)
+        private readonly INhanVienService _Service;
+        public NhanviensController(INhanVienService service)
         {
-            _services = services;
+            _Service = service;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var nhanviens = await _services.GetAll();
-            return Ok(nhanviens);
+            var result = await _Service.GetAllNhanviensAsync();
+            return Ok(result.Select(nv => new
+            {
+                nv.Hovaten,
+                nv.Ngaysinh,
+                nv.Diachi,
+                Gioitinh = nv.Gioitinh == true ? "Nam" : "Nữ",
+                nv.Sdt,
+                Trangthai = nv.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
+                nv.Password,
+                Role = nv.Role == 0 ? "Quản lý" : "Nhân viên"
+            }));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var nhanvien = await _services.GetById(id);
-            if (nhanvien == null)
-                return NotFound("Nhân viên không tồn tại.");
-
-            return Ok(nhanvien);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, NhanvienDTO dto)
-        {
-            dto.Id = id;
-
             try
             {
-                await _services.Update(dto);
-                return Ok(new { message = "Cập nhật nhân viên thành công." });
+                var nhanvien = await _Service.GetNhanvienByIdAsync(id);
+                return Ok(new
+                {
+                    nhanvien.Hovaten,
+                    nhanvien.Ngaysinh,
+                    nhanvien.Diachi,
+                    Gioitinh = nhanvien.Gioitinh == false ? "Nam" : "Nữ",
+                    nhanvien.Sdt,
+                    Trangthai = nhanvien.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
+                    nhanvien.Password,
+                    Role = nhanvien.Role == 0 ? "Quản lý" : "Nhân viên"
+                });
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException)
             {
-                return BadRequest(ex.Message);
+                return NotFound("Nhân viên không tồn tại.");
             }
+
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(NhanvienDTO dto)
+        public async Task<IActionResult> Create([FromBody] NhanvienDTO nhanvienDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _services.Create(dto);
-            return Ok(new { message = "Thêm nhân viên thành công.", data = dto });
+            await _Service.AddNhanvienAsync(nhanvienDto);
+            return CreatedAtAction(nameof(GetById), new { id = nhanvienDto.Hovaten }, nhanvienDto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] NhanvienDTO nhanvienDto)
+        {
+            try
+            {
+                await _Service.UpdateNhanvienAsync(id, nhanvienDto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Nhân viên không tồn tại.");
+            }
+        }
+
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var nhanvien = await _services.GetById(id);
-            if (nhanvien == null)
+            try
+            {
+                await _Service.DeleteNhanvienAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
                 return NotFound("Nhân viên không tồn tại.");
-
-            await _services.Delete(id);
-            return Ok(new { message = "Xóa nhân viên thành công." });
+            }
         }
     }
 }

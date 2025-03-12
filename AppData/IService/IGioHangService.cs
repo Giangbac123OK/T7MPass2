@@ -10,10 +10,11 @@ namespace AppData.IService
 {
     public interface IGioHangService
     {
-        Task<List<Giohang>> GetAll();
-        Task<Giohang> GetById(int id);
-        Task Create(GiohangDTO dto);
-        Task Update(GiohangDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<GiohangDTO>> GetAllGiohangsAsync();
+        Task<GiohangDTO> GetGiohangByIdAsync(int id);
+        Task<GiohangDTO> GetByIdKHAsync(int id);
+        Task AddGiohangAsync(GiohangDTO dto);
+        Task UpdateGiohangAsync(int id, GiohangDTO dto);
+        Task DeleteGiohangAsync(int id);
     }
 }

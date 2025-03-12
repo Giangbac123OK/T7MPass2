@@ -15,62 +15,108 @@ namespace AppData.Service
 {
     public class DiaChiService : IDiaChiService
     {
-        private readonly IDiaChiRepo _repository;
-        private readonly IKhachHangRepo _KHrepository;
-        public DiaChiService(IDiaChiRepo repository, IKhachHangRepo kHrepository)
+        private readonly IDiaChiRepo diaChiRepos;
+
+        public DiaChiService(IDiaChiRepo diaChiRepos)
         {
-            _repository = repository;
-            _KHrepository = kHrepository;
+            this.diaChiRepos = diaChiRepos;
         }
 
-        public async Task Create(DiachiDTO dto)
+        public async Task Create(DiachiDTO diachi)
         {
-            var khachhang = await _KHrepository.GetById(dto.Idkh);
-            if (khachhang == null) return;
-
-            var diachi = new Diachi
+            var Diachi = new Diachi()
             {
-                Idkh = dto.Idkh,
-                Tennguoinhan = dto.Tennguoinhan,
-                sdtnguoinhan = dto.sdtnguoinhan,
-                Thanhpho = dto.Thanhpho,
-                Quanhuyen = dto.Quanhuyen,
-                Phuongxa = dto.Phuongxa,
-                Diachicuthe = dto.Diachicuthe
+                Thanhpho = diachi.Thanhpho,
+                Idkh = diachi.Idkh,
+                Diachicuthe = diachi.Diachicuthe,
+                Quanhuyen = diachi.Quanhuyen,
+                Phuongxa = diachi.Phuongxa,
+                Tennguoinhan = diachi.Tennguoinhan,
+                sdtnguoinhan = diachi.sdtnguoinhan,
+
             };
-
-            await _repository.Create(diachi);
+            await diaChiRepos.Create(Diachi);
+            await diaChiRepos.SaveChanges();
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Diachi>> GetAll()
+        public async Task Delete(int id)
         {
-            return await _repository.GetAll();
+            await diaChiRepos.Delete(id);
+            await diaChiRepos.SaveChanges();
         }
 
-        public async Task<Diachi> GetById(int id)
+        public async Task<IEnumerable<DiachiDTO>> GetAllDiaChi()
         {
-            return await _repository.GetById(id);
+            var diaChis = await diaChiRepos.GetAllDiaChi();
+            return diaChis.Select(diaChis => new DiachiDTO()
+            {
+                Id = diaChis.Id,
+                Diachicuthe = diaChis.Diachicuthe,
+                Thanhpho = diaChis.Thanhpho,
+                Phuongxa = diaChis.Phuongxa,
+                Quanhuyen = diaChis.Quanhuyen,
+                Idkh = diaChis.Idkh,
+                Tennguoinhan = diaChis.Tennguoinhan,
+                sdtnguoinhan = diaChis.sdtnguoinhan,
+            });
         }
 
-        public async Task Update(DiachiDTO dto)
+        public async Task<Diachi> GetByIdAsync(int id)
         {
-            var diachi = await _repository.GetById(dto.Id);
-            if (diachi == null) return;
 
-            var khachhang = await _KHrepository.GetById(dto.Idkh);
-            if (khachhang == null) return;
+            var diaChi = await diaChiRepos.GetByIdAsync(id);
+            if (diaChi == null) throw new KeyNotFoundException("Không tìm thấy Dịa chỉ");
+            return new Diachi()
+            {
+                Id = diaChi.Id,
+                Diachicuthe = diaChi.Diachicuthe,
+                Thanhpho = diaChi.Thanhpho,
+                Phuongxa = diaChi.Phuongxa,
+                Quanhuyen = diaChi.Quanhuyen,
+                Idkh = diaChi.Idkh,
+                Tennguoinhan = diaChi.Tennguoinhan,
+                sdtnguoinhan = diaChi.sdtnguoinhan,
+            };
+        }
 
-            diachi.Idkh = dto.Idkh;
-            diachi.Tennguoinhan = dto.Tennguoinhan;
-            diachi.sdtnguoinhan = dto.sdtnguoinhan;
-            diachi.Thanhpho = dto.Thanhpho;
-            diachi.Quanhuyen = dto.Quanhuyen;
-            diachi.Phuongxa = dto.Phuongxa;
-            diachi.Diachicuthe = dto.Diachicuthe;
+        public async Task<List<DiachiDTO>> GetDiaChiByIdKH(int idspct)
+        {
+            try
+            {
+                var results = await diaChiRepos.GetDiaChiByIdKH(idspct);
 
-            await _repository.Update(diachi);
+                var dtoList = results.Select(result => new DiachiDTO
+                {
+                    Id = result.Id,
+                    Idkh = result.Idkh,
+                    Thanhpho = result.Thanhpho,
+                    Quanhuyen = result.Quanhuyen,
+                    Phuongxa = result.Phuongxa,
+                    Diachicuthe = result.Diachicuthe,
+                    Tennguoinhan = result.Tennguoinhan,
+                    sdtnguoinhan = result.sdtnguoinhan,
+                }).ToList();
+
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi tìm địa chỉ khách hàng: " + ex.Message);
+            }
+        }
+
+        public async Task Update(int id, DiachiDTO DiachiDTO)
+        {
+            var diaChi = await diaChiRepos.GetByIdAsync(id);
+            diaChi.Quanhuyen = DiachiDTO.Quanhuyen;
+            diaChi.Thanhpho = DiachiDTO.Thanhpho;
+            diaChi.Diachicuthe = DiachiDTO.Diachicuthe;
+            diaChi.Idkh = DiachiDTO.Idkh;
+            diaChi.Phuongxa = DiachiDTO.Phuongxa;
+            diaChi.Tennguoinhan = DiachiDTO.Tennguoinhan;
+            diaChi.sdtnguoinhan = DiachiDTO.sdtnguoinhan;
+            await diaChiRepos.Update(diaChi);
+            await diaChiRepos.SaveChanges();
         }
     }
 }

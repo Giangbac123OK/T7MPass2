@@ -2,6 +2,7 @@
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Models;
+using AppData.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,58 +15,119 @@ namespace AppData.Service
 {
     public class DanhGiaService : IDanhGiaService
     {
-        private readonly IDanhGiaRepo _repository;
-        private readonly IKhachHangRepo _KHrepository;
-        public DanhGiaService(IDanhGiaRepo repository, IKhachHangRepo kHrepository)
+        private readonly IDanhGiaRepo _repos;
+
+        public DanhGiaService(IDanhGiaRepo repos)
         {
-            _repository = repository;
-            _KHrepository = kHrepository;
+            _repos = repos;
         }
 
-        public async Task Create(DanhgiaDTO dto)
+        public async Task Create(DanhgiaDTO danhGiaDTO)
         {
-            var khachhang = await _KHrepository.GetById(dto.Idkh);
-            if (khachhang == null) return;
-
-            var danhgia = new Danhgia
+            var danhgia = new Danhgia()
             {
-                Idkh = dto.Idkh,
-                Noidungdanhgia = dto.Noidungdanhgia,
-                Ngaydanhgia = dto.Ngaydanhgia,
-                Idhdct = dto.Idhdct,
-                Sosao = dto.Sosao
+                Idkh = danhGiaDTO.Idkh,
+                Noidungdanhgia = danhGiaDTO.Noidungdanhgia,
+                Ngaydanhgia = danhGiaDTO.Ngaydanhgia,
+                Idhdct = danhGiaDTO.Idhdct,
+                Sosao = danhGiaDTO.Sosao,
             };
 
-            await _repository.Create(danhgia);
+            await _repos.Create(danhgia);
+            await _repos.SaveChanges();
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Danhgia>> GetAll()
+        public async Task Delete(int id)
         {
-            return await _repository.GetAll();
+            await _repos.Delete(id);
+            await _repos.SaveChanges();
         }
 
-        public async Task<Danhgia> GetById(int id)
+        public async Task<List<DanhgiaDTO>> GetAll()
         {
-            return await _repository.GetById(id);
+            var list = await _repos.GetAll();
+            return list.Select(list => new DanhgiaDTO()
+            {
+                Id = list.Id,
+                Idkh = list.Idkh,
+                Noidungdanhgia = list.Noidungdanhgia,
+                Ngaydanhgia = list.Ngaydanhgia,
+                Idhdct = list.Idhdct,
+                Sosao = list.Sosao,
+            }).ToList();
+
         }
 
-        public async Task Update(DanhgiaDTO dto)
+        public async Task<DanhgiaDTO> GetById(int id)
         {
-            var khachhang = await _KHrepository.GetById(dto.Idkh);
-            if (khachhang == null) return;
+            var list = await _repos.GetById(id);
+            return new DanhgiaDTO()
+            {
+                Id = list.Id,
+                Idkh = list.Idkh,
+                Noidungdanhgia = list.Noidungdanhgia,
+                Ngaydanhgia = list.Ngaydanhgia,
+                Idhdct = list.Idhdct,
+                Sosao = list.Sosao,
+            };
+        }
 
-            var danhgia = await _repository.GetById(dto.Id);
-            if (danhgia == null) return;
+        public async Task<DanhgiaDTO> getByidHDCT(int id)
+        {
+            var list = await _repos.getByidHDCT(id);
+            if (list == null)
+            {
+                return null;
+            }
 
-            danhgia.Idkh = dto.Idkh;
-            danhgia.Noidungdanhgia = dto.Noidungdanhgia;
-            danhgia.Ngaydanhgia = dto.Ngaydanhgia;
-            danhgia.Idhdct = dto.Idhdct;
-            danhgia.Sosao = dto.Sosao;
 
-            await _repository.Update(danhgia);
+            return new DanhgiaDTO()
+            {
+                Id = list.Id,
+                Idkh = list.Idkh,
+                Noidungdanhgia = list.Noidungdanhgia,
+                Ngaydanhgia = list.Ngaydanhgia,
+                Idhdct = list.Idhdct,
+                Sosao = list.Sosao  ,
+            };
+
+        }
+
+        public async Task<List<DanhgiaDTO>> GetByidSP(int idsp)
+        {
+            var list = await _repos.GetByidSP(idsp);
+            if (list == null || !list.Any()) // Kiểm tra nếu list null hoặc rỗng
+            {
+                return null;
+            }
+
+            // Ánh xạ từng phần tử trong list thành DanhGiaDTO
+            return list.Select(item => new DanhgiaDTO()
+            {
+                Id = item.Id,
+                Idkh = item.Idkh,
+                Noidungdanhgia = item.Noidungdanhgia,
+                Ngaydanhgia = item.Ngaydanhgia,
+                Idhdct = item.Idhdct,
+                Sosao = item.Sosao,
+            }).ToList();
+        }
+
+
+
+        public async Task Update(int id, DanhgiaDTO danhGiaDTO)
+        {
+            var itemUpdate = await _repos.GetById(id);
+
+
+            itemUpdate.Idhdct = danhGiaDTO.Idhdct;
+            itemUpdate.Ngaydanhgia = danhGiaDTO.Ngaydanhgia;
+            itemUpdate.Idkh = danhGiaDTO.Idkh;
+            itemUpdate.Noidungdanhgia = danhGiaDTO.Noidungdanhgia;
+            itemUpdate.Sosao = danhGiaDTO.Sosao;
+
+            await _repos.Update(itemUpdate);
+            await _repos.SaveChanges();
         }
     }
 }

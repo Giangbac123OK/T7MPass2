@@ -16,65 +16,55 @@ namespace AppAPI.Controllers
     [ApiController]
     public class ThuonghieuController : ControllerBase
     {
-        private readonly IThuongHieuService _services;
+        private readonly IThuongHieuService _service;
 
-        public ThuonghieuController(IThuongHieuService services)
+        public ThuonghieuController(IThuongHieuService service)
         {
-            _services = services;
+            _service = service;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IEnumerable<ThuonghieuDTO>>> GetAll()
         {
-            var thuonghieus = await _services.GetAll();
-            return Ok(thuonghieus);
+            var result = await _service.GetAllAsync();
+            return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet("_KhachHang/{id}")]
+        public async Task<ActionResult<ThuonghieuDTO>> GetById(int id)
         {
-            var thuonghieu = await _services.GetById(id);
-            if (thuonghieu == null)
-                return NotFound("Thương hiệu không tồn tại.");
-
-            return Ok(thuonghieu);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, ThuonghieuDTO dto)
-        {
-            dto.Id = id;
-
-            try
-            {
-                await _services.Update(dto);
-                return Ok(new { message = "Cập nhật thành công." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _service.GetByIdAsync(id);
+            if (result == null) return NotFound();
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ThuonghieuDTO dto)
+        public async Task<ActionResult<ThuonghieuDTO>> Create(ThuonghieuDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            await _services.Create(dto);
-            return Ok(new { message = "Thêm thành công.", data = dto });
+            var result = await _service.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = result.Tenthuonghieu }, result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("_KhachHang/{id}")]
+        public async Task<ActionResult<ThuonghieuDTO>> Update(int id, ThuonghieuDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var result = await _service.UpdateAsync(id, dto);
+            if (result == null) return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpDelete("_KhachHang/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var thuonghieu = await _services.GetById(id);
-            if (thuonghieu == null)
-                return NotFound(" không tồn tại.");
+            var result = await _service.DeleteAsync(id);
+            if (!result) return NotFound();
 
-            await _services.Delete(id);
-            return Ok(new { message = "Xóa  thành công." });
+            return NoContent();
         }
     }
 }

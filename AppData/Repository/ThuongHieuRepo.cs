@@ -13,36 +13,44 @@ namespace AppData.Repository
     public class ThuongHieuRepo : IThuongHieuRepo
     {
         private readonly AppDbContext _context;
-
         public ThuongHieuRepo(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task Create(Thuonghieu thuonghieu)
+
+        public async Task<IEnumerable<Thuonghieu>> GetAllAsync()
         {
-            _context.thuonghieus.Add(thuonghieu);
-            await _context.SaveChangesAsync();
+            return await _context.Set<Thuonghieu>().ToListAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task<Thuonghieu> GetByIdAsync(int id)
         {
-            var thuonghieu = await GetById(id);
-            if (thuonghieu != null)
-            {
-                _context.thuonghieus.Remove(thuonghieu);
-                await _context.SaveChangesAsync();
-            }
+            return await _context.Set<Thuonghieu>().FindAsync(id);
         }
 
-        public async Task<List<Thuonghieu>> GetAll() => await _context.thuonghieus.ToListAsync();
-
-        public async Task<Thuonghieu> GetById(int id) => await _context.thuonghieus.FindAsync(id);
-
-        public async Task Update(Thuonghieu thuonghieu)
+        public async Task<Thuonghieu> AddAsync(Thuonghieu entity)
         {
-            _context.thuonghieus.Update(thuonghieu);
+            _context.Set<Thuonghieu>().Add(entity);
             await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<Thuonghieu> UpdateAsync(Thuonghieu entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity == null) return false;
+
+            _context.Set<Thuonghieu>().Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

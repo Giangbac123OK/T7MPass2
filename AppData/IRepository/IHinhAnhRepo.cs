@@ -1,4 +1,5 @@
-﻿using AppData.Models;
+﻿using AppData.DTO;
+using AppData.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,12 @@ namespace AppData.IRepository
 {
     public interface IHinhAnhRepo
     {
-        Task<List<Hinhanh>> GetAll();
-        Task<Hinhanh> GetById(int id);
-        Task Create(Hinhanh hinhanh);
-        Task Update(Hinhanh hinhanh);
-        Task Delete(int id);
+        Task<IEnumerable<Hinhanh>> GetAllAsync();
+        Task<List<Hinhanh>> GetByIdTraHangAsync(int id);
+        Task<List<Hinhanh>> GetByIdDanhGiaAsync(int id);
+        Task<Hinhanh> GetByIdAsync(int id);
+        Task AddAsync(Hinhanh entity);
+        Task DeleteAsync(int id);
+        Task UpdateAsync(Hinhanh entity);
     }
 }

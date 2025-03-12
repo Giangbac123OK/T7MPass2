@@ -9,10 +9,10 @@ namespace AppData.IRepository
 {
     public interface IChatLieuRepo
     {
-        Task<List<ChatLieu>> GetAll();
-        Task<ChatLieu> GetById(int id);
-        Task Create(ChatLieu chatLieu);
-        Task Update(ChatLieu chatLieu);
-        Task Delete(int id);
+        Task<IEnumerable<ChatLieu>> GetAllAsync();
+        Task<ChatLieu> GetByIdAsync(int id);
+        Task<ChatLieu> AddAsync(ChatLieu entity);
+        Task<ChatLieu> UpdateAsync(ChatLieu entity);
+        Task<bool> DeleteAsync(int id);
     }
 }

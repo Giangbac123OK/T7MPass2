@@ -11,10 +11,15 @@ namespace AppData.IRepository
 {
     public interface IKhachHangService
     {
-        Task<List<Khachhang>> GetAll();
-        Task<Khachhang> GetById(int id);
-        Task Create(KhachhangDTO dto);
-        Task Update(KhachhangDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<Khachhang>> GetAllKhachhangsAsync();
+        Task<KhachhangDTO> GetKhachhangByIdAsync(int id);
+        Task AddKhachhangAsync(KhachhangDTO dto);
+        Task UpdateKhachhangAsync(int id, KhachhangDTO dto);
+        Task UpdateThongTinKhachhangAsync(int id, KhachhangDTO dto);
+        Task DeleteKhachhangAsync(int id);
+        Task<IEnumerable<KhachhangDTO>> TimKiemAsync(string search);
+        Task<KhachhangDTO> FindByEmailAsync(string email);
+        Task<(bool isSent, object otp)> SendOtpAsync(string email);
+        string GenerateOtp();
     }
 }

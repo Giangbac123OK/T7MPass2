@@ -13,36 +13,44 @@ namespace AppData.Repository
     public class ChatLieuRepo : IChatLieuRepo
     {
         private readonly AppDbContext _context;
-
         public ChatLieuRepo(AppDbContext context)
         {
             _context = context;
         }
-        public async Task Create(ChatLieu chatLieu)
+
+
+        public async Task<IEnumerable<Models.ChatLieu>> GetAllAsync()
         {
-            _context.chatLieus.Add(chatLieu);
-            await _context.SaveChangesAsync();
+            return await _context.Set<Models.ChatLieu>().ToListAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task<Models.ChatLieu> GetByIdAsync(int id)
         {
-            var chatLieu = await GetById(id);
-            if (chatLieu != null)
-            {
-                _context.chatLieus.Remove(chatLieu);
-                await _context.SaveChangesAsync();
-            }
+            return await _context.Set<Models.ChatLieu>().FindAsync(id);
         }
 
-        public async Task<List<ChatLieu>> GetAll() => await _context.chatLieus.ToListAsync();
-
-        public async Task<ChatLieu> GetById(int id) => await _context.chatLieus.FindAsync(id);
-
-
-        public async Task Update(ChatLieu chatLieu)
+        public async Task<Models.ChatLieu> AddAsync(Models.ChatLieu entity)
         {
-            _context.chatLieus.Update(chatLieu);
+            _context.Set<Models.ChatLieu>().Add(entity);
             await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<Models.ChatLieu> UpdateAsync(Models.ChatLieu entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity == null) return false;
+
+            _context.Set<Models.ChatLieu>().Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

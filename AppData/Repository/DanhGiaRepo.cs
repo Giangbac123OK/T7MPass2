@@ -12,36 +12,73 @@ namespace AppData.Repository
 {
     public class DanhGiaRepo : IDanhGiaRepo
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _db;
 
-        public DanhGiaRepo(AppDbContext context)
+        public DanhGiaRepo(AppDbContext db)
         {
-            _context = context;
+            _db = db;
         }
+
         public async Task Create(Danhgia danhgia)
         {
-            _context.danhgias.Add(danhgia);
-            await _context.SaveChangesAsync();
+            await _db.danhgias.AddAsync(danhgia);
         }
 
         public async Task Delete(int id)
         {
-            var danhgia = await GetById(id);
-            if (danhgia != null)
+            var item = await GetById(id);
+            if (item != null)
             {
-                _context.danhgias.Remove(danhgia);
-                await _context.SaveChangesAsync();
-            }
+
+
+                _db.danhgias.Remove(item);
+            } 
+           
+            
         }
 
-        public async Task<List<Danhgia>> GetAll() => await _context.danhgias.ToListAsync();
+        public async Task<List<Danhgia>> GetAll()
+        {
+            return await _db.danhgias.ToListAsync();
+        }
 
-        public async Task<Danhgia> GetById(int id) => await _context.danhgias.FindAsync(id);
+        public async Task<Danhgia> GetById(int id)
+        {
+            return await _db.danhgias.FindAsync(id);
+        }
+
+      
+        public async Task SaveChanges()
+        {
+            await _db.SaveChangesAsync();
+        }
 
         public async Task Update(Danhgia danhgia)
         {
-            _context.danhgias.Update(danhgia);
-            await _context.SaveChangesAsync();
+            var itemUpdate  = await GetById(danhgia.Id);
+            if(itemUpdate != null)
+            {
+                _db.Entry(danhgia).State = EntityState.Modified;
+            }
+        }
+      
+        public async Task<Danhgia> getByidHDCT(int id)
+        {
+            var resurl = await _db.danhgias.Where(d => d.Idhdct == id).FirstOrDefaultAsync();
+            return resurl;
+
+        }
+
+        public async Task<List<Danhgia>> GetByidSP(int idsp)
+        {
+            // Tìm danh sách đánh giá theo idsp
+            var danhgias = await _db.danhgias
+                .Include(dg => dg.Khachhang) // Bao gồm thông tin khách hàng
+                .Include(dg => dg.Hoadonchitiet) // Bao gồm thông tin hóa đơn chi tiết
+                .Where(dg => dg.Hoadonchitiet.Idspchitiet.Sanpham.Id == idsp) // Lọc theo idsp
+                .ToListAsync();
+
+            return danhgias;
         }
     }
 }

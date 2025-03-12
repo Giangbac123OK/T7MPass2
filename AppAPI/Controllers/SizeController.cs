@@ -16,57 +16,48 @@ namespace AppAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IEnumerable<SizeDTO>>> GetAll()
         {
-            var sizes = await _service.GetAll();
-            return Ok(sizes);
+            var result = await _service.GetAllAsync();
+            return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet("/{id}")]
+        public async Task<ActionResult<SizeDTO>> GetById(int id)
         {
-            var size = await _service.GetById(id);
-            if (size == null)
-                return NotFound("Size không tồn tại.");
-
-            return Ok(size);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, SizeDTO dto)
-        {
-            dto.Id = id;
-
-            try
-            {
-                await _service.Update(dto);
-                return Ok(new { message = "Cập nhật size thành công." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _service.GetByIdAsync(id);
+            if (result == null) return NotFound();
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SizeDTO dto)
+        public async Task<ActionResult<SizeDTO>> Create(SizeDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            await _service.Create(dto);
-            return Ok(new { message = "Thêm size thành công.", data = dto });
+            var result = await _service.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { Sosize = result.Sosize }, result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("/{id}")]
+        public async Task<ActionResult<SizeDTO>> Update(int id, SizeDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var result = await _service.UpdateAsync(id, dto);
+            if (result == null) return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existingSizes = await _service.GetById(id);
-            if (existingSizes == null)
-                return NotFound("Size không tồn tại.");
+            var result = await _service.DeleteAsync(id);
+            if (!result) return NotFound();
 
-            await _service.Delete(id);
-            return Ok(new { message = "Xóa size thành công." });
+            return NoContent();
         }
+
     }
 }

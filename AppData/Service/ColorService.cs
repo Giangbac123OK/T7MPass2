@@ -14,46 +14,76 @@ namespace AppData.Service
     public class ColorService : IColorService
     {
         private readonly IColorRepo _repository;
-        public ColorService(IColorRepo repository)
-        {
-            _repository = repository;
 
+        public ColorService(IColorRepo repos)
+        {
+            _repository = repos;
         }
 
-        public async Task Create(ColorDTO dto)
+
+        public async Task<IEnumerable<ColorDTO>> GetAllAsync()
         {
-            var color = new Color
+            var entities = await _repository.GetAllAsync();
+            return entities.Select(e => new ColorDTO
+            {
+                Tenmau = e.Tenmau,
+                Mamau = e.Mamau,
+                Trangthai = e.Trangthai
+            });
+        }
+
+        public async Task<ColorDTO> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new ColorDTO
+            {
+                Tenmau = entity.Tenmau,
+                Mamau = entity.Mamau,
+                Trangthai = entity.Trangthai
+            };
+        }
+
+        public async Task<ColorDTO> AddAsync(ColorDTO dto)
+        {
+            var entity = new Models.Color
             {
                 Tenmau = dto.Tenmau,
                 Mamau = dto.Mamau,
                 Trangthai = dto.Trangthai
             };
 
-            await _repository.Create(color);
+            var addedEntity = await _repository.AddAsync(entity);
+            return new ColorDTO
+            {
+                Tenmau = addedEntity.Tenmau,
+                Mamau = addedEntity.Mamau,
+                Trangthai = addedEntity.Trangthai
+            };
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Color>> GetAll()
+        public async Task<ColorDTO> UpdateAsync(int id, ColorDTO dto)
         {
-            return await _repository.GetAll();
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            entity.Tenmau = dto.Tenmau;
+            entity.Mamau = dto.Mamau;
+            entity.Trangthai = dto.Trangthai;
+
+            var updatedEntity = await _repository.UpdateAsync(entity);
+            return new ColorDTO
+            {
+                Tenmau = updatedEntity.Tenmau,
+                Mamau = updatedEntity.Mamau,
+                Trangthai = updatedEntity.Trangthai
+            };
         }
 
-        public async Task<Color> GetById(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            return await _repository.GetById(id);  
-        }
-
-        public async Task Update(ColorDTO dto)
-        {
-            var color = await _repository.GetById(dto.Id);
-            if (color == null) return;
-
-            color.Tenmau = dto.Tenmau;
-            color.Mamau = dto.Mamau;
-            color.Trangthai = dto.Trangthai;
-
-            await _repository.Update(color);
+            return await _repository.DeleteAsync(id);
         }
     }
 }

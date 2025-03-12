@@ -9,10 +9,12 @@ namespace AppData.IRepository
 {
     public interface IDiaChiRepo
     {
-        Task<List<Diachi>> GetAll();
-        Task<Diachi> GetById(int id);
+        Task<IEnumerable<Diachi>> GetAllDiaChi();
+        Task<Diachi> GetByIdAsync(int id);
+        Task<List<Diachi>> GetDiaChiByIdKH(int idsp);
         Task Create(Diachi diachi);
-        Task Update(Diachi diachi);
         Task Delete(int id);
+        Task Update(Diachi diachi);
+        Task SaveChanges();
     }
 }

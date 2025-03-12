@@ -8,65 +8,116 @@ namespace AppAPI.Controllers
     [Route("api/[controller]")]
     public class HinhanhController : ControllerBase
     {
-        private readonly IHinhAnhService _service;
+        private readonly IHinhAnhService _Service;
 
         public HinhanhController(IHinhAnhService service)
         {
-            _service = service;
+            _Service = service;
         }
 
+        // API để lấy tất cả Hình ảnh trả hàng
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var sizes = await _service.GetAll();
-            return Ok(sizes);
+            var hoadonList = await _Service.GetAllAsync();
+            return Ok(hoadonList);
         }
 
-        [HttpGet("{id}")]
+        // API để lấy Hình ảnh trả hàng theo Id
+        [HttpGet("TraHang/{id}")]
+        public async Task<IActionResult> GetByIdTraHang(int id)
+        {
+            var hoadon = await _Service.GetByIdTraHangAsync(id);
+            if (hoadon == null) return NotFound(new { message = "Hình ảnh trả hàng không tìm thấy" });
+            return Ok(hoadon);
+        }
+
+        [HttpGet("DanhGia/{id}")]
+        public async Task<IActionResult> GetByIdDanhGia(int id)
+        {
+            var hoadon = await _Service.GetByIdTraHangAsync(id);
+            if (hoadon == null) return NotFound(new { message = "Hình ảnh đánh giá không tìm thấy" });
+            return Ok(hoadon);
+        }
+
+        [HttpGet("DanhGia/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var hinhanh = await _service.GetById(id);
-            if (hinhanh == null)
-                return NotFound("Hình ảnh không tồn tại.");
-
-            return Ok(hinhanh);
+            var hoadon = await _Service.GetByIdAsync(id);
+            if (hoadon == null) return NotFound(new { message = "Hình ảnh tìm theo mã không tìm thấy" });
+            return Ok(hoadon);
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, HinhanhDTO dto)
+        [HttpPost]
+        public async Task<IActionResult> Add(HinhanhDTO dto)
         {
-            dto.Id = id;
-
+            // Kiểm tra tính hợp lệ của dữ liệu
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Trả về lỗi nếu DTO không hợp lệ
+            }
             try
             {
-                await _service.Update(dto);
-                return Ok(new { message = "Cập nhật hình ảnh thành công." });
+                // Thêm hình ảnh (hoặc Hình ảnh trả hàng tùy theo context)
+                await _Service.AddAsync(dto);
+
+                // Trả về ID của hình ảnh vừa được thêm
+                return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // Xử lý lỗi nếu có khi thêm hình ảnh
+                return StatusCode(500, new { message = "Lỗi khi thêm hình ảnh", error = ex.Message });
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(HinhanhDTO dto)
+
+        // API để cập nhật Hình ảnh trả hàng
+        [HttpPut("/{id}")]
+        public async Task<IActionResult> Update(int id, HinhanhDTO dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(ModelState); // Trả về lỗi nếu DTO không hợp lệ
+            }
 
-            await _service.Create(dto);
-            return Ok(new { message = "Thêm hình ảnh thành công.", data = dto });
+            var existingHoadon = await _Service.GetByIdAsync(id);
+            if (existingHoadon == null)
+            {
+                return NotFound(new { message = "Hình ảnh trả hàng không tìm thấy" });
+            }
+
+            try
+            {
+                await _Service.UpdateAsync(dto, id);
+                return NoContent(); // Trả về status code 204 nếu cập nhật thành công
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có khi cập nhật Hình ảnh trả hàng
+                return StatusCode(500, new { message = "Lỗi khi cập nhật Hình ảnh trả hàng", error = ex.Message });
+            }
         }
 
-        [HttpDelete("{id}")]
+        // API để xóa Hình ảnh trả hàng
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existingHinhanh = await _service.GetById(id);
-            if (existingHinhanh == null)
-                return NotFound("Hình ảnh không tồn tại.");
+            var existingHoadon = await _Service.GetByIdAsync(id);
+            if (existingHoadon == null)
+            {
+                return NotFound(new { message = "Hình ảnh trả hàng không tìm thấy" });
+            }
 
-            await _service.Delete(id);
-            return Ok(new { message = "Xóa hình ảnh thành công." });
+            try
+            {
+                await _Service.DeleteAsync(id);
+                return NoContent(); // Trả về status code 204 nếu xóa thành công
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có khi xóa Hình ảnh trả hàng
+                return StatusCode(500, new { message = "Lỗi khi xóa Hình ảnh trả hàng", error = ex.Message });
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AppData.Models;
+using AppData.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,10 @@ namespace AppData.IRepository
     {
         Task<List<Trahang>> GetAll();
         Task<Trahang> GetById(int id);
-        Task Create(Trahang trahang);
-        Task Update(Trahang trahang);
-        Task Delete(int id);
+        Task Add(Trahang trhang);
+        Task Update(Trahang trhang);
+        Task DeleteById(int id);
+        Task Trahangquahan();
+        Task<List<TraHangViewModel>> ViewHoaDonTraByIdkh(int id);
     }
 }
