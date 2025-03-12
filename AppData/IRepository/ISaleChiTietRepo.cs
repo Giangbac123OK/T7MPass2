@@ -9,10 +9,11 @@ namespace AppData.IRepository
 {
     public interface ISaleChiTietRepo
     {
-        Task<List<Salechitiet>> GetAll();
-        Task<Salechitiet> GetById(int id);
-        Task Create(Salechitiet salechitiet);
-        Task Update(Salechitiet salechitiet);
-        Task Delete(int id);
+        Task<IEnumerable<Salechitiet>> GetAllAsync();
+        Task<Salechitiet> GetByIdAsync(int id);
+        Task<List<Salechitiet>> GetByIdAsyncSpct(int id);
+        Task AddAsync(Salechitiet entity);
+        Task UpdateAsync(Salechitiet entity);
+        Task DeleteAsync(int id);
     }
 }

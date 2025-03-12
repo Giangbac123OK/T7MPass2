@@ -13,35 +13,69 @@ namespace AppData.Repository
     public class GiamGiaRepo : IGiamGiaRepo
     {
         private readonly AppDbContext _context;
-
         public GiamGiaRepo(AppDbContext context)
         {
             _context = context;
         }
+        public async Task<IEnumerable<Giamgia>> GetAllAsync()
+        {
+            return await _context.giamgias
+                .OrderBy(g => g.Donvi != 1) // Sắp xếp các bản ghi có Donvi == 1 lên đầu (Donvi != 1 sẽ được sắp xếp sau)
+                .ThenBy(g => g.Giatri) // Sắp xếp theo Giatri theo thứ tự tăng dần
+                .ToListAsync();
+        }
 
-        public async Task Create(Giamgia giamgia)
+        public async Task<Giamgia> GetByIdAsync(int id)
+        {
+            return await _context.giamgias
+                .OrderBy(g => g.Donvi != 1) // Sắp xếp các bản ghi có Donvi == 1 lên đầu (Donvi != 1 sẽ được sắp xếp sau)
+                .ThenBy(g => g.Giatri) // Sắp xếp theo Giatri theo thứ tự tăng dần
+                .FirstOrDefaultAsync(g => g.Id == id); // Lọc bản ghi có Id trùng với id truyền vào
+        }
+
+        public async Task<Giamgia> AddAsync(Giamgia giamgia)
         {
             _context.giamgias.Add(giamgia);
             await _context.SaveChangesAsync();
+            return giamgia;
         }
 
-        public async Task Delete(int id)
+        public async Task<Giamgia> UpdateAsync(Giamgia giamgia)
         {
-            var giamgia = await GetById(id);
+            _context.giamgias.Update(giamgia);
+            await _context.SaveChangesAsync();
+            return giamgia;
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var giamgia = await _context.giamgias.FindAsync(id);
             if (giamgia != null)
             {
                 _context.giamgias.Remove(giamgia);
                 await _context.SaveChangesAsync();
             }
+            else
+            {
+                throw new KeyNotFoundException("Không tìm thấy mã giảm giá");
+            }
         }
 
-        public async Task<List<Giamgia>> GetAll() => await _context.giamgias.ToListAsync();
-
-        public async Task<Giamgia> GetById(int id) => await _context.giamgias.FindAsync(id);
-
-        public async Task Update(Giamgia giamgias)
+        public async Task AddRankToGiamgia(int giamgiaId, List<string> rankNames)
         {
-            _context.giamgias.Update(giamgias);
+            var giamgia = await _context.giamgias.FindAsync(giamgiaId);
+            if (giamgia == null) throw new Exception("Giảm giá không tồn tại");
+
+            foreach (var rankName in rankNames)
+            {
+                var rank = await _context.ranks.FirstOrDefaultAsync(r => r.Tenrank == rankName);
+                if (rank != null)
+                {
+                    var giamgiaRank = new giamgia_rank { IDgiamgia = giamgiaId, Idrank = rank.Id };
+                    _context.giamgia_Ranks.Add(giamgiaRank);
+                }
+            }
+
             await _context.SaveChangesAsync();
         }
     }

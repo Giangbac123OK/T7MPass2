@@ -20,55 +20,89 @@ namespace AppData.Service
             _repository = repository;
 
         }
+        public async Task<IEnumerable<NhanvienDTO>> GetAllNhanviensAsync()
+        {
+            var nhanviens = await _repository.GetAllAsync();
+            return nhanviens.Select(n => new NhanvienDTO
+            {
+                Hovaten = n.Hovaten,
+                Ngaysinh = n.Ngaysinh,
+                Diachi = n.Diachi,
+                Gioitinh = n.Gioitinh,
+                Sdt = n.Sdt,
+                Trangthai = n.Trangthai,
+                Password = n.Password,
+                Role = n.Role
+            });
+        }
 
-        public async Task Create(NhanvienDTO dto)
+        public async Task<NhanvienDTO> GetNhanvienByIdAsync(int id)
+        {
+            var nhanvien = await _repository.GetByIdAsync(id);
+            if (nhanvien == null) throw new KeyNotFoundException("Nhân viên không tồn tại.");
+
+            return new NhanvienDTO
+            {
+                Hovaten = nhanvien.Hovaten,
+                Ngaysinh = nhanvien.Ngaysinh,
+                Diachi = nhanvien.Diachi,
+                Gioitinh = nhanvien.Gioitinh,
+                Sdt = nhanvien.Sdt,
+                Trangthai = nhanvien.Trangthai,
+                Password = nhanvien.Password,
+                Role = nhanvien.Role
+            };
+        }
+
+        public async Task AddNhanvienAsync(NhanvienDTO nhanvienDto)
         {
             var nhanvien = new Nhanvien
             {
-                Hovaten = dto.Hovaten,
-                Ngaysinh = dto.Ngaysinh,
-                Diachi = dto.Diachi,
-                Gioitinh = dto.Gioitinh,
-                Sdt = dto.Sdt,
-                Email = dto.Email,
-                Trangthai = dto.Trangthai,
-                Password = dto.Password,
-                Role = dto.Role,
-                Ngaytaotaikhoan = dto.Ngaytaotaikhoan
+                Hovaten = nhanvienDto.Hovaten,
+                Ngaysinh = nhanvienDto.Ngaysinh,
+                Diachi = nhanvienDto.Diachi,
+                Gioitinh = nhanvienDto.Gioitinh,
+                Sdt = nhanvienDto.Sdt,
+                Trangthai = 0, // Mặc định "hoạt động"
+                Password = nhanvienDto.Password,
+                Role = nhanvienDto.Role // 0: Quản lý, 1: Nhân viên
             };
-
-            await _repository.Create(nhanvien);
+            await _repository.AddAsync(nhanvien);
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Nhanvien>> GetAll()
+        public async Task UpdateNhanvienAsync(int id, NhanvienDTO nhanvienDto)
         {
-            return await _repository.GetAll();
+            var nhanvien = await _repository.GetByIdAsync(id);
+            if (nhanvien == null) throw new KeyNotFoundException("Nhân viên không tồn tại.");
+
+            nhanvien.Hovaten = nhanvienDto.Hovaten;
+            nhanvien.Ngaysinh = nhanvienDto.Ngaysinh;
+            nhanvien.Diachi = nhanvienDto.Diachi;
+            nhanvien.Gioitinh = nhanvienDto.Gioitinh;
+            nhanvien.Sdt = nhanvienDto.Sdt;
+            nhanvien.Password = nhanvienDto.Password;
+
+            await _repository.UpdateAsync(nhanvien);
         }
 
-        public async Task<Nhanvien> GetById(int id)
+        public async Task DeleteNhanvienAsync(int id)
         {
-            return await _repository.GetById(id);
+            await _repository.DeleteAsync(id);
         }
-
-        public async Task Update(NhanvienDTO dto)
+        public async Task<IEnumerable<NhanvienDTO>> TimKiemNhanvienAsync(string search)
         {
-            var nhanvien = await _repository.GetById(dto.Id);
-            if (nhanvien == null) return;
-
-            nhanvien.Hovaten = dto.Hovaten;
-            nhanvien.Ngaysinh = dto.Ngaysinh;
-            nhanvien.Diachi = dto.Diachi;
-            nhanvien.Gioitinh = dto.Gioitinh;
-            nhanvien.Sdt = dto.Sdt;
-            nhanvien.Email = dto.Email;
-            nhanvien.Trangthai = dto.Trangthai;
-            nhanvien.Password = dto.Password;
-            nhanvien.Role = dto.Role;
-            nhanvien.Ngaytaotaikhoan = dto.Ngaytaotaikhoan;
-
-            await _repository.Update(nhanvien);
+            var nhanviens = await _repository.TimKiemNhanvienAsync(search);
+            return nhanviens.Select(n => new NhanvienDTO
+            {
+                Hovaten = n.Hovaten,
+                Ngaysinh = n.Ngaysinh,
+                Diachi = n.Diachi,
+                Gioitinh = n.Gioitinh,
+                Sdt = n.Sdt,
+                Trangthai = n.Trangthai,
+                Password = n.Password,
+                Role = n.Role
+            });
         }
     }
 }

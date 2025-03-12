@@ -1,5 +1,6 @@
 ﻿using AppData.DTO;
 using AppData.Models;
+using AppData.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,13 @@ namespace AppData.IService
 {
     public interface IHoaDonChiTietService
     {
-        Task<List<Hoadonchitiet>> GetAll();
-        Task<Hoadonchitiet> GetById(int id);
-        Task Create(HoadonchitietDTO dto);
-        Task Update(HoadonchitietDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<Hoadonchitiet>> GetAllAsync();
+        Task<Hoadonchitiet> GetByIdAsync(int id);
+        Task AddAsync(HoadonchitietDTO dto);
+        Task ReturnProductAsync(int hoadonId);
+        Task UpdateAsync(HoadonchitietDTO dto, int id);
+        Task DeleteAsync(int id);
+        Task<List<HoadonchitietViewModel>> HoadonchitietTheoMaHD(int id);
+        Task<List<HoadonchitietViewModel>> Checksoluong(int id);
     }
 }

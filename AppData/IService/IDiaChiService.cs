@@ -10,10 +10,11 @@ namespace AppData.IService
 {
     public interface IDiaChiService
     {
-        Task<List<Diachi>> GetAll();
-        Task<Diachi> GetById(int id);
-        Task Create(DiachiDTO dto);
-        Task Update(DiachiDTO dto);
+        Task<IEnumerable<DiachiDTO>> GetAllDiaChi();
+        Task<Diachi> GetByIdAsync(int id);
+        Task<List<DiachiDTO>> GetDiaChiByIdKH(int idsp);
+        Task Create(DiachiDTO diachi);
         Task Delete(int id);
+        Task Update(int id, DiachiDTO diaChiDTO);
     }
 }

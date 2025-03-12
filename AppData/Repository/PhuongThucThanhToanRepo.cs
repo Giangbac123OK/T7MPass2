@@ -13,36 +13,48 @@ namespace AppData.Repository
     public class PhuongThucThanhToanRepo : IPhuongThucThanhToanRepo
     {
         private readonly AppDbContext _context;
-
         public PhuongThucThanhToanRepo(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task Create(Phuongthucthanhtoan phuongthucthanhtoan)
+
+        public async Task<IEnumerable<Phuongthucthanhtoan>> GetAllAsync()
         {
-            _context.phuongthucthanhtoans.Add(phuongthucthanhtoan);
-            await _context.SaveChangesAsync();
+            return await _context.Set<Phuongthucthanhtoan>().ToListAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task<Phuongthucthanhtoan> GetByIdAsync(int id)
         {
-            var phuongthucthanhtoan = await GetById(id);
+            return await _context.Set<Phuongthucthanhtoan>().FindAsync(id);
+        }
+
+        public async Task AddAsync(Phuongthucthanhtoan entity)
+        {
+            _context.Set<Phuongthucthanhtoan>().Add(entity);
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task UpdateAsync(Phuongthucthanhtoan entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var phuongthucthanhtoan = await GetByIdAsync(id);
             if (phuongthucthanhtoan != null)
             {
-                _context.phuongthucthanhtoans.Remove(phuongthucthanhtoan);
+                _context.Set<Phuongthucthanhtoan>().Remove(phuongthucthanhtoan);
                 await _context.SaveChangesAsync();
             }
-        }
-
-        public async Task<List<Phuongthucthanhtoan>> GetAll() => await _context.phuongthucthanhtoans.ToListAsync();
-
-        public async Task<Phuongthucthanhtoan> GetById(int id) => await _context.phuongthucthanhtoans.FindAsync(id);
-
-        public async Task Update(Phuongthucthanhtoan phuongthucthanhtoan)
-        {
-            _context.phuongthucthanhtoans.Update(phuongthucthanhtoan);
-            await _context.SaveChangesAsync();
+            else
+            {
+                throw new KeyNotFoundException("Không tìm thấy Phương thức thanh toán");
+            }
         }
     }
 }

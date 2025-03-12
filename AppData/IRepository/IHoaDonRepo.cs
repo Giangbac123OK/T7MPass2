@@ -1,4 +1,5 @@
 ﻿using AppData.Models;
+using AppData.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,13 @@ namespace AppData.IRepository
 {
     public interface IHoaDonRepo
     {
-        Task<List<Hoadon>> GetAll();
-        Task<Hoadon> GetById(int id);
-        Task Create(Hoadon hoadon);
-        Task Update(Hoadon hoadon);
-        Task Delete(int id);
+        Task<IEnumerable<Hoadon>> GetAllAsync();
+        Task<Hoadon> GetByIdAsync(int id);
+        Task AddAsync(Hoadon entity);
+        Task UpdateAsync(Hoadon entity);
+        Task DeleteAsync(int id);
+        Task<List<Hoadon>> Checkvoucher(int idspct);
+        Task<List<HoaDonViewModel>> TimhoadontheoIdKH(int id);
+        Task Danhandonhang(int id);
     }
 }

@@ -9,10 +9,10 @@ namespace AppData.IRepository
 {
     public interface IPhuongThucThanhToanRepo
     {
-        Task<List<Phuongthucthanhtoan>> GetAll();
-        Task<Phuongthucthanhtoan> GetById(int id);
-        Task Create(Phuongthucthanhtoan phuongthucthanhtoan);
-        Task Update(Phuongthucthanhtoan phuongthucthanhtoan);
-        Task Delete(int id);
+        Task<IEnumerable<Phuongthucthanhtoan>> GetAllAsync();
+        Task<Phuongthucthanhtoan> GetByIdAsync(int id);
+        Task AddAsync(Phuongthucthanhtoan entity);
+        Task UpdateAsync(Phuongthucthanhtoan entity);
+        Task DeleteAsync(int id);
     }
 }

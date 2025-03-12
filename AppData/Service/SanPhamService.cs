@@ -2,6 +2,7 @@
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Models;
+using AppData.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,87 +15,157 @@ namespace AppData.Service
 {
     public class SanPhamService : ISanPhamService
     {
-
-        private readonly ISanPhamRepo _repo;
-
-        public SanPhamService(ISanPhamRepo repo)
+        private readonly ISanPhamRepo _repository;
+        public SanPhamService(ISanPhamRepo repository)
         {
-            _repo = repo;
+            _repository = repository;
+
+        }
+        public async Task<IEnumerable<Sanpham>> GetAllAsync()
+        {
+            return await _repository.GetAllAsync();
+
         }
 
-        public async Task Create(SanphamDTO dto)
+        public async Task AddAsync(SanphamDTO sanphamDto)
         {
-            var item = new Sanpham
+            var sanpham = new Sanpham
             {
-                TenSanpham = dto.TenSanpham,
-                Mota = dto.Mota,
-                Trangthai = dto.Trangthai,
-                Soluong = dto.Soluong,
-                GiaBan = dto.GiaBan,
-                NgayThemMoi = dto.NgayThemMoi,
-                Chieudai = dto.Chieudai,
-                Chieurong = dto.Chieurong,
-                Trongluong = dto.Trongluong,
-                Idth = dto.Idth,
+                TenSanpham = sanphamDto.TenSanpham,
+                Mota = sanphamDto.Mota,
+                Soluong = sanphamDto.Soluong,
+                GiaBan = sanphamDto.GiaBan,
+                Chieudai = sanphamDto.Chieudai,
+                Chieurong = sanphamDto.Chieurong,
+                Trongluong = sanphamDto.Trongluong,
+                //Giasale = sanphamDto.Giasale,
+                Idth = sanphamDto.Idth,
+                Trangthai = sanphamDto.Soluong > 0 ? 0 : 1
             };
-            await _repo.Create(item);
+
+            await _repository.AddAsync(sanpham);
         }
 
-        public async Task Delete(int id)
+        public async Task UpdateAsync(int id, SanphamDTO sanphamDto)
         {
-           await _repo.Delete(id);
+            var sanpham = await _repository.GetByIdAsync(id);
+            if (sanpham == null) return;
+
+            sanpham.TenSanpham = sanphamDto.TenSanpham;
+            sanpham.Mota = sanphamDto.Mota;
+            sanpham.Soluong = sanphamDto.Soluong;
+            sanpham.GiaBan = sanphamDto.GiaBan;
+            sanpham.Chieudai = sanphamDto.Chieudai;
+            sanpham.Chieurong = sanphamDto.Chieurong;
+            sanpham.Trongluong = sanphamDto.Trongluong;
+            //sanpham.Giasale = sanphamDto.Giasale;
+            sanpham.Idth = sanphamDto.Idth;
+            sanpham.Trangthai = sanphamDto.Soluong > 0 ? 0 : 1;
+
+            await _repository.UpdateAsync(sanpham);
         }
 
-        public async Task<List<Sanpham>> GetAll() => await _repo.GetAll();
+        public async Task DeleteAsync(int id) => await _repository.DeleteAsync(id);
 
-        public async Task<Sanpham> GetById(int id) => await _repo.GetById(id);
-
-        public async Task<List<SanphamDTO>> SpNoiBat()
+        public async Task<IEnumerable<SanphamDTO>> SearchByNameAsync(string name)
         {
-            var data = await _repo.SpNoiBat();
-            return data.Select(g => new SanphamDTO()
+            var sanphams = await _repository.SearchByNameAsync(name);
+            return sanphams.Select(sp => new SanphamDTO
             {
-                Id = g.Id,
-                TenSanpham = g.TenSanpham,
-                Trangthai = g.Trangthai,
-                Soluong = g.Soluong,
-                GiaBan = g.GiaBan,
-                Idth = g.Idth,
-                Mota = g.Mota,
-                NgayThemMoi = g.NgayThemMoi
-            }).ToList();
+                Id = sp.Id,
+                TenSanpham = sp.TenSanpham,
+                Mota = sp.Mota,
+                Trangthai = sp.Trangthai,
+                Soluong = sp.Soluong,
+                GiaBan = sp.GiaBan,
+                //Giasale = sp.Giasale,
+                Chieudai = sp.Chieudai,
+                Chieurong = sp.Chieurong,
+                Trongluong = sp.Trongluong,
+                Idth = sp.Idth
+            });
         }
-        public async Task<List<SanphamDTO>> SpMoiNhat()
+        public async Task UpdateStatusLoad(int id)
         {
-            var data = await _repo.SpMoiNhat();
-            return data.Select(g => new SanphamDTO()
+
+            var sale = await _repository.GetByIdAsync(id);
+            if (sale == null)
             {
-                Id = g.Id,
-                TenSanpham = g.TenSanpham,
-                Trangthai = g.Trangthai,
-                Soluong = g.Soluong,
-                GiaBan = g.GiaBan,
-                Idth = g.Idth,
-                Mota = g.Mota,
-                NgayThemMoi = g.NgayThemMoi
-            }).ToList();
+                throw new KeyNotFoundException("Sản phẩm không tồn tại");
+            }
+            if (sale.Trangthai != 3)
+            {
+                // Cập nhật trạng thái dựa trên ngày bắt đầu và ngày kết thúc
+                if (sale.Soluong > 0)
+                {
+                    sale.Trangthai = 0; // Đang diễn ra
+                }
+                else if (sale.Soluong == 0)
+                {
+                    sale.Trangthai = 1; // Chuẩn bị diễn ra
+                }
+            }
+
+
+            await _repository.UpdateAsync(sale);
         }
-        public async Task Update(SanphamDTO dto)
+        public async Task UpdateStatusToCancelled(int id)
         {
-            var item = await _repo.GetById(dto.Id);
+            var sale = await _repository.GetByIdAsync(id);
+            if (sale == null)
+            {
+                throw new KeyNotFoundException("Sản phẩm không tồn tại");
+            }
 
-            item.TenSanpham = dto.TenSanpham;
-            item.Mota = dto.Mota;
-            item.Trangthai = dto.Trangthai;
-            item.Soluong = dto.Soluong;
-            item.GiaBan = dto.GiaBan;
-            item.NgayThemMoi = dto.NgayThemMoi;
-            item.Chieudai = dto.Chieudai;
-            item.Chieurong = dto.Chieurong;
-            item.Trongluong = dto.Trongluong;
-            item.Idth = dto.Idth;
+            sale.Trangthai = 2; // Cập nhật trạng thái thành Hủy
+            await _repository.UpdateAsync(sale);
+        }
+        public async Task<SanphamDTO> GetByIdAsync(int id)
+        {
+            var sanpham = await _repository.GetByIdAsync(id);
 
-            await _repo.Update(item);
+            if (sanpham == null)
+                return null;
+
+            // Chuyển đổi đối tượng Sanpham thành SanphamDTO
+            return new SanphamDTO
+            {
+                TenSanpham = sanpham.TenSanpham,
+                Mota = sanpham.Mota,
+                Trangthai = sanpham.Trangthai,
+                Soluong = sanpham.Soluong,
+                GiaBan = sanpham.GiaBan,
+                //Giasale = sanpham.Giasale,
+                Chieudai = sanpham.Chieudai,
+                Chieurong = sanpham.Chieurong,
+                Trongluong = sanpham.Trongluong,
+                Idth = sanpham.Idth
+            };
+        }
+
+        public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamViewModels()
+        {
+            return await _repository.GetAllSanphamViewModels();
+        }
+
+        public async Task<SanphamViewModel> GetAllSanphamViewModelsByIdSP(int idsp)
+        {
+            return await _repository.GetSanphamViewModelByIdSP(idsp);
+        }
+
+        public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamGiamGiaViewModels()
+        {
+            return await _repository.GetAllSanphamGiamGiaViewModels();
+        }
+
+        public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamByThuongHieu(int id)
+        {
+            return await _repository.GetAllSanphamByThuongHieu(id);
+        }
+
+        public async Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(List<string> tenThuocTinhs, decimal? giaMin = null, decimal? giaMax = null, int? idThuongHieu = null)
+        {
+            return await _repository.GetSanphamByThuocTinh(tenThuocTinhs, giaMin, giaMax, idThuongHieu);
         }
     }
 }

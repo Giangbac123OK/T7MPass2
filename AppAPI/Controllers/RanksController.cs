@@ -16,65 +16,81 @@ namespace AppAPI.Controllers
     [ApiController]
     public class RanksController : ControllerBase
     {
-        private readonly IRankService _services;
-
-        public RanksController(IRankService services)
+        private readonly IRankService _service;
+        public RanksController(IRankService service)
         {
-            _services = services;
-        }
+            _service = service;
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var ranks = await _services.GetAll();
-            return Ok(ranks);
         }
-
-        [HttpGet("{id}")]
+        [HttpGet("/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var rank = await _services.GetById(id);
-            if (rank == null)
-                return NotFound(" không tồn tại.");
+            var x = await _service.GetRankByIdAsync(id);
+            if (x == null) return NotFound();
 
-            return Ok(rank);
+            return Ok(new
+            {
+                x.Tenrank,
+                x.MaxMoney,
+                x.MinMoney,
+                Trangthai = x.Trangthai == 0 ? "Đang hoạt động" : "Dừng hoạt động"
+            });
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, RankDTO dto)
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] RankDTO rankDTO)
         {
-            dto.Id = id;
+
 
             try
             {
-                await _services.Update(dto);
-                return Ok(new { message = "Cập nhật thành công." });
+                await _service.AddRankDTOAsync(rankDTO);
+                return CreatedAtAction(nameof(GetById), new { id = rankDTO.Tenrank }, rankDTO); // Trả về trạng thái 201 Created
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, new { message = "Có lỗi xảy ra: " + ex.Message }); // Trả về thông điệp lỗi chung
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(RankDTO dto)
+        // Cập nhật nhà cung cấp theo ID
+        [HttpPut("/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] RankDTO rankDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(ModelState); // Trả về lỗi nếu model không hợp lệ
 
-            await _services.Create(dto);
-            return Ok(new { message = "Thêm thành công.", data = dto });
+            try
+            {
+                await _service.UpdateRankAsync(id, rankDTO);
+                return NoContent(); // Trả về trạng thái 204 No Content nếu cập nhật thành công
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Có lỗi xảy ra: " + ex.Message }); // Trả về thông điệp lỗi chung
+            }
         }
 
-        [HttpDelete("{id}")]
+        // Xóa nhà cung cấp theo ID
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var rank = await _services.GetById(id);
-            if (rank == null)
-                return NotFound(" không tồn tại.");
+            try
+            {
+                await _service.DeleteRankAsync(id);
+                return NoContent(); // Trả về trạng thái 204 No Content nếu xóa thành công
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Có lỗi xảy ra: " + ex.Message }); // Trả về thông điệp lỗi chung
+            }
+        }
 
-            await _services.Delete(id);
-            return Ok(new { message = "Xóa thành công." });
+        // Lấy tất cả nhà cung cấp
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _service.GetAllRanksAsync();
+            return Ok(result);
         }
     }
 }

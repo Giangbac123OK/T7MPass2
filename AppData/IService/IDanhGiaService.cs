@@ -10,10 +10,12 @@ namespace AppData.IService
 {
     public interface IDanhGiaService
     {
-        Task<List<Danhgia>> GetAll();
-        Task<Danhgia> GetById(int id);
-        Task Create(DanhgiaDTO dto);
-        Task Update(DanhgiaDTO dto);
+        Task<List<DanhgiaDTO>> GetAll();
+        Task<DanhgiaDTO> GetById(int id);
+        Task Create(DanhgiaDTO danhGiaDTO);
+        Task Update(int id, DanhgiaDTO danhGiaDTO);
         Task Delete(int id);
+        Task<DanhgiaDTO> getByidHDCT(int id);
+        Task<List<DanhgiaDTO>> GetByidSP(int idsp);
     }
 }

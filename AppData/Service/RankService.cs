@@ -14,49 +14,64 @@ namespace AppData.Service
 {
     public class RankService : IRankService
     {
-        private readonly IRankRepo _repository;
-        public RankService(IRankRepo repository)
+        private readonly IRankRepo _repos;
+        public RankService(IRankRepo repos)
         {
-            _repository = repository;
-
+            _repos = repos;
         }
-
-        public async Task Create(RankDTO dto)
+        public async Task AddRankDTOAsync(RankDTO rankDto)
         {
-            var rank = new Rank
+            var asf = new Rank()
             {
-                Tenrank = dto.Tenrank,
-                MinMoney = dto.MinMoney,
-                MaxMoney = dto.MaxMoney,
-                Trangthai = dto.Trangthai
+                Tenrank = rankDto.Tenrank,
+                MaxMoney = rankDto.MaxMoney,
+                MinMoney = rankDto.MinMoney,
+                Trangthai = 0,
+
             };
-
-            await _repository.Create(rank);
+            await _repos.AddAsync(asf);
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Rank>> GetAll()
+        public async Task DeleteRankAsync(int id)
         {
-            return await _repository.GetAll();
+            await _repos.DeleteAsync(id);
         }
 
-        public async Task<Rank> GetById(int id)
+        public async Task<IEnumerable<RankDTO>> GetAllRanksAsync()
         {
-            return await _repository.GetById(id);
+            var a = await _repos.GetAllAsync();
+            return a.Select(x => new RankDTO()
+            {
+                Tenrank = x.Tenrank,
+                MaxMoney = x.MaxMoney,
+                MinMoney = x.MinMoney,
+                Trangthai = x.Trangthai,
+            });
         }
 
-        public async Task Update(RankDTO dto)
+        public async Task<RankDTO> GetRankByIdAsync(int id)
         {
-            var rank = await _repository.GetById(dto.Id);
-            if (rank == null) return;
+            var x = await _repos.GetByIdAsync(id);
+            return new RankDTO()
+            {
+                Tenrank = x.Tenrank,
+                MaxMoney = x.MaxMoney,
+                MinMoney = x.MinMoney,
+                Trangthai = x.Trangthai,
+            };
+        }
 
-            rank.Tenrank = dto.Tenrank;
-            rank.MinMoney = dto.MinMoney;
-            rank.MaxMoney = dto.MaxMoney;
-            rank.Trangthai = dto.Trangthai;
+        public async Task UpdateRankAsync(int id, RankDTO rankDTO)
+        {
+            var x = await _repos.GetByIdAsync(id);
+            if (x == null) throw new KeyNotFoundException("Khách hàng không tồn tại.");
+            x.Tenrank = rankDTO.Tenrank;
+            x.MaxMoney = rankDTO.MaxMoney;
+            x.MinMoney = rankDTO.MinMoney;
+            x.Trangthai = rankDTO.Trangthai;
+            await _repos.UpdateAsync(x);
 
-            await _repository.Update(rank);
+
         }
     }
 }

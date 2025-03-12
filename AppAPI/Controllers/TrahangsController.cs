@@ -16,65 +16,111 @@ namespace AppAPI.Controllers
     [ApiController]
     public class TrahangsController : ControllerBase
     {
-        private readonly ITraHangService _services;
-
-        public TrahangsController(ITraHangService services)
+        private readonly ITraHangService _ser;
+        public TrahangsController(ITraHangService ser)
         {
-            _services = services;
+            _ser = ser;
         }
-
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> Get()
         {
-            var trahangs = await _services.GetAll();
-            return Ok(trahangs);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var trahang = await _services.GetById(id);
-            if (trahang == null)
-                return NotFound("đơn trả hàng không tồn tại.");
-
-            return Ok(trahang);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, TrahangDTO dto)
-        {
-            dto.Id = id;
-
             try
             {
-                await _services.Update(dto);
-                return Ok(new { message = "Cập nhật thành công." });
+                return Ok(await _ser.GetAll());
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(TrahangDTO dto)
+        [HttpGet("_KhachHang/{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _services.Create(dto);
-            return Ok(new { message = "Thêm thành công.", data = dto });
+            try
+            {
+                var a = await _ser.GetById(id);
+                if (a == null) return BadRequest("Không tồn tại");
+                return Ok(a);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
-        [HttpDelete("{id}")]
+        [HttpPost]
+        public async Task<IActionResult> Post(TrahangDTO dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    await _ser.Add(dto);
+                    return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut("_KhachHang/{id}")]
+        public async Task<IActionResult> Put(int id, TrahangDTO dto)
+        {
+            try
+            {
+                await _ser.Update(id, dto);
+                return Ok("Sửa thành công!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete("_KhachHang/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var trahang = await _services.GetById(id);
-            if (trahang == null)
-                return NotFound(" không tồn tại.");
-
-            await _services.Delete(id);
-            return Ok(new { message = "Xóa  thành công." });
+            try
+            {
+                await _ser.DeleteById(id);
+                return Ok("Xóa thành công!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete("_KhachHang/tra-hang-qua-han")]
+        public async Task<IActionResult> DeleteTrahangQua15Days()
+        {
+            try
+            {
+                await _ser.Trahangquahan();///a
+                return NoContent(); // HTTP 204 - Thành công, không trả về nội dung
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message }); // HTTP 404 - Không tìm thấy
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi hệ thống", details = ex.Message }); // HTTP 500 - Lỗi server
+            }
+        }
+        [HttpGet("_KhachHang/View-Hoa-Don-Tra-By-Idkh-{id}")]
+        public async Task<IActionResult> ViewHoaDonTraByIdkh(int id)
+        {
+            try
+            {
+                return Ok(await _ser.ViewHoaDonTraByIdkh(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

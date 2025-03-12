@@ -14,5 +14,8 @@ namespace AppData.IRepository
         Task Create(Danhgia danhgia);
         Task Update(Danhgia danhgia);
         Task Delete(int id);
+        Task<Danhgia> getByidHDCT(int id);
+        Task SaveChanges();
+        Task<List<Danhgia>> GetByidSP(int idsp);
     }
 }

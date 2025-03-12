@@ -10,10 +10,10 @@ namespace AppData.IService
 {
     public interface IThuongHieuService
     {
-        Task<List<Thuonghieu>> GetAll();
-        Task<Thuonghieu> GetById(int id);
-        Task Create(ThuonghieuDTO dto);
-        Task Update(ThuonghieuDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<ThuonghieuDTO>> GetAllAsync();
+        Task<ThuonghieuDTO> GetByIdAsync(int id);
+        Task<ThuonghieuDTO> AddAsync(ThuonghieuDTO dto);
+        Task<ThuonghieuDTO> UpdateAsync(int id, ThuonghieuDTO dto);
+        Task<bool> DeleteAsync(int id);
     }
 }

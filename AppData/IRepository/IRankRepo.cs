@@ -9,10 +9,10 @@ namespace AppData.IRepository
 {
     public interface IRankRepo
     {
-        Task<List<Rank>> GetAll();
-        Task<Rank> GetById(int id);
-        Task Create(Rank rank);
-        Task Update(Rank rank);
-        Task Delete(int id);
+        Task<IEnumerable<Rank>> GetAllAsync();
+        Task<Rank> GetByIdAsync(int id);
+        Task AddAsync(Rank rank);
+        Task UpdateAsync(Rank rank);
+        Task DeleteAsync(int id);
     }
 }

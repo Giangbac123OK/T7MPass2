@@ -8,39 +8,78 @@ namespace AppAPI.Controllers
     [Route("api/[controller]")]
     public class GiamgiaController : ControllerBase
     {
-        private readonly IGiamGiaService _service;
-
+        private readonly IGiamGiaService _Service;
         public GiamgiaController(IGiamGiaService service)
         {
-            _service = service;
-        }
+            _Service = service;
 
+        }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var sizes = await _service.GetAll();
-            return Ok(sizes);
+            var result = await _Service.GetAllAsync();
+            return Ok(result.Select(gg => new
+            {
+                gg.Id,
+                gg.Mota,
+                Donvi = gg.Donvi == 0 ? "VND" : "%",
+                gg.Giatri,
+                gg.Ngaybatdau,
+                gg.Ngayketthuc,
+                gg.Soluong,
+                Trangthai = gg.Trangthai switch
+                {
+                    0 => "Đang phát hành",
+                    1 => "Chuẩn bị phát hành",
+                    2 => "Dừng phát hành",
+                    _ => "Không xác định"
+                }
+            }));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var giamgia = await _service.GetById(id);
-            if (giamgia == null)
-                return NotFound("giảm giá không tồn tại.");
-
-            return Ok(giamgia);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, GiamgiaDTO dto)
-        {
-            dto.Id = id;
-
             try
             {
-                await _service.Update(dto);
-                return Ok(new { message = "Cập nhật giảm giá thành công." });
+                var giamgia = await _Service.GetByIdAsync(id);
+                return Ok(new
+                {
+                    giamgia.Id,
+                    giamgia.Mota,
+                    Donvi = giamgia.Donvi == 0 ? "VND" : "%",
+                    giamgia.Giatri,
+                    giamgia.Ngaybatdau,
+                    giamgia.Ngayketthuc,
+                    giamgia.Soluong,
+                    Trangthai = giamgia.Trangthai switch
+                    {
+                        0 => "Đang phát hành",
+                        1 => "Chuẩn bị phát hành",
+                        2 => "Dừng phát hành",
+                        _ => "Không xác định"
+                    }
+                });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Không tìm thấy mã giảm giá.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(GiamgiaDTO dto)
+        {
+            await _Service.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = dto.Mota }, dto);
+        }
+        [HttpPost("_KhachHang/AddRankToGiamgia")]
+        public async Task<IActionResult> AddRankToGiamgia([FromBody] GiamgiaDTO dto)
+        {
+            try
+            {
+                await _Service.AddRankToGiamgia(dto);
+                return Ok("Rank added to Giảm Giá thành công.");
             }
             catch (Exception ex)
             {
@@ -48,25 +87,18 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(GiamgiaDTO dto)
+        [HttpPut("/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] GiamgiaDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _service.Create(dto);
-            return Ok(new { message = "Thêm giảm giá thành công.", data = dto });
+            await _Service.UpdateAsync(id, dto);
+            return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existingGiamgia = await _service.GetById(id);
-            if (existingGiamgia == null)
-                return NotFound("Giảm giá không tồn tại.");
-
-            await _service.Delete(id);
-            return Ok(new { message = "Xóa giảm giá thành công." });
+            await _Service.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

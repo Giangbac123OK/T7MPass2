@@ -10,10 +10,10 @@ namespace AppData.IService
 {
     public interface IColorService
     {
-        Task<List<Color>> GetAll();
-        Task<Color> GetById(int id);
-        Task Create(ColorDTO dto);
-        Task Update(ColorDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<ColorDTO>> GetAllAsync();
+        Task<ColorDTO> GetByIdAsync(int id);
+        Task<ColorDTO> AddAsync(ColorDTO dto);
+        Task<ColorDTO> UpdateAsync(int id, ColorDTO dto);
+        Task<bool> DeleteAsync(int id);
     }
 }

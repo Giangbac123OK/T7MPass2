@@ -10,10 +10,11 @@ namespace AppData.IService
 {
     public interface INhanVienService
     {
-        Task<List<Nhanvien>> GetAll();
-        Task<Nhanvien> GetById(int id);
-        Task Create(NhanvienDTO dto);
-        Task Update(NhanvienDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<NhanvienDTO>> GetAllNhanviensAsync();
+        Task<NhanvienDTO> GetNhanvienByIdAsync(int id);
+        Task AddNhanvienAsync(NhanvienDTO nhanvienDto);
+        Task UpdateNhanvienAsync(int id, NhanvienDTO nhanvienDto);
+        Task DeleteNhanvienAsync(int id);
+        Task<IEnumerable<NhanvienDTO>> TimKiemNhanvienAsync(string search);
     }
 }

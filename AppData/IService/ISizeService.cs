@@ -10,10 +10,10 @@ namespace AppData.IService
 {
     public interface ISizeService
     {
-        Task<List<Size>> GetAll();
-        Task<Size> GetById(int id);
-        Task Create(SizeDTO dto);
-        Task Update(SizeDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<SizeDTO>> GetAllAsync();
+        Task<SizeDTO> GetByIdAsync(int id);
+        Task<SizeDTO> AddAsync(SizeDTO dto);
+        Task<SizeDTO> UpdateAsync(int id, SizeDTO dto);
+        Task<bool> DeleteAsync(int id);
     }
 }

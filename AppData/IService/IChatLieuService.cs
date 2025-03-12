@@ -10,10 +10,10 @@ namespace AppData.IService
 {
     public interface IChatLieuService
     {
-        Task<List<ChatLieu>> GetAll();
-        Task<ChatLieu> GetById(int id);
-        Task Create(ChatLieuDTO dto);
-        Task Update(ChatLieuDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<ChatLieuDTO>> GetAllAsync();
+        Task<ChatLieuDTO> GetByIdAsync(int id);
+        Task<ChatLieuDTO> AddAsync(ChatLieuDTO dto);
+        Task<ChatLieuDTO> UpdateAsync(int id, ChatLieuDTO dto);
+        Task<bool> DeleteAsync(int id);
     }
 }

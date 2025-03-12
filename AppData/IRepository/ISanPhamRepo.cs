@@ -1,4 +1,5 @@
 ﻿using AppData.Models;
+using AppData.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,20 @@ namespace AppData.IRepository
 {
     public interface ISanPhamRepo
     {
-        Task<List<Sanpham>> GetAll();
-        Task<Sanpham> GetById(int id);
-        Task Create(Sanpham sanpham);
-        Task Update(Sanpham sanpham);
-        Task Delete(int id);
-        Task<List<Sanpham>> SpNoiBat();
-        Task<List<Sanpham>> SpMoiNhat();
+        Task<IEnumerable<Sanpham>> GetAllAsync();
+        Task<Sanpham> GetByIdAsync(int id);
+        Task AddAsync(Sanpham sanpham);
+        Task UpdateAsync(Sanpham sanpham);
+        Task DeleteAsync(int id);
+        Task<IEnumerable<Sanpham>> SearchByNameAsync(string name);
+        Task<IEnumerable<SanphamViewModel>> GetAllSanphamViewModels();
+        Task<SanphamViewModel> GetSanphamViewModelByIdSP(int idsp);
+        Task<IEnumerable<SanphamViewModel>> GetAllSanphamGiamGiaViewModels();
+        Task<IEnumerable<SanphamViewModel>> GetAllSanphamByThuongHieu(int id);
+        Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(
+          List<string> tenThuocTinhs, // Danh sách tên thuộc tính cần tìm
+          decimal? giaMin = null,
+          decimal? giaMax = null,
+          int? idThuongHieu = null);
     }
 }

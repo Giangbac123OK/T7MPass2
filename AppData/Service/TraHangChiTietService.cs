@@ -2,6 +2,7 @@
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Models;
+using AppData.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,51 +16,133 @@ namespace AppData.Service
     public class TraHangChiTietService : ITraHangChiTietService
 
     {
-        private readonly ITraHangChiTietRepo _repo;
-
-        public TraHangChiTietService(ITraHangChiTietRepo repo)
+        private readonly ITraHangChiTietRepo _repos;
+        private readonly IHoaDonChiTietRepo _HDCTrepos;
+        private readonly ITraHangRepo _THrepos;
+        public TraHangChiTietService(ITraHangChiTietRepo repos, IHoaDonChiTietRepo hDCTrepos, ITraHangRepo tHrepos)
         {
-            _repo = repo;
+            _repos = repos;
+            _HDCTrepos = hDCTrepos;
+            _THrepos = tHrepos;
         }
 
-       
-        public async Task Create(TrahangchitietDTO dto)
+        public async Task Add(TrahangchitietDTO ct)
         {
-            var item = new Trahangchitiet
-            {
-                Idhdct = dto.Idhdct,
-                Idth = dto.Idth,
-                Ghichu = dto.Ghichu,
-                Soluong = dto.Soluong,
-                Tinhtrang = dto.Tinhtrang,
-                Hinhthucxuly = dto.Hinhthucxuly,
+            // Kiểm tra nếu trà hàng không tồn tại
+            var trahang = await _THrepos.GetById(ct.Idth);
+            if (trahang == null)
+                throw new ArgumentNullException("Trà hàng không tồn tại");
 
+            // Kiểm tra nếu trà hàng không tồn tại
+            var hdct = await _HDCTrepos.GetByIdAsync(ct.Idhdct);
+            if (hdct == null)
+                throw new ArgumentNullException("Hoá đơn chi tiết không tồn tại");
+
+            var a = new Trahangchitiet
+            {
+                Idth = ct.Idth,
+                Soluong = ct.Soluong,
+                Tinhtrang = ct.Tinhtrang,
+                Ghichu = ct.Ghichu,
+                Hinhthucxuly = ct.Hinhthucxuly,
+                Idhdct = ct.Idhdct
             };
-            await _repo.Create(item);
+            await _repos.Add(a);
+
+            ct.Id = a.Id;
         }
 
         public async Task Delete(int id)
         {
-           await _repo.Delete(id);
+            await _repos.Delete(id);
         }
 
-        public async Task<List<Trahangchitiet>> GetAll() => await _repo.GetAll();
-
-        public async Task<Trahangchitiet> GetById(int id) => await _repo.GetById(id);
-
-     
-
-        public async Task Update(TrahangchitietDTO dto)
+        public async Task<List<TrahangchitietDTO>> GetAll()
         {
-            var item = await GetById(dto.Id);
-            item.Idhdct = dto.Idhdct;
-            item.Idth = dto.Idth;
-            item.Ghichu = dto.Ghichu;
-            item.Soluong = dto.Soluong;
-            item.Tinhtrang = dto.Tinhtrang;
-            item.Hinhthucxuly = dto.Hinhthucxuly;
+            var a = await _repos.GetAll();
+            return a.Select(x => new TrahangchitietDTO
+            {
+                Id = x.Id,
+                Idth = x.Idth,
+                Soluong = x.Soluong,
+                Tinhtrang = x.Tinhtrang,
+                Ghichu = x.Ghichu,
+                Hinhthucxuly = x.Hinhthucxuly,
+                Idhdct = x.Idhdct
+            }).ToList();
+        }
 
-            await _repo.Update(item);
+        public async Task<TrahangchitietDTO> GetById(int id)
+        {
+            var x = await _repos.GetById(id);
+            return new TrahangchitietDTO
+            {
+                Id = x.Id,
+                Idth = x.Idth,
+                Soluong = x.Soluong,
+                Tinhtrang = x.Tinhtrang,
+                Ghichu = x.Ghichu,
+                Hinhthucxuly = x.Hinhthucxuly,
+                Idhdct = x.Idhdct
+            };
+        }
+
+        public async Task<List<TrahangchitietDTO>> GetByMaHD(int id)
+        {
+            var a = await _repos.GetByMaHD(id);
+            return a.Select(x => new TrahangchitietDTO
+            {
+                Id = x.Id,
+                Idth = x.Idth,
+                Soluong = x.Soluong,
+                Tinhtrang = x.Tinhtrang,
+                Ghichu = x.Ghichu,
+                Hinhthucxuly = x.Hinhthucxuly,
+                Idhdct = x.Idhdct
+            }).ToList();
+        }
+
+        public async Task Update(int id, TrahangchitietDTO ct)
+        {
+
+            // Kiểm tra nếu trà hàng không tồn tại
+            var a = await _repos.GetById(id);
+            if (a == null)
+                throw new ArgumentNullException("Trà hàng không tồn tại");
+            // Kiểm tra nếu trà hàng không tồn tại
+            var trahang = await _THrepos.GetById(ct.Idth);
+            if (trahang == null)
+                throw new ArgumentNullException("Trà hàng không tồn tại");
+
+            // Kiểm tra nếu trà hàng không tồn tại
+            var hdct = await _THrepos.GetById(ct.Idhdct);
+            if (hdct == null)
+                throw new ArgumentNullException("Hoá đơn chi tiết không tồn tại");
+
+            if (a != null)
+            {
+                a.Idth = ct.Idth;
+                a.Soluong = ct.Soluong;
+                a.Tinhtrang = ct.Tinhtrang;
+                a.Ghichu = ct.Ghichu;
+                a.Hinhthucxuly = ct.Hinhthucxuly;
+                a.Idhdct = ct.Idhdct;
+                await _repos.Update(a);
+            }
+            else
+            {
+                throw new KeyNotFoundException("Không tồn tại!");
+            }
+        }
+
+        public async Task UpdateSoluongTra(int idhdct, int soluong)
+        {
+            await _repos.UpdateSoluongTra(idhdct, soluong);
+        }
+
+        public async Task<List<TrahangchitietViewModel>> ViewHoadonctTheoIdth(int id)
+        {
+            return await _repos.ViewHoadonctTheoIdth(id);
         }
     }
 }

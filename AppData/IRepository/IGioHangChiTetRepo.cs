@@ -9,10 +9,12 @@ namespace AppData.IRepository
 {
     public interface IGioHangChiTetRepo
     {
-        Task<List<Giohangchitiet>> GetAll();
-        Task<Giohangchitiet> GetById(int id);
-        Task Create(Giohangchitiet giohangchitiet);
-        Task Update(Giohangchitiet giohangchitiet);
-        Task Delete(int id);
+        Task<IEnumerable<Giohangchitiet>> GetAllAsync();
+        Task<Giohangchitiet> GetByIdAsync(int id);
+        Task<Giohangchitiet> GetByIdspctToGiohangAsync(int idgh, int idspct);
+        Task<List<Giohangchitiet>> GetGHCTByIdGH(int Idkh);
+        Task AddAsync(Giohangchitiet ct);
+        Task UpdateAsync(Giohangchitiet ct);
+        Task DeleteAsync(int id);
     }
 }

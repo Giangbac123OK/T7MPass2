@@ -9,10 +9,10 @@ namespace AppData.IRepository
 {
     public interface ISaleRepo
     {
-        Task<List<Sale>> GetAll();
-        Task<Sale> GetById(int id);
-        Task Create(Sale sale);
-        Task Update(Sale sale);
-        Task Delete(int id);
+        Task<IEnumerable<Sale>> GetAllAsync();
+        Task<Sale> GetByIdAsync(int id);
+        Task AddAsync(Sale sale);
+        Task UpdateAsync(Sale sale);
+        Task DeleteAsync(int id);
     }
 }

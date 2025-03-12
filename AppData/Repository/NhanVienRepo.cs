@@ -13,36 +13,59 @@ namespace AppData.Repository
     public class NhanVienRepo : INhanVienRepo
     {
         private readonly AppDbContext _context;
-
         public NhanVienRepo(AppDbContext context)
         {
             _context = context;
+
         }
 
-        public async Task Create(Nhanvien nhanvien)
+        public async Task<IEnumerable<Nhanvien>> GetAllAsync()
         {
-            _context.nhanviens.Add(nhanvien);
+            return await _context.Set<Nhanvien>().ToListAsync();
+        }
+
+        public async Task<Nhanvien> GetByIdAsync(int id)
+        {
+            return await _context.Set<Nhanvien>().FindAsync(id);
+        }
+
+        public async Task AddAsync(Nhanvien nhanvien)
+        {
+            await _context.Set<Nhanvien>().AddAsync(nhanvien);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task UpdateAsync(Nhanvien nhanvien)
         {
-            var nhanvien = await GetById(id);
+            _context.Set<Nhanvien>().Update(nhanvien);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var nhanvien = await GetByIdAsync(id);
             if (nhanvien != null)
             {
-                _context.nhanviens.Remove(nhanvien);
+                _context.Set<Nhanvien>().Remove(nhanvien);
                 await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException("Không tìm thấy nhân viên");
             }
         }
 
-        public async Task<List<Nhanvien>> GetAll() => await _context.nhanviens.ToListAsync();
-
-        public async Task<Nhanvien> GetById(int id) => await _context.nhanviens.FindAsync(id);
-
-        public async Task Update(Nhanvien nhanvien)
+        public async Task<IEnumerable<Nhanvien>> TimKiemNhanvienAsync(string search)
         {
-            _context.nhanviens.Update(nhanvien);
-            await _context.SaveChangesAsync();
+            if (search == null)
+            {
+                return await _context.nhanviens.ToListAsync();
+            }
+            else
+            {
+                search = search.ToLower();
+                return await _context.nhanviens.Where(x => x.Hovaten.StartsWith(search) || x.Sdt.StartsWith(search) || x.Diachi.StartsWith(search)).ToListAsync();
+            }
         }
     }
 }

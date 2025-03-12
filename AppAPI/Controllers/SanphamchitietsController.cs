@@ -16,65 +16,74 @@ namespace AppAPI.Controllers
     [ApiController]
     public class SanphamchitietsController : ControllerBase
     {
-        private readonly ISanPhamChiTietService _services;
-
-        public SanphamchitietsController(ISanPhamChiTietService services)
+        private readonly ISanPhamChiTietService _service;
+        public SanphamchitietsController(ISanPhamChiTietService service)
         {
-            _services = services;
-        }
+            _service = service;
 
+        }
+        // API để lấy tất cả sản phẩm chi tiết
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var sanphamchitiets = await _services.GetAll();
-            return Ok(sanphamchitiets);
+            var SanPhamCTList = await _service.GetAllAsync();
+            return Ok(SanPhamCTList);
         }
 
-        [HttpGet("{id}")]
+        // API để lấy sản phẩm chi tiết theo Id
+        [HttpGet("/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var sanphamchitiet = await _services.GetById(id);
-            if (sanphamchitiet == null)
-                return NotFound("Phương thức thanh toán không tồn tại.");
-
-            return Ok(sanphamchitiet);
+            var SanPhamCT = await _service.GetByIdAsync(id);
+            if (SanPhamCT == null) return NotFound(new { message = "Sản phẩm chi tiết không tìm thấy" });
+            return Ok(SanPhamCT);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, SanphamchitietDTO dto)
+        [HttpGet("/sanpham/{id}")]
+        public async Task<IActionResult> GetByIdSPAsync(int id)
         {
-            dto.Id = id;
-
             try
             {
-                await _services.Update(dto);
-                return Ok(new { message = "Cập nhật thành công." });
+                var thuoctinhDto = await _service.GetByIdSPAsync(id);
+
+                if (thuoctinhDto == null || !thuoctinhDto.Any())
+                {
+                    return NotFound(new { Message = "Không tìm thấy sản phẩm trong sản phẩm chi tiết với ID: " + id });
+                }
+
+                return Ok(thuoctinhDto);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, new { Message = "Đã xảy ra lỗi: " + ex.Message });
             }
         }
+
+        
 
         [HttpPost]
         public async Task<IActionResult> Create(SanphamchitietDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _services.Create(dto);
-            return Ok(new { message = "Thêm thành công.", data = dto });
+            await _service.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = dto.Mota }, dto);
+        }
+        
+        [HttpPut("/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] SanphamchitietDTO dto)
+        {
+            await _service.UpdateAsync(id, dto);
+            return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var sanphamchitiet = await _services.GetById(id);
-            if (sanphamchitiet == null)
-                return NotFound(" không tồn tại.");
-
-            await _services.Delete(id);
-            return Ok(new { message = "Xóa  thành công." });
+            await _service.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

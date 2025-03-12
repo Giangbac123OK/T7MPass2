@@ -17,65 +17,104 @@ namespace AppAPI.Controllers
     [ApiController]
     public class PhuongthucthanhtoansController : ControllerBase
     {
-        private readonly IPhuongThucThanhToanService _services;
+        private readonly IPhuongThucThanhToanService _Service_service;
 
-        public PhuongthucthanhtoansController(IPhuongThucThanhToanService services)
+        public PhuongthucthanhtoansController(IPhuongThucThanhToanService service)
         {
-            _services = services;
+            _Service_service = service;
         }
 
+        //sửa lại
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IEnumerable<PhuongthucthanhtoanDTO>>> GetAll()
         {
-            var phuongthucthanhtoans = await _services.GetAll();
-            return Ok(phuongthucthanhtoans);
+            // Lấy toàn bộ danh sách hiện có từ cơ sở dữ liệu
+            var existingItems = await _Service_service.GetAllAsync();
+
+            // Dữ liệu mặc định cần kiểm tra hoặc tạo
+            var defaultItems = new List<PhuongthucthanhtoanDTO>
+            {
+                new PhuongthucthanhtoanDTO { Id = 1, Tenpttt = "Thanh toán khi nhận hàng", Trangthai = 0 },
+                new PhuongthucthanhtoanDTO { Id = 2, Tenpttt = "Chuyển khoản ngân hàng", Trangthai = 0 }
+            };
+
+            // Danh sách item cần tạo mới
+            var itemsToCreate = new List<PhuongthucthanhtoanDTO>();
+
+            foreach (var defaultItem in defaultItems)
+            {
+                // Kiểm tra xem item mặc định có tồn tại trong danh sách không
+                var existingItem = existingItems.FirstOrDefault(e => e.Tenpttt.Equals(defaultItem.Tenpttt, StringComparison.OrdinalIgnoreCase));
+
+                if (existingItem == null)
+                {
+                    // Nếu không tồn tại, thêm vào danh sách cần tạo
+                    itemsToCreate.Add(defaultItem);
+                }
+            }
+
+            // Tạo mới các item cần tạo
+            if (itemsToCreate.Any())
+            {
+                foreach (var item in itemsToCreate)
+                {
+                    await _Service_service.AddAsync(item);
+                }
+            }
+
+            // Trả về danh sách đầy đủ sau khi xử lý
+            var result = await _Service_service.GetAllAsync();
+            return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+
+        [HttpGet("_Service/{id}")]
+        public async Task<ActionResult<PhuongthucthanhtoanDTO>> GetById(int id)
         {
-            var phuongthucthanhtoan = await _services.GetById(id);
-            if (phuongthucthanhtoan == null)
-                return NotFound("Phương thức thanh toán không tồn tại.");
+            var phuongthucthanhtoan = await _Service_service.GetByIdAsync(id);
+            if (phuongthucthanhtoan == null) return NotFound();
 
-            return Ok(phuongthucthanhtoan);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, PhuongthucthanhtoanDTO dto)
-        {
-            dto.Id = id;
-
-            try
+            return Ok(new
             {
-                await _services.Update(dto);
-                return Ok(new { message = "Cập nhật thành công." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                phuongthucthanhtoan.Id,
+                phuongthucthanhtoan.Tenpttt,
+                Trangthai = phuongthucthanhtoan.Trangthai == 0 ? "Đang sử dụng" : "Không sử dụng"
+            });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(PhuongthucthanhtoanDTO dto)
+        public async Task<ActionResult> Create(PhuongthucthanhtoanDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            await _services.Create(dto);
-            return Ok(new { message = "Thêm thành công.", data = dto });
+            // Kiểm tra trùng lặp
+            var existingItems = await _Service_service.GetAllAsync();
+            if (existingItems.Any(e => e.Tenpttt == dto.Tenpttt && e.Trangthai == dto.Trangthai))
+            {
+                return BadRequest("Phương thức thanh toán này đã tồn tại.");
+            }
+
+            await _Service_service.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("_Service/{id}")]
+        public async Task<ActionResult> Update(int id, PhuongthucthanhtoanDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var existingItem = await _Service_service.GetByIdAsync(id);
+            if (existingItem == null) return NotFound();
+
+            await _Service_service.UpdateAsync(id, dto);
+            return NoContent();
+        }
+
+        [HttpDelete("_Service/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var phuongthucthanhtoan = await _services.GetById(id);
-            if (phuongthucthanhtoan == null)
-                return NotFound(" không tồn tại.");
-
-            await _services.Delete(id);
-            return Ok(new { message = "Xóa  thành công." });
+            await _Service_service.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

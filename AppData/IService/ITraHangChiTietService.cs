@@ -1,5 +1,6 @@
 ﻿using AppData.DTO;
 using AppData.Models;
+using AppData.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,13 @@ namespace AppData.IService
 {
     public interface ITraHangChiTietService
     {
-        Task<List<Trahangchitiet>> GetAll();
-        Task<Trahangchitiet> GetById(int id);
-        Task Create(TrahangchitietDTO dto);
-        Task Update(TrahangchitietDTO dto);
+        Task<List<TrahangchitietDTO>> GetAll();
+        Task<TrahangchitietDTO> GetById(int id);
+        Task<List<TrahangchitietDTO>> GetByMaHD(int id);
+        Task Add(TrahangchitietDTO ct);
+        Task UpdateSoluongTra(int idhdct, int soluong);
+        Task Update(int id, TrahangchitietDTO ct);
         Task Delete(int id);
+        Task<List<TrahangchitietViewModel>> ViewHoadonctTheoIdth(int id);
     }
 }

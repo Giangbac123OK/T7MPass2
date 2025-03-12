@@ -1,4 +1,5 @@
 ﻿using AppData.Models;
+using AppData.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace AppData.IRepository
 {
     public interface ISizeRepo
     {
-        Task<List<Size>> GetAll();
-        Task<Size> GetById(int id);
-        Task Create(Size size);
-        Task Update(Size size);
-        Task Delete(int id);
+        Task<IEnumerable<Size>> GetAllAsync();
+        Task<Size> GetByIdAsync(int id);
+        Task<Size> AddAsync(Size entity);
+        Task<Size> UpdateAsync(Size entity);
+        Task<bool> DeleteAsync(int id);
     }
 }

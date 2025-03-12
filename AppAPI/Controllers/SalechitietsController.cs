@@ -16,65 +16,111 @@ namespace AppAPI.Controllers
     [ApiController]
     public class SalechitietsController : ControllerBase
     {
-        private readonly ISaleChiTietService _services;
+        private readonly ISaleChiTietService _KhachHang_service;
 
-        public SalechitietsController(ISaleChiTietService services)
+        public SalechitietsController(ISaleChiTietService service)
         {
-            _services = services;
+            _KhachHang_service = service;
         }
 
+        // API để lấy tất cả hoá đơn
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var salechitiets = await _services.GetAll();
-            return Ok(salechitiets);
+            var hoadonList = await _KhachHang_service.GetAllAsync();
+            return Ok(hoadonList);
         }
 
-        [HttpGet("{id}")]
+        // API để lấy hoá đơn theo Id
+        [HttpGet("_KhachHang/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var salechitiet = await _services.GetById(id);
-            if (salechitiet == null)
-                return NotFound("salechitiet không tồn tại.");
-
-            return Ok(salechitiet);
+            var hoadon = await _KhachHang_service.GetByIdAsync(id);
+            if (hoadon == null) return NotFound(new { message = "Sale không tìm thấy" });
+            return Ok(hoadon);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, SalechitietDTO dto)
+        // API để lấy hoá đơn theo Id
+        [HttpGet("_KhachHang/SanPhamCT/{id}")]
+        public async Task<IActionResult> GetByIdSPCT(int id)
         {
-            dto.Id = id;
+            var hoadon = await _KhachHang_service.GetByIdAsyncSpct(id);
+            if (hoadon == null) return NotFound(new { message = "Idspct không tìm thấy" });
+            return Ok(hoadon);
+        }
+
+        // API để thêm hoá đơn
+        [HttpPost]
+        public async Task<IActionResult> Add(SalechitietDTO dto)
+        {
+            // Kiểm tra tính hợp lệ của dữ liệu
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Trả về lỗi nếu DTO không hợp lệ
+            }
 
             try
             {
-                await _services.Update(dto);
-                return Ok(new { message = "Cập nhật thành công." });
+                // Thêm hóa đơn
+                await _KhachHang_service.AddAsync(dto);
+
+                // Trả về ID của hóa đơn mới được tạo
+                return CreatedAtAction(nameof(GetById), new { id = dto.Idsale }, dto);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // Xử lý lỗi nếu có khi thêm hoá đơn
+                return StatusCode(500, new { message = "Lỗi khi thêm hoá đơn", error = ex.Message });
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(SalechitietDTO dto)
+        // API để cập nhật hoá đơn
+        [HttpPut("_KhachHang/{id}")]
+        public async Task<IActionResult> Update(int id, SalechitietDTO dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(ModelState); // Trả về lỗi nếu DTO không hợp lệ
+            }
 
-            await _services.Create(dto);
-            return Ok(new { message = "Thêm thành công.", data = dto });
+            var existingHoadon = await _KhachHang_service.GetByIdAsync(id);
+            if (existingHoadon == null)
+            {
+                return NotFound(new { message = "Hoá đơn không tìm thấy" });
+            }
+
+            try
+            {
+                await _KhachHang_service.UpdateAsync(dto, id);
+                return NoContent(); // Trả về status code 204 nếu cập nhật thành công
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có khi cập nhật hoá đơn
+                return StatusCode(500, new { message = "Lỗi khi cập nhật hoá đơn", error = ex.Message });
+            }
         }
 
-        [HttpDelete("{id}")]
+        // API để xóa hoá đơn
+        [HttpDelete("_KhachHang/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var salechitiet = await _services.GetById(id);
-            if (salechitiet == null)
-                return NotFound(" không tồn tại.");
+            var existingHoadon = await _KhachHang_service.GetByIdAsync(id);
+            if (existingHoadon == null)
+            {
+                return NotFound(new { message = "Hoá đơn không tìm thấy" });
+            }
 
-            await _services.Delete(id);
-            return Ok(new { message = "Xóa  thành công." });
+            try
+            {
+                await _KhachHang_service.DeleteAsync(id);
+                return NoContent(); // Trả về status code 204 nếu xóa thành công
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có khi xóa hoá đơn
+                return StatusCode(500, new { message = "Lỗi khi xóa hoá đơn", error = ex.Message });
+            }
         }
     }
 }

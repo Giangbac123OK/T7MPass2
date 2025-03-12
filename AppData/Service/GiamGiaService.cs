@@ -9,60 +9,69 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace AppData.Service
 {
     public class GiamGiaService : IGiamGiaService
     {
         private readonly IGiamGiaRepo _repository;
-        public GiamGiaService(IGiamGiaRepo repository)
+        private readonly IMapper _mapper;
+        public GiamGiaService(IGiamGiaRepo repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
+
+        }
+        public async Task<IEnumerable<GiamgiaDTO>> GetAllAsync()
+        {
+            var giamgias = await _repository.GetAllAsync();
+            return _mapper.Map<IEnumerable<GiamgiaDTO>>(giamgias);
+        }
+
+        public async Task<GiamgiaDTO> GetByIdAsync(int id)
+        {
+            var giamgia = await _repository.GetByIdAsync(id);
+            if (giamgia == null) throw new KeyNotFoundException("Không tìm thấy mã giảm giá.");
+
+            return _mapper.Map<GiamgiaDTO>(giamgia);
+        }
+
+        public async Task AddAsync(GiamgiaDTO dto)
+        {
+            var giamgia = _mapper.Map<Giamgia>(dto);
+            await _repository.AddAsync(giamgia);
 
         }
 
-        public async Task Create(GiamgiaDTO dto)
+        public async Task UpdateAsync(int id, GiamgiaDTO dto)
+        {
+            var existingGiamgia = await _repository.GetByIdAsync(id);
+            if (existingGiamgia == null) throw new KeyNotFoundException("Không tìm thấy mã giảm giá.");
+            _mapper.Map(dto, existingGiamgia);
+            await _repository.UpdateAsync(existingGiamgia);
+
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            await _repository.DeleteAsync(id);
+        }
+
+        public async Task AddRankToGiamgia(GiamgiaDTO dto)
         {
             var giamgia = new Giamgia
             {
                 Mota = dto.Mota,
                 Donvi = dto.Donvi,
-                Soluong = dto.Soluong,
                 Giatri = dto.Giatri,
                 Ngaybatdau = dto.Ngaybatdau,
                 Ngayketthuc = dto.Ngayketthuc,
                 Trangthai = dto.Trangthai
             };
 
-            await _repository.Create(giamgia);
-        }
-
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Giamgia>> GetAll()
-        {
-            return await _repository.GetAll();
-        }
-
-        public async Task<Giamgia> GetById(int id)
-        {
-            return await _repository.GetById(id);
-        }
-
-        public async Task Update(GiamgiaDTO dto)
-        {
-            var giamgia = await _repository.GetById(dto.Id);
-            if (giamgia == null) return;
-
-            giamgia.Mota = dto.Mota;
-            giamgia.Donvi = dto.Donvi;
-            giamgia.Soluong = dto.Soluong;
-            giamgia.Giatri = dto.Giatri;
-            giamgia.Ngaybatdau = dto.Ngaybatdau;
-            giamgia.Ngayketthuc = dto.Ngayketthuc;
-            giamgia.Trangthai = dto.Trangthai;
-
-            await _repository.Update(giamgia);
+            await _repository.AddAsync(giamgia);
+            await _repository.AddRankToGiamgia(giamgia.Id, dto.RankNames);
         }
     }
 }

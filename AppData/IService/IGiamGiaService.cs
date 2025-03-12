@@ -10,10 +10,11 @@ namespace AppData.IService
 {
     public interface IGiamGiaService
     {
-        Task<List<Giamgia>> GetAll();
-        Task<Giamgia> GetById(int id);
-        Task Create(GiamgiaDTO dto);
-        Task Update(GiamgiaDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<GiamgiaDTO>> GetAllAsync();
+        Task<GiamgiaDTO> GetByIdAsync(int id);
+        Task AddAsync(GiamgiaDTO dto);
+        Task UpdateAsync(int id, GiamgiaDTO dto);
+        Task AddRankToGiamgia(GiamgiaDTO dto);
+        Task DeleteAsync(int id);
     }
 }

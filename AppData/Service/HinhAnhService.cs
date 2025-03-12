@@ -17,75 +17,143 @@ namespace AppData.Service
         private readonly IHinhAnhRepo _repository;
         private readonly ITraHangRepo _THrepository;
         private readonly IDanhGiaRepo _DGrepository;
-        public HinhAnhService(IHinhAnhRepo repository, ITraHangRepo tHrepository, IDanhGiaRepo dGrepository)
+        public HinhAnhService(IHinhAnhRepo repository, ITraHangRepo THrepository, IDanhGiaRepo DGrepository)
         {
             _repository = repository;
-            _THrepository = tHrepository;
-            _DGrepository = dGrepository;
+            _THrepository = THrepository;
+            _DGrepository = DGrepository;
         }
 
-        public async Task Create(HinhanhDTO dto)
+        public async Task AddAsync(HinhanhDTO entity)
         {
-            if(dto.Iddanhgia != null)
+            // Kiểm tra nếu trà hàng không tồn tại
+            if( entity.Idtrahang != null)
             {
-                int iddanhgia = (int)dto.Iddanhgia;
-                var danhgia = await _DGrepository.GetById(iddanhgia);
-                if (danhgia == null) return;
-            }
-
-            if (dto.Idtrahang != null)
-            {
-                int idtrahang = (int)dto.Idtrahang;
+                int idtrahang = (int)entity.Idtrahang;
                 var trahang = await _THrepository.GetById(idtrahang);
-                if (trahang == null) return;
+                if (trahang == null)
+                    throw new ArgumentNullException("Trà hàng không tồn tại");
             }
 
+            if (entity.Idtrahang != null)
+            {
+                int iddanhgia = (int)entity.Iddanhgia;
+                var danhgia = await _DGrepository.GetById(iddanhgia);
+                if (danhgia == null)
+                    throw new ArgumentNullException("Đánh giá không tồn tại");
+            }
+            // Tạo đối tượng Hinhanh mới
             var hinhanh = new Hinhanh
             {
-                Urlhinhanh = dto.Urlhinhanh,
-                Idtrahang = dto.Idtrahang,
-                Iddanhgia = dto.Iddanhgia
+                Urlhinhanh = entity.Urlhinhanh,
+                Idtrahang = entity.Idtrahang,
+                Iddanhgia = entity.Iddanhgia
             };
 
-            await _repository.Create(hinhanh);
+            // Thêm hình ảnh vào cơ sở dữ liệu và đợi kết quả
+            await _repository.AddAsync(hinhanh);
+
+            // Trả về dữ liệu hình ảnh đã thêm vào cơ sở dữ liệu
+            entity.Id = hinhanh.Id; // Gán ID từ Hoadon vào DTO
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Hinhanh>> GetAll()
+        public async Task DeleteAsync(int id)
         {
-            return await _repository.GetAll();
+            await _repository.DeleteAsync(id);
         }
 
-        public async Task<Hinhanh> GetById(int id)
+        public async Task<IEnumerable<Hinhanh>> GetAllAsync()
         {
-            return await _repository.GetById(id);
-        }
+            var entities = await _repository.GetAllAsync();
 
-        public async Task Update(HinhanhDTO dto)
-        {
-            var hinhanh = await _repository.GetById(dto.Id);
-            if (hinhanh == null) return;
-
-            if (dto.Iddanhgia != null)
+            return entities.Select(hoaDon => new Hinhanh
             {
-                int iddanhgia = (int)dto.Iddanhgia;
-                var danhgia = await _DGrepository.GetById(iddanhgia);
-                if (danhgia == null) return;
-            }
+                Id = hoaDon.Id,
+                Idtrahang = hoaDon.Idtrahang,
+                Iddanhgia = hoaDon.Iddanhgia,
+                Urlhinhanh = hoaDon.Urlhinhanh,
+            });
+        }
 
-            if (dto.Idtrahang != null)
+        public async Task<Hinhanh> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new Hinhanh
             {
-                int idtrahang = (int)dto.Idtrahang;
+                Id = entity.Id,
+                Idtrahang = entity.Idtrahang,
+                Iddanhgia = entity.Iddanhgia,
+                Urlhinhanh = entity.Urlhinhanh,
+            };
+        }
+
+
+        public async Task<List<Hinhanh>> GetByIdTraHangAsync(int id)
+        {
+            var entities = await _repository.GetByIdTraHangAsync(id);
+
+            if (entities == null || !entities.Any())
+                return new List<Hinhanh>();
+
+            return entities.Select(entity => new Hinhanh
+            {
+                Id = entity.Id,
+                Idtrahang = entity.Idtrahang,
+                Iddanhgia = entity.Iddanhgia,
+                Urlhinhanh = entity.Urlhinhanh,
+            }).ToList();
+        }
+
+        public async Task<List<Hinhanh>> GetByIdDanhGiaAsync(int id)
+        {
+            var entities = await _repository.GetByIdDanhGiaAsync(id);
+
+            if (entities == null || !entities.Any())
+                return new List<Hinhanh>();
+
+            return entities.Select(entity => new Hinhanh
+            {
+                Id = entity.Id,
+                Idtrahang = entity.Idtrahang,
+                Iddanhgia = entity.Iddanhgia,
+                Urlhinhanh = entity.Urlhinhanh,
+            }).ToList();
+        }
+
+        public async Task UpdateAsync(HinhanhDTO dto, int id)
+        {
+
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) throw new KeyNotFoundException("Hình ảnh không tồn tại");
+
+            if (entity.Idtrahang != null)
+            {
+                int idtrahang = (int)entity.Idtrahang;
                 var trahang = await _THrepository.GetById(idtrahang);
-                if (trahang == null) return;
+                if (trahang == null)
+                    throw new ArgumentNullException("Trà hàng không tồn tại");
             }
 
-            hinhanh.Urlhinhanh = dto.Urlhinhanh;
-            hinhanh.Idtrahang = dto.Idtrahang;
-            hinhanh.Iddanhgia = dto.Iddanhgia;
+            if (entity.Idtrahang != null)
+            {
+                int iddanhgia = (int)entity.Iddanhgia;
+                var danhgia = await _DGrepository.GetById(iddanhgia);
+                if (danhgia == null)
+                    throw new ArgumentNullException("Đánh giá không tồn tại");
+            }
 
-            await _repository.Update(hinhanh);
+            if (entity != null)
+            {
+                entity.Idtrahang = dto.Idtrahang;
+                entity.Iddanhgia = dto.Iddanhgia;
+                entity.Urlhinhanh = dto.Urlhinhanh;
+
+                await _repository.AddAsync(entity);
+            }
+            ;
+
         }
     }
 }

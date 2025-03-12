@@ -10,10 +10,13 @@ namespace AppData.IService
 {
     public interface IGioHangChiTetService
     {
-        Task<List<Giohangchitiet>> GetAll();
-        Task<Giohangchitiet> GetById(int id);
-        Task Create(GiohangchitietDTO dto);
-        Task Update(GiohangchitietDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<GiohangchitietDTO>> GetAllGiohangsAsync();
+        Task<GiohangchitietDTO> GetGiohangByIdAsync(int id);
+        Task<List<GiohangchitietDTO>> GetGHCTByIdGH(int Idkh);
+        Task<GiohangchitietDTO> GetByIdspctToGiohangAsync(int idgh, int idspct);
+        Task UpdateSoLuongGiohangAsync(int id, GiohangchitietDTO dto);
+        Task AddGiohangAsync(GiohangchitietDTO dto);
+        Task UpdateGiohangAsync(int id, GiohangchitietDTO dto);
+        Task DeleteGiohangAsync(int id);
     }
 }

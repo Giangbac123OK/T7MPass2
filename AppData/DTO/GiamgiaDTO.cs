@@ -19,5 +19,6 @@ namespace AppData.DTO
 		public DateTime Ngayketthuc { get; set; }
 		public int Trangthai { get; set; }
 
-	}
+        public List<string> RankNames { get; set; }
+    }
 }

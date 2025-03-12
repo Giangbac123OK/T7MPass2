@@ -14,59 +14,105 @@ namespace AppData.Service
 {
     public class GioHangChiTetService : IGioHangChiTetService
     {
-        private readonly IGioHangChiTetRepo _repository;
-        private readonly IGioHangRepo _GHrepository;
-        private readonly ISanPhamChiTietRepo _SPCTrepository;
-        public GioHangChiTetService(IGioHangChiTetRepo repository, IGioHangRepo GHrepository, ISanPhamChiTietRepo SPCTrepository)
+        private readonly IGioHangChiTetRepo _repos;
+        public GioHangChiTetService(IGioHangChiTetRepo repos)
         {
-            _repository = repository;
-            _GHrepository = GHrepository;
-            _SPCTrepository = SPCTrepository;
+            _repos = repos;
         }
-
-        public async Task Create(GiohangchitietDTO dto)
+        public async Task AddGiohangAsync(GiohangchitietDTO dto)
         {
-            var giohang = await _GHrepository.GetById(dto.Idgh);
-            if (giohang == null) return;
-
-            var giohangchitiet = new Giohangchitiet
+            var gh = new Giohangchitiet()
             {
                 Idgh = dto.Idgh,
                 Idspct = dto.Idspct,
                 Soluong = dto.Soluong
             };
-
-            await _repository.Create(giohangchitiet);
+            await _repos.AddAsync(gh);
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Giohangchitiet>> GetAll()
+        public async Task DeleteGiohangAsync(int id)
         {
-            return await _repository.GetAll();
+            await _repos.DeleteAsync(id);
         }
 
-        public async Task<Giohangchitiet> GetById(int id)
+        public async Task<List<GiohangchitietDTO>> GetGHCTByIdGH(int idspct)
         {
-            return await _repository.GetById(id);
+            try
+            {
+                var results = await _repos.GetGHCTByIdGH(idspct);
+
+                var dtoList = results.Select(result => new GiohangchitietDTO
+                {
+                    Id = result.Id,
+                    Idgh = result.Idgh,
+                    Idspct = result.Idspct,
+                    Soluong = result.Soluong,
+                }).ToList();
+
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi tìm giỏ hàng chi tiết by giỏ hàng: " + ex.Message);
+            }
         }
 
-        public async Task Update(GiohangchitietDTO dto)
+        public async Task<IEnumerable<GiohangchitietDTO>> GetAllGiohangsAsync()
         {
-            var giohangchitiet = await _repository.GetById(dto.Id);
-            if (giohangchitiet == null) return;
+            var a = await _repos.GetAllAsync();
+            return a.Select(x => new GiohangchitietDTO()
+            {
+                Id = x.Id,
+                Idspct = x.Idspct,
+                Idgh = x.Idgh,
+                Soluong = x.Soluong
+            });
+        }
 
-            var giohang = await _GHrepository.GetById(dto.Idgh);
-            if (giohang == null) return;
+        public async Task<GiohangchitietDTO> GetByIdspctToGiohangAsync(int idgh, int idspct)
+        {
+            var entity = await _repos.GetByIdspctToGiohangAsync(idgh, idspct);
+            if (entity == null) return null;
 
-            var sanphamchitiet = await _SPCTrepository.GetById(dto.Idspct);
-            if (sanphamchitiet == null) return;
+            // Mapping entity to DTO
+            return new GiohangchitietDTO
+            {
+                Id = entity.Id,
+                Idspct = entity.Idspct,
+                Soluong = entity.Soluong,
+                Idgh = entity.Idgh,
+            };
+        }
 
-            giohangchitiet.Idgh = dto.Idgh;
-            giohangchitiet.Idspct = dto.Idspct;
-            giohangchitiet.Soluong = dto.Soluong;
+        public async Task<GiohangchitietDTO> GetGiohangByIdAsync(int id)
+        {
+            var a = await _repos.GetByIdAsync(id);
+            return new GiohangchitietDTO()
+            {
+                Id = a.Id,
+                Idspct = a.Idspct,
+                Idgh = a.Idgh,
+                Soluong = a.Soluong
+            };
+        }
+        public async Task UpdateSoLuongGiohangAsync(int id, GiohangchitietDTO dto)
+        {
+            var a = await _repos.GetByIdAsync(id);
+            if (a == null) throw new KeyNotFoundException("Giỏ hàng không tồn tại.");
+            a.Soluong += dto.Soluong;
+            a.Idgh = dto.Idgh;
+            a.Idspct = dto.Idspct;
+            await _repos.UpdateAsync(a);
+        }
 
-            await _repository.Update(giohangchitiet);
+        public async Task UpdateGiohangAsync(int id, GiohangchitietDTO dto)
+        {
+            var a = await _repos.GetByIdAsync(id);
+            if (a == null) throw new KeyNotFoundException("Giỏ hàng không tồn tại.");
+            a.Soluong = dto.Soluong;
+            a.Idgh = dto.Idgh;
+            a.Idspct = dto.Idspct;
+            await _repos.UpdateAsync(a);
         }
     }
 }

@@ -9,10 +9,11 @@ namespace AppData.IRepository
 {
     public interface IGiamGiaRepo
     {
-        Task<List<Giamgia>> GetAll();
-        Task<Giamgia> GetById(int id);
-        Task Create(Giamgia giamgia);
-        Task Update(Giamgia giamgia);
-        Task Delete(int id);
+        Task<IEnumerable<Giamgia>> GetAllAsync();
+        Task<Giamgia> GetByIdAsync(int id);
+        Task<Giamgia> AddAsync(Giamgia giamgia);
+        Task<Giamgia> UpdateAsync(Giamgia giamgia);
+        Task AddRankToGiamgia(int giamgiaId, List<string> rankNames);
+        Task DeleteAsync(int id);
     }
 }

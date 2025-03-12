@@ -10,10 +10,10 @@ namespace AppData.IService
 {
     public interface IRankService
     {
-        Task<List<Rank>> GetAll();
-        Task<Rank> GetById(int id);
-        Task Create(RankDTO dto);
-        Task Update(RankDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<RankDTO>> GetAllRanksAsync();
+        Task<RankDTO> GetRankByIdAsync(int id);
+        Task AddRankDTOAsync(RankDTO rankDto);
+        Task UpdateRankAsync(int id, RankDTO rankDTO);
+        Task DeleteRankAsync(int id);
     }
 }

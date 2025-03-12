@@ -18,25 +18,52 @@ namespace AppData.Repository
         {
             _context = context;
         }
-        public async Task Create(giamgia_rank giamgia_Rank)
+        public async Task<IEnumerable<giamgia_rank>> GetAllAsync()
         {
-            _context.giamgia_Ranks.Add(giamgia_Rank);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task Delete(int id)
-        {
-            var giamgia_Rank = await GetById(id);
-            if (giamgia_Rank != null)
+            try
             {
-                _context.giamgia_Ranks.Remove(giamgia_Rank);
-                await _context.SaveChangesAsync();
+                return await _context.giamgia_Ranks.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy danh sách giảm giá - rank: " + ex.Message);
             }
         }
 
-        public async Task<List<giamgia_rank>> GetAll() => await _context.giamgia_Ranks.ToListAsync();
+        public async Task<giamgia_rank> GetByIdAsync(int id)
+        {
+            try
+            {
+                var result = await _context.giamgia_Ranks.FindAsync(id);
+                if (result == null)
+                    throw new KeyNotFoundException("Không tìm thấy giảm giá - rank với ID: " + id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi tìm giảm giá - rank: " + ex.Message);
+            }
+        }
 
-        public async Task<giamgia_rank> GetById(int id) => await _context.giamgia_Ranks.FindAsync(id);
+        public async Task<List<giamgia_rank>> GetByIdRankSPCTAsync(int idspct)
+        {
+            return await _context.giamgia_Ranks
+                                   .Where(t => t.Idrank == idspct)
+                                   .ToListAsync();
+        }
 
+
+        public async Task AddAsync(giamgia_rank sanphamchitiet)
+        {
+            try
+            {
+                _context.giamgia_Ranks.Add(sanphamchitiet);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Lỗi khi thêm giảm giá - rank: " + ex.InnerException?.Message ?? ex.Message);
+            }
+        }
     }
 }

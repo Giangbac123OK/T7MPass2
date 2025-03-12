@@ -12,37 +12,61 @@ namespace AppData.Repository
 {
     public class DiaChiRepo : IDiaChiRepo
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _db;
 
-        public DiaChiRepo(AppDbContext context)
+        public DiaChiRepo(AppDbContext db)
         {
-            _context = context;
+            _db = db;
         }
 
         public async Task Create(Diachi diachi)
         {
-            _context.diachis.Add(diachi);
-            await _context.SaveChangesAsync();
+            await _db.diachis.AddAsync(diachi);
         }
 
         public async Task Delete(int id)
         {
-            var diachi = await GetById(id);
-            if (diachi != null)
+            var item = await GetByIdAsync(id);
+            _db.diachis.Remove(item);
+
+        }
+
+        public async Task<IEnumerable<Diachi>> GetAllDiaChi()
+        {
+            return await _db.diachis.ToListAsync();
+        }
+
+        public async Task<Diachi> GetByIdAsync(int id)
+        {
+            try
             {
-                _context.diachis.Remove(diachi);
-                await _context.SaveChangesAsync();
+                return await _db.diachis
+                                     .Include(h => h.Khachhang)
+                                     .FirstOrDefaultAsync(h => h.Id == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi lấy hóa đơn với ID {id}.", ex);
             }
         }
 
-        public async Task<List<Diachi>> GetAll() => await _context.diachis.ToListAsync();
+        public async Task<List<Diachi>> GetDiaChiByIdKH(int Idkh)
+        {
+            return await _db.diachis.Where(t => t.Idkh == Idkh).ToListAsync();
+        }
 
-        public async Task<Diachi> GetById(int id) => await _context.diachis.FindAsync(id);
+        public async Task SaveChanges()
+        {
+            await _db.SaveChangesAsync();
+        }
 
         public async Task Update(Diachi diachi)
         {
-            _context.diachis.Update(diachi);
-            await _context.SaveChangesAsync();
+            var updateItem = await GetByIdAsync(diachi.Id);
+            if (updateItem != null)
+            {
+                _db.Entry(diachi).State = EntityState.Modified;
+            }
         }
     }
 }

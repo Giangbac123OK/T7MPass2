@@ -16,57 +16,47 @@ namespace AppAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IEnumerable<ColorDTO>>> GetAll()
         {
-            var colors = await _service.GetAll();
-            return Ok(colors);
+            var result = await _service.GetAllAsync();
+            return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet("/{id}")]
+        public async Task<ActionResult<ColorDTO>> GetById(int id)
         {
-            var color = await _service.GetById(id);
-            if (color == null)
-                return NotFound("Màu không tồn tại.");
-
-            return Ok(color);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, ColorDTO dto)
-        {
-            dto.Id = id;
-
-            try
-            {
-                await _service.Update(dto);
-                return Ok(new { message = "Cập nhật màu thành công." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _service.GetByIdAsync(id);
+            if (result == null) return NotFound();
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ColorDTO dto)
+        public async Task<ActionResult<ColorDTO>> Create(ColorDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            await _service.Create(dto);
-            return Ok(new { message = "Thêm màu thành công.", data = dto });
+            var result = await _service.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { tenmau = result.Tenmau }, result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("/{id}")]
+        public async Task<ActionResult<ColorDTO>> Update(int id, ColorDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var result = await _service.UpdateAsync(id, dto);
+            if (result == null) return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpDelete("/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existingColor = await _service.GetById(id);
-            if (existingColor == null)
-                return NotFound("Màu không tồn tại.");
+            var result = await _service.DeleteAsync(id);
+            if (!result) return NotFound();
 
-            await _service.Delete(id);
-            return Ok(new { message = "Xóa màu thành công." });
+            return NoContent();
         }
     }
 }

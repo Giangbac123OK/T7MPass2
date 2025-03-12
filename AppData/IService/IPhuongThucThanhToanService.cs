@@ -10,10 +10,10 @@ namespace AppData.IService
 {
     public interface IPhuongThucThanhToanService
     {
-        Task<List<Phuongthucthanhtoan>> GetAll();
-        Task<Phuongthucthanhtoan> GetById(int id);
-        Task Create(PhuongthucthanhtoanDTO dto);
-        Task Update(PhuongthucthanhtoanDTO dto);
-        Task Delete(int id);
+        Task<IEnumerable<PhuongthucthanhtoanDTO>> GetAllAsync();
+        Task<PhuongthucthanhtoanDTO> GetByIdAsync(int id);
+        Task AddAsync(PhuongthucthanhtoanDTO dto);
+        Task UpdateAsync(int id, PhuongthucthanhtoanDTO dto);
+        Task DeleteAsync(int id);
     }
 }

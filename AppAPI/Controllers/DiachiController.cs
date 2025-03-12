@@ -8,39 +8,38 @@ namespace AppAPI.Controllers
     [Route("api/[controller]")]
     public class DiachiController : ControllerBase
     {
-        private readonly IDiaChiService _service;
+        private readonly IDiaChiService _diaChiService;
 
-        public DiachiController(IDiaChiService service)
+        public DiachiController(IDiaChiService diaChiService)
         {
-            _service = service;
+            _diaChiService = diaChiService;
         }
 
+        // GET: api/Diachis
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IEnumerable<DiachiDTO>>> Getdiachis()
         {
-            var diachis = await _service.GetAll();
-            return Ok(diachis);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var diachi = await _service.GetById(id);
-            if (diachi == null)
-                return NotFound("Địa chỉ không tồn tại.");
-
-            return Ok(diachi);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, DiachiDTO dto)
-        {
-            dto.Id = id;
-
             try
             {
-                await _service.Update(dto);
-                return Ok(new { message = "Cập nhật địa chỉ thành công." });
+                var item = await _diaChiService.GetAllDiaChi();
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        // GET: api/Diachis/5
+        [HttpGet("/{id}")]
+        public async Task<ActionResult<DiachiDTO>> GetDiachi(int id)
+        {
+            try
+            {
+                var diachi = await _diaChiService.GetByIdAsync(id);
+                if (diachi == null) return NotFound(new { message = "Địa chỉ không tìm thấy" });
+                return Ok(diachi);
             }
             catch (Exception ex)
             {
@@ -48,25 +47,71 @@ namespace AppAPI.Controllers
             }
         }
 
+        [HttpGet("/khachhang/{id}")]
+        public async Task<IActionResult> GetDiaChiByIdKH(int id)
+        {
+            try
+            {
+                var DiachiDTO = await _diaChiService.GetDiaChiByIdKH(id);
+
+                return Ok(DiachiDTO);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Đã xảy ra lỗi: " + ex.Message });
+            }
+        }
+
+        // PUT: api/Diachis/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("/{id}")]
+        public async Task<IActionResult> PutDiachi(int id, DiachiDTO diachi)
+        {
+
+            try
+            {
+                await _diaChiService.Update(id, diachi);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
+        }
+
+        // POST: api/Diachis
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> Create(DiachiDTO dto)
+        public async Task<ActionResult<DiachiDTO>> PostDiachi(DiachiDTO diachi)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await _service.Create(dto);
-            return Ok(new { message = "Thêm địa chỉ thành công.", data = dto });
+            await _diaChiService.Create(diachi);
+            return CreatedAtAction(nameof(Getdiachis), new { id = diachi.Diachicuthe }, diachi);
+
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        // DELETE: api/Diachis/5
+        [HttpDelete("/{id}")]
+        public async Task<IActionResult> DeleteDiachi(int id)
         {
-            var existingDiachi = await _service.GetById(id);
-            if (existingDiachi == null)
-                return NotFound("Đại chỉ không tồn tại.");
+            try
+            {
+                await _diaChiService.Delete(id);
 
-            await _service.Delete(id);
-            return Ok(new { message = "Xóa địa chỉ thành công." });
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

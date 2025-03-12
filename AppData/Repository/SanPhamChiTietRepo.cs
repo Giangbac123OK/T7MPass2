@@ -1,5 +1,7 @@
-﻿using AppData.IRepository;
+﻿using AppData.DTO;
+using AppData.IRepository;
 using AppData.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,30 +21,83 @@ namespace AppData.Repository
             _context = context;
         }
 
-        public async Task Create(Sanphamchitiet sanphamchitiet)
+        public async Task<IEnumerable<Sanphamchitiet>> GetAllAsync()
         {
-            _context.Sanphamchitiets.Add(sanphamchitiet);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task Delete(int id)
-        {
-            var sanphamchitiet = await GetById(id);
-            if (sanphamchitiet != null)
+            try
             {
-                _context.Sanphamchitiets.Remove(sanphamchitiet);
-                await _context.SaveChangesAsync();
+                return await _context.Sanphamchitiets.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy danh sách sản phẩm chi tiết: " + ex.Message);
             }
         }
 
-        public async Task<List<Sanphamchitiet>> GetAll() => await _context.Sanphamchitiets.ToListAsync();
-
-        public async Task<Sanphamchitiet> GetById(int id) => await _context.Sanphamchitiets.FindAsync(id);
-
-        public async Task Update(Sanphamchitiet sanphamchitiet)
+        public async Task<Sanphamchitiet> GetByIdAsync(int id)
         {
-            _context.Sanphamchitiets.Update(sanphamchitiet);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var result = await _context.Sanphamchitiets.FindAsync(id);
+                if (result == null)
+                    throw new KeyNotFoundException("Không tìm thấy sản phẩm chi tiết với ID: " + id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi tìm sản phẩm chi tiết: " + ex.Message);
+            }
+        }
+        public async Task<List<Sanphamchitiet>> GetByIdSPAsync(int idsp)
+        {
+            return await _context.Sanphamchitiets
+                                   .Where(t => t.Idsp == idsp)
+                                   .ToListAsync();
+        }
+
+
+        public async Task<Sanphamchitiet> AddAsync(Sanphamchitiet sanphamchitiet)
+        {
+            try
+            {
+                _context.Sanphamchitiets.Add(sanphamchitiet);
+                await _context.SaveChangesAsync();
+                return sanphamchitiet;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Lỗi khi thêm sản phẩm chi tiết: " + ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        public async Task<Sanphamchitiet> UpdateAsync(Sanphamchitiet sanphamchitiet)
+        {
+            try
+            {
+                _context.Sanphamchitiets.Update(sanphamchitiet);
+                await _context.SaveChangesAsync();
+                return sanphamchitiet;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Lỗi khi cập nhật sản phẩm chi tiết: " + ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            try
+            {
+                var sanphamchitiet = await _context.Sanphamchitiets.FindAsync(id);
+                if (sanphamchitiet == null)
+                    throw new KeyNotFoundException("Không tìm thấy sản phẩm chi tiết với ID: " + id);
+
+                _context.Sanphamchitiets.Remove(sanphamchitiet);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Lỗi khi xóa sản phẩm chi tiết: " + ex.InnerException?.Message ?? ex.Message);
+            }
         }
     }
 }

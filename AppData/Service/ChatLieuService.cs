@@ -15,44 +15,70 @@ namespace AppData.Service
     public class ChatLieuService : IChatLieuService
     {
         private readonly IChatLieuRepo _repository;
-        public ChatLieuService(IChatLieuRepo repository)
-        {
-            _repository = repository;
 
+        public ChatLieuService(IChatLieuRepo repos)
+        {
+            _repository = repos;
         }
 
-        public async Task Create(ChatLieuDTO dto)
+
+        public async Task<IEnumerable<ChatLieuDTO>> GetAllAsync()
         {
-            var color = new ChatLieu
+            var entities = await _repository.GetAllAsync();
+            return entities.Select(e => new ChatLieuDTO
+            {
+                Tenchatlieu = e.Tenchatlieu,
+                Trangthai = e.Trangthai
+            });
+        }
+
+        public async Task<ChatLieuDTO> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new ChatLieuDTO
+            {
+                Tenchatlieu = entity.Tenchatlieu,
+                Trangthai = entity.Trangthai
+            };
+        }
+
+        public async Task<ChatLieuDTO> AddAsync(ChatLieuDTO dto)
+        {
+            var entity = new Models.ChatLieu
             {
                 Tenchatlieu = dto.Tenchatlieu,
                 Trangthai = dto.Trangthai
             };
 
-            await _repository.Create(color);
+            var addedEntity = await _repository.AddAsync(entity);
+            return new ChatLieuDTO
+            {
+                Tenchatlieu = addedEntity.Tenchatlieu,
+                Trangthai = addedEntity.Trangthai
+            };
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<ChatLieu>> GetAll()
+        public async Task<ChatLieuDTO> UpdateAsync(int id, ChatLieuDTO dto)
         {
-            return await _repository.GetAll();
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            entity.Tenchatlieu = dto.Tenchatlieu;
+            entity.Trangthai = dto.Trangthai;
+
+            var updatedEntity = await _repository.UpdateAsync(entity);
+            return new ChatLieuDTO
+            {
+                Tenchatlieu = updatedEntity.Tenchatlieu,
+                Trangthai = updatedEntity.Trangthai
+            };
         }
 
-        public async Task<ChatLieu> GetById(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            return await _repository.GetById(id);
-        }
-
-        public async Task Update(ChatLieuDTO dto)
-        {
-            var chatlieu = await _repository.GetById(dto.Id);
-            if (chatlieu == null) return;
-
-            chatlieu.Tenchatlieu = dto.Tenchatlieu;
-            chatlieu.Trangthai = dto.Trangthai;
-
-            await _repository.Update(chatlieu);
+            return await _repository.DeleteAsync(id);
         }
     }
 }

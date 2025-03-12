@@ -2,6 +2,7 @@
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Models;
+using AppData.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -28,114 +29,204 @@ namespace AppData.Service
             _PTTTrepository = PTTTrepository;
         }
 
-        public async Task Create(HoadonDTO dto)
+        public async Task UpdateTrangThaiAsync(int orderCode, int status, int trangthaiTT)
         {
-            if (dto.Idnv != null)
+            var entity = await _repository.GetByIdAsync(orderCode);
+            if (entity == null) throw new KeyNotFoundException("Hoá đơn không tồn tại");
+
+            entity.Trangthai = status;
+            entity.Trangthaithanhtoan = trangthaiTT;
+            await _repository.UpdateAsync(entity);
+        }
+
+
+        public async Task<IEnumerable<Hoadon>> GetAllAsync()
+        {
+
+            var entities = await _repository.GetAllAsync();
+
+            return entities.Select(hoaDon => new Hoadon
             {
-                int idnv = (int)dto.Idnv;
-                var nhanvien = await _NVrepository.GetById(idnv);
-                if (nhanvien == null) return;
+                Id = hoaDon.Id,
+                Idnv = hoaDon.Idnv,
+                Idkh = hoaDon.Idkh,
+                Trangthaithanhtoan = hoaDon.Trangthaithanhtoan,
+                Trangthaidonhang = hoaDon.Trangthaidonhang,
+                Thoigiandathang = hoaDon.Thoigiandathang,
+                Diachiship = hoaDon.Diachiship,
+                Ngaygiaothucte = hoaDon.Ngaygiaothucte,
+                Tongtiencantra = hoaDon.Tongtiencantra,
+                Tongtiensanpham = hoaDon.Tongtiensanpham,
+                Sdt = hoaDon.Sdt,
+                Tonggiamgia = hoaDon.Tonggiamgia,
+                Ghichu = hoaDon.Ghichu,
+                Idgg = hoaDon.Idgg,
+                Trangthai = hoaDon.Trangthai,
+            });
+        }
+
+        public async Task<List<HoadonDTO>> Checkvoucher(int idKh)
+        {
+            try
+            {
+                // Lấy dữ liệu từ repository
+                var results = await _repository.Checkvoucher(idKh);
+
+                // Kiểm tra nếu không có dữ liệu hoặc dữ liệu không hợp lệ, trả về null
+                if (results == null || !results.Any())
+                    return null; // Trả về null khi không có dữ liệu
+
+                // Ánh xạ thủ công từ entity sang DTO và lọc chỉ lấy những Idgg khác null
+                var dtoList = results
+                    .Where(result => result.Idgg != null)  // Lọc các Idgg không null
+                    .Select(result => new HoadonDTO
+                    {
+                        Idgg = result.Idgg,
+                    })
+                    .ToList();
+
+                // Nếu không có mã giảm giá hợp lệ, trả về null
+                if (!dtoList.Any())
+                    return null;
+
+                // Trả về danh sách DTO
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và throw ra thông báo lỗi
+                throw new Exception("Lỗi khi tìm giảm giá trong hoá đơn: " + ex.Message);
+            }
+        }
+
+        public async Task<HoadonDTO> GetByIdAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new HoadonDTO
+            {
+                Id = entity.Id,
+                Idnv = entity.Idnv,
+                Idkh = entity.Idkh,
+                Trangthaithanhtoan = entity.Trangthaithanhtoan,
+                Trangthaidonhang = entity.Trangthaidonhang,
+                Thoigiandathang = entity.Thoigiandathang,
+                Diachiship = entity.Diachiship,
+                Ngaygiaothucte = entity.Ngaygiaothucte,
+                Tongtiencantra = entity.Tongtiencantra,
+                Tongtiensanpham = entity.Tongtiensanpham,
+                Sdt = entity.Sdt,
+                Tonggiamgia = entity.Tonggiamgia,
+                Ghichu = entity.Ghichu,
+                Idgg = entity.Idgg,
+                Trangthai = entity.Trangthai,
+            };
+        }
+
+        public async Task AddAsync(HoadonDTO HoadonDTO)
+        {
+            // Kiểm tra xem khách hàng có tồn tại không
+            if (HoadonDTO.Idkh != 0)
+            {
+                int idkh = HoadonDTO.Idkh.Value;
+                var khachhang = await _KHrepository.GetByIdAsync(idkh);
+                if (khachhang == null) throw new ArgumentNullException("Khách hàng không tồn tại");
             }
 
-            if (dto.Idkh != null)
+            // Kiểm tra xem mã giảm giá có tồn tại không
+            if (HoadonDTO.Idgg != 0)
             {
-                int idkh = (int)dto.Idkh;
-                var nhanvien = await _NVrepository.GetById(idkh);
-                if (nhanvien == null) return;
+                int idgg = HoadonDTO.Idgg.Value; // Chuyển đổi từ int? sang int
+                var giamgia = await _GGrepository.GetByIdAsync(idgg);
+
+                if (giamgia == null)
+                {
+                    // Cải thiện thông báo lỗi nếu không tìm thấy mã giảm giá
+                    throw new ArgumentNullException(nameof(giamgia), "Mã giảm giá không tồn tại");
+                }
+
+                // Giảm số lượng mã giảm giá
+                giamgia.Soluong -= 1;
+                _GGrepository.UpdateAsync(giamgia);
             }
 
-            if (dto.Idgg != null)
+            // Tạo đối tượng Hoadon từ DTO
+            var hoaDon = new Hoadon
             {
-                int idgg = (int)dto.Idgg;
-                var nhanvien = await _NVrepository.GetById(idgg);
-                if (nhanvien == null) return;
-            }
-
-            var phuongthucthanhtoan = await _NVrepository.GetById(dto.Idpttt);
-            if (phuongthucthanhtoan == null) return;
-
-            var hoadon = new Hoadon
-            {
-                Idnv = dto.Idnv,
-                Idkh = dto.Idkh,
-                Trangthaithanhtoan = dto.Trangthaithanhtoan,
-                Trangthaidonhang = dto.Trangthaidonhang,
-                Thoigiandathang = dto.Thoigiandathang,
-                Diachiship = dto.Diachiship,
-                Ngaygiaothucte = dto.Ngaygiaothucte,
-                Tongtiencantra = dto.Tongtiencantra,
-                Tongtiensanpham = dto.Tongtiensanpham,
-                Sdt = dto.Sdt,
-                Tonggiamgia = dto.Tonggiamgia,
-                Idgg = dto.Idgg,
-                Trangthai = dto.Trangthai,
-                Phivanchuyen = dto.Phivanchuyen,
-                Idpttt = dto.Idpttt,
-                Ghichu = dto.Ghichu
+                Idnv = HoadonDTO.Idnv == 0 ? (int?)null : HoadonDTO.Idnv,  // Nếu Idnv = 0, gán null
+                Idkh = HoadonDTO.Idkh == 0 ? (int?)null : HoadonDTO.Idkh,  // Nếu Idgg = 0, gán null
+                Trangthaithanhtoan = HoadonDTO.Trangthaithanhtoan,
+                Trangthaidonhang = HoadonDTO.Trangthaidonhang,
+                Thoigiandathang = HoadonDTO.Thoigiandathang,
+                Diachiship = HoadonDTO.Diachiship,
+                Ngaygiaothucte = null,
+                Tongtiencantra = HoadonDTO.Tongtiencantra,
+                Tongtiensanpham = HoadonDTO.Tongtiensanpham,
+                Ghichu = HoadonDTO.Ghichu,
+                Sdt = HoadonDTO.Sdt,
+                Tonggiamgia = HoadonDTO.Tonggiamgia,
+                Idgg = HoadonDTO.Idgg == 0 ? (int?)null : HoadonDTO.Idgg,  // Nếu Idgg = 0, gán null
+                Trangthai = HoadonDTO.Trangthai,
             };
 
-            await _repository.Create(hoadon);
+            // Thêm hóa đơn vào cơ sở dữ liệu
+            await _repository.AddAsync(hoaDon);
+
+            // Gán lại ID của hóa đơn từ đối tượng Hoadon vào DTO
+            HoadonDTO.Id = hoaDon.Id; // Gán ID từ Hoadon vào DTO
         }
 
-        public async Task Delete(int id) => await _repository.Delete(id);
-
-        public async Task<List<Hoadon>> GetAll()
+        // Phương thức cập nhật hoá đơn
+        public async Task UpdateAsync(HoadonDTO dto, int id)
         {
-            return await _repository.GetAll();
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) throw new KeyNotFoundException("Hóa đơn không tồn tại");
+
+            // Kiểm tra xem khách hàng có tồn tại không
+            if (dto.Idkh != 0)
+            {
+                int idkh = dto.Idkh.Value;
+                var khachhang = await _KHrepository.GetByIdAsync(idkh);
+                if (khachhang == null) throw new ArgumentNullException("Khách hàng không tồn tại");
+            }
+
+            if (entity != null)
+            {
+                entity.Idnv = dto.Idnv == 0 ? (int?)null : dto.Idnv;
+                entity.Idkh = dto.Idkh == 0 ? (int?)null : dto.Idkh;
+                entity.Trangthaithanhtoan = dto.Trangthaithanhtoan;
+                entity.Trangthaidonhang = dto.Trangthaidonhang;
+                entity.Thoigiandathang = dto.Thoigiandathang;
+                entity.Diachiship = dto.Diachiship;
+                entity.Ngaygiaothucte = dto.Ngaygiaothucte;
+                entity.Tongtiencantra = dto.Tongtiencantra;
+                entity.Tongtiensanpham = dto.Tongtiensanpham;
+                entity.Sdt = dto.Sdt;
+                entity.Tonggiamgia = dto.Tonggiamgia;
+                entity.Idgg = dto.Idgg == 0 ? (int?)null : dto.Idgg;
+                entity.Trangthai = dto.Trangthai;
+                entity.Ghichu = dto.Ghichu;
+                await _repository.UpdateAsync(entity);
+
+                entity.Id = id; // Gán ID từ Hoadon vào DTO
+            }
         }
 
-        public async Task<Hoadon> GetById(int id)
+        // Phương thức xóa hoá đơn
+        public async Task DeleteAsync(int id)
         {
-            return await _repository.GetById(id);
+            await _repository.DeleteAsync(id);
         }
 
-        public async Task Update(HoadonDTO dto)
+        public async Task<List<HoaDonViewModel>> TimhoadontheoIdKH(int id)
         {
-            var hoadon = await _repository.GetById(dto.Id);
-            if (hoadon == null) return;
+            return await _repository.TimhoadontheoIdKH(id);
+        }
 
-            if (dto.Idnv != null)
-            {
-                int idnv = (int)dto.Idnv;
-                var nhanvien = await _NVrepository.GetById(idnv);
-                if (nhanvien == null) return;
-            }
-
-            if (dto.Idkh != null)
-            {
-                int idkh = (int)dto.Idkh;
-                var nhanvien = await _NVrepository.GetById(idkh);
-                if (nhanvien == null) return;
-            }
-
-            if (dto.Idgg != null)
-            {
-                int idgg = (int)dto.Idgg;
-                var nhanvien = await _NVrepository.GetById(idgg);
-                if (nhanvien == null) return;
-            }
-
-            var phuongthucthanhtoan = await _NVrepository.GetById(dto.Idpttt);
-            if (phuongthucthanhtoan == null) return;
-
-            hoadon.Idnv = dto.Idnv;
-            hoadon.Idkh = dto.Idkh;
-            hoadon.Trangthaithanhtoan = dto.Trangthaithanhtoan;
-            hoadon.Trangthaidonhang = dto.Trangthaidonhang;
-            hoadon.Thoigiandathang = dto.Thoigiandathang;
-            hoadon.Diachiship = dto.Diachiship;
-            hoadon.Ngaygiaothucte = dto.Ngaygiaothucte;
-            hoadon.Tongtiencantra = dto.Tongtiencantra;
-            hoadon.Tongtiensanpham = dto.Tongtiensanpham;
-            hoadon.Sdt = dto.Sdt;
-            hoadon.Tonggiamgia = dto.Tonggiamgia;
-            hoadon.Idgg = dto.Idgg;
-            hoadon.Trangthai = dto.Trangthai;
-            hoadon.Phivanchuyen = dto.Phivanchuyen;
-            hoadon.Idpttt = dto.Idpttt;
-            hoadon.Ghichu = dto.Ghichu;
-
-            await _repository.Update(hoadon);
+        public async Task Danhandonhang(int id)
+        {
+            await _repository.Danhandonhang(id);
         }
     }
 }
