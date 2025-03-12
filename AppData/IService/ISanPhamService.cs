@@ -28,6 +28,5 @@ namespace AppData.IService
         decimal? giaMin = null,
         decimal? giaMax = null,
         int? idThuongHieu = null);
-
     }
 }

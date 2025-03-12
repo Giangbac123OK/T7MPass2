@@ -1,4 +1,4 @@
-using AppData;
+﻿using AppData;
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Repository;
@@ -7,11 +7,23 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// 🔹 Thêm cấu hình CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()   // Cho phép tất cả nguồn (Frontend có thể gọi API)
+               .AllowAnyMethod()   // Cho phép tất cả HTTP methods (GET, POST, PUT, DELETE, ...)
+               .AllowAnyHeader();  // Cho phép tất cả headers
+    });
+});
+
+// Thêm DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Thêm các dịch vụ vào DI container
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddScoped<IPhuongThucThanhToanRepo, PhuongThucThanhToanRepo>();
 builder.Services.AddScoped<IPhuongThucThanhToanService, PhuongThucThanhToanService>();
 builder.Services.AddScoped<ISaleRepo, SaleRepo>();
@@ -64,7 +76,7 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 🔹 Cấu hình Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -73,6 +85,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// 🔹 Đặt CORS ngay sau HTTPS Redirection
 app.UseCors("AllowAll");
 
 app.UseAuthorization();
