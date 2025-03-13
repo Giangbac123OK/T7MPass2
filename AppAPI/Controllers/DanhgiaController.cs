@@ -36,7 +36,7 @@ namespace AppAPI.Controllers
         }
 
         // GET: api/Danhgias/5
-        [HttpGet("{id}")]
+        [HttpGet("/{id}")]
         public async Task<ActionResult<DanhgiaDTO>> GetDanhgia(int id)
         {
             try
@@ -60,7 +60,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("byIDhdct/{id}")]
+        [HttpGet("/byIDhdct/{id}")]
         public async Task<ActionResult<DanhgiaDTO>> GetDanhgiaByidHDCT(int id)
         {
             try
@@ -87,7 +87,7 @@ namespace AppAPI.Controllers
 
         // PUT: api/Danhgias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("/{id}")]
         public async Task<IActionResult> PutDanhgia(int id, DanhgiaDTO danhgia)
         {
             if (id != danhgia.Id)
@@ -144,7 +144,7 @@ namespace AppAPI.Controllers
 
 
         // DELETE: api/Danhgias/5
-        [HttpDelete("{id}")]
+        [HttpDelete("_KhachHang/{id}")]
         public async Task<IActionResult> DeleteDanhgia(int id)
         {
             if (await _services.GetAll() == null)
@@ -163,8 +163,9 @@ namespace AppAPI.Controllers
             }
         }
 
-        [HttpGet("GetByIdSPCT/{id}")]
-        public async Task<IActionResult> GetByIdSPCT(int id)
+        [HttpGet("GetByIdSP/{id}")]
+        public async Task<IActionResult> GetByIdSP(int id)
+
         {
             // Kiểm tra ID
             if (id <= 0)
@@ -182,6 +183,25 @@ namespace AppAPI.Controllers
             }
 
             return Ok(result); // Trả về kết quả nếu tìm thấy
+        }
+        [HttpGet("{idsp}/TinhTrungBinhDanhGia")]
+        public async Task<IActionResult> GetTBSaoDanhGia(int idsp)
+        {
+            // Kiểm tra ID
+            if (idsp <= 0)
+            {
+                return BadRequest(new { message = "ID sản phẩm chi tiết không hợp lệ." });
+            }
+            var danhGiaList = await _services.GetByidSP(idsp);
+
+            if (danhGiaList == null || !danhGiaList.Any())
+            {
+                return Ok(new { ProductId = idsp, AverageRating = 0 }); // Không có đánh giá, trả về 0
+            }
+
+            double averageRating = danhGiaList.Average(dg => dg.Sosao);
+
+            return Ok(new { ProductId = idsp, AverageRating = averageRating });
         }
     }
 }

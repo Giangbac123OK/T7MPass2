@@ -70,6 +70,9 @@ builder.Services.AddScoped<ITraHangRepo, TraHangRepo>();
 builder.Services.AddScoped<ITraHangService, TraHangService>();
 builder.Services.AddScoped<ITraHangChiTietRepo, TraHangChiTietRepo>();
 builder.Services.AddScoped<ITraHangChiTietService, TraHangChiTietService>();
+builder.Services.AddScoped<IThongKeSanPhamRepo, ThongKeSanPhamRepo>();
+builder.Services.AddScoped<IThongkeService, ThongkeService>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddEndpointsApiExplorer();
