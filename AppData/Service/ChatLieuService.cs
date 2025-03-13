@@ -27,6 +27,7 @@ namespace AppData.Service
             var entities = await _repository.GetAllAsync();
             return entities.Select(e => new ChatLieuDTO
             {
+                Id = e.Id,
                 Tenchatlieu = e.Tenchatlieu,
                 Trangthai = e.Trangthai
             });
@@ -38,7 +39,8 @@ namespace AppData.Service
             if (entity == null) return null;
 
             return new ChatLieuDTO
-            {
+            {   
+                Id = entity.Id,
                 Tenchatlieu = entity.Tenchatlieu,
                 Trangthai = entity.Trangthai
             };
@@ -47,14 +49,14 @@ namespace AppData.Service
         public async Task<ChatLieuDTO> AddAsync(ChatLieuDTO dto)
         {
             var entity = new Models.ChatLieu
-            {
+            {   
                 Tenchatlieu = dto.Tenchatlieu,
                 Trangthai = dto.Trangthai
             };
 
             var addedEntity = await _repository.AddAsync(entity);
             return new ChatLieuDTO
-            {
+            {   
                 Tenchatlieu = addedEntity.Tenchatlieu,
                 Trangthai = addedEntity.Trangthai
             };
@@ -70,7 +72,7 @@ namespace AppData.Service
 
             var updatedEntity = await _repository.UpdateAsync(entity);
             return new ChatLieuDTO
-            {
+            { 
                 Tenchatlieu = updatedEntity.Tenchatlieu,
                 Trangthai = updatedEntity.Trangthai
             };

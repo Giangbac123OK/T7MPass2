@@ -31,10 +31,14 @@ namespace AppData.Service
             {
                 Id = sanphamchitiet.Id,
                 Mota = sanphamchitiet.Mota,
+                UrlHinhanh = sanphamchitiet.UrlHinhanh,
                 Trangthai = sanphamchitiet.Trangthai,
                 Giathoidiemhientai = sanphamchitiet.Giathoidiemhientai,
                 Soluong = sanphamchitiet.Soluong,
                 Idsp = sanphamchitiet.Idsp,
+                IdSize = sanphamchitiet.IdSize,
+                IdMau = sanphamchitiet.IdMau,
+                IdChatLieu = sanphamchitiet.IdChatLieu,
             });
         }
 
@@ -48,9 +52,13 @@ namespace AppData.Service
                 Id = entity.Id,
                 Mota = entity.Mota,
                 Trangthai = entity.Trangthai,
+                UrlHinhanh = entity.UrlHinhanh,
                 Giathoidiemhientai = entity.Giathoidiemhientai,
                 Soluong = entity.Soluong,
                 Idsp = entity.Idsp,
+                IdSize = entity.IdSize,
+                IdMau = entity.IdMau,
+                IdChatLieu = entity.IdChatLieu,
             };
         }
 
@@ -71,8 +79,12 @@ namespace AppData.Service
                     Mota = result.Mota,
                     Trangthai = result.Trangthai,
                     Giathoidiemhientai = result.Giathoidiemhientai,
+                    UrlHinhanh = result.UrlHinhanh,
                     Soluong = result.Soluong,
                     Idsp = result.Idsp,
+                    IdSize = result.IdSize,
+                    IdMau = result.IdMau,
+                    IdChatLieu = result.IdChatLieu,
                 }).ToList();
 
                 return dtoList;
@@ -93,8 +105,12 @@ namespace AppData.Service
                 Mota = dto.Mota,
                 Trangthai = dto.Trangthai,
                 Giathoidiemhientai = dto.Giathoidiemhientai,
+                UrlHinhanh = dto.UrlHinhanh,
                 Soluong = dto.Soluong,
                 Idsp = dto.Idsp,
+                IdSize = dto.IdSize,
+                IdMau = dto.IdMau,
+                IdChatLieu = dto.IdChatLieu,
             };
 
             await _repository.AddAsync(sanphamchitiet);
@@ -114,8 +130,12 @@ namespace AppData.Service
                 entity.Mota = dto.Mota;
                 entity.Trangthai = dto.Trangthai;
                 entity.Giathoidiemhientai = dto.Giathoidiemhientai;
+                entity.UrlHinhanh = dto.UrlHinhanh;
                 entity.Soluong = dto.Soluong;
                 entity.Idsp = dto.Idsp;
+                entity.IdSize = dto.IdSize;
+                entity.IdMau = dto.IdMau;
+                entity.IdChatLieu = dto.IdChatLieu;
 
                 await _repository.UpdateAsync(entity);
             }
