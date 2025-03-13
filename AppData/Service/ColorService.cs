@@ -26,6 +26,7 @@ namespace AppData.Service
             var entities = await _repository.GetAllAsync();
             return entities.Select(e => new ColorDTO
             {
+                Id = e.Id,
                 Tenmau = e.Tenmau,
                 Mamau = e.Mamau,
                 Trangthai = e.Trangthai
@@ -39,6 +40,7 @@ namespace AppData.Service
 
             return new ColorDTO
             {
+                Id = entity.Id,
                 Tenmau = entity.Tenmau,
                 Mamau = entity.Mamau,
                 Trangthai = entity.Trangthai

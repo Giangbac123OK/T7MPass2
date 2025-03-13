@@ -28,6 +28,7 @@ namespace AppData.Service
             var entities = await _repository.GetAllAsync();
             return entities.Select(e => new SizeDTO
             {
+                Id = e.Id,
                 Sosize = e.Sosize,
                 Trangthai = e.Trangthai
             });
@@ -40,6 +41,7 @@ namespace AppData.Service
 
             return new SizeDTO
             {
+                Id = entity.Id,
                 Sosize = entity.Sosize,
                 Trangthai = entity.Trangthai
             };
@@ -55,7 +57,7 @@ namespace AppData.Service
 
             var addedEntity = await _repository.AddAsync(entity);
             return new SizeDTO
-            {
+            {   
                 Sosize = addedEntity.Sosize,
                 Trangthai = addedEntity.Trangthai
             };
@@ -65,6 +67,7 @@ namespace AppData.Service
         {
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null) return null;
+
 
             entity.Sosize = dto.Sosize;
             entity.Trangthai = dto.Trangthai;

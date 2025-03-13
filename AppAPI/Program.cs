@@ -29,6 +29,7 @@ builder.Services.AddScoped<IPhuongThucThanhToanService, PhuongThucThanhToanServi
 builder.Services.AddScoped<ISaleRepo, SaleRepo>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<ISanPhamChiTietRepo, SanPhamChiTietRepo>();
+builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IColorRepo, ColorRepo>();
 builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<IChatLieuRepo, ChatLieuRepo>();
@@ -87,7 +88,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // 🔹 Đặt CORS ngay sau HTTPS Redirection
-app.UseCors("AllowAll");
+app.UseCors("AllowAll"); 
+
+app.UseStaticFiles(); // Cho phép truy cập ảnh trong wwwroot
 
 app.UseAuthorization();
 
