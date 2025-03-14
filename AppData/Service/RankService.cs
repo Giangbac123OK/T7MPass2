@@ -42,6 +42,7 @@ namespace AppData.Service
             var a = await _repos.GetAllAsync();
             return a.Select(x => new RankDTO()
             {
+                Id = x.Id,
                 Tenrank = x.Tenrank,
                 MaxMoney = x.MaxMoney,
                 MinMoney = x.MinMoney,
