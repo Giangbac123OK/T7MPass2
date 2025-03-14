@@ -98,8 +98,29 @@ namespace AppData.Service
         public async Task AddAsync(SanphamchitietDTO dto)
         {
             var sanpham = await _isanphamchitietRepos.GetByIdAsync(dto.Idsp);
-            if (sanpham == null) throw new ArgumentNullException("Sản phẩm không tồn tại");
 
+            if (sanpham == null) throw new ArgumentNullException("Sản phẩm không tồn tại");
+            var size = await _isanphamchitietRepos.GetByIdAsync(dto.IdSize);
+            if (size == null) throw new ArgumentNullException("Size không tồn tại");
+
+            var chatlieu = await _isanphamchitietRepos.GetByIdAsync(dto.IdChatLieu);
+            if (chatlieu == null) throw new ArgumentNullException("Chất Liệu không tồn tại");
+
+            var mau = await _isanphamchitietRepos.GetByIdAsync(dto.IdMau);
+            if (mau == null) throw new ArgumentNullException("Màu không tồn tại");
+
+            var existingSanphamchitiet = await _repository.GetAllAsync();
+            bool exists = existingSanphamchitiet.Any(spct =>
+                spct.Idsp == dto.Idsp &&
+                spct.IdSize == dto.IdSize &&
+                spct.IdMau == dto.IdMau &&
+                spct.IdChatLieu == dto.IdChatLieu
+            );
+
+            if (exists)
+            {
+                throw new InvalidOperationException("Sản phẩm chi tiết với màu, size, chất liệu này đã tồn tại");
+            }
             var sanphamchitiet = new Sanphamchitiet
             {
                 Mota = dto.Mota,
@@ -119,11 +140,34 @@ namespace AppData.Service
         public async Task UpdateAsync(int id, SanphamchitietDTO dto)
         {
 
+
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null) throw new KeyNotFoundException("Không tìm thấy sản phẩm chi tiết.");
 
             var sanpham = await _isanphamchitietRepos.GetByIdAsync(dto.Idsp);
             if (sanpham == null) throw new ArgumentNullException("Sản phẩm không tồn tại");
+            var size = await _isanphamchitietRepos.GetByIdAsync(dto.IdSize);
+            if (size == null) throw new ArgumentNullException("Size không tồn tại");
+
+            var chatlieu = await _isanphamchitietRepos.GetByIdAsync(dto.IdChatLieu);
+            if (chatlieu == null) throw new ArgumentNullException("Chất Liệu không tồn tại");
+
+            var mau = await _isanphamchitietRepos.GetByIdAsync(dto.IdMau);
+            if (mau == null) throw new ArgumentNullException("Màu không tồn tại");
+
+
+            var existingSanphamchitiet = await _repository.GetAllAsync();
+            bool exists = existingSanphamchitiet.Any(spct =>
+                spct.Idsp == dto.Idsp &&
+                spct.IdSize == dto.IdSize &&
+                spct.IdMau == dto.IdMau &&
+                spct.IdChatLieu == dto.IdChatLieu
+            );
+
+            if (exists)
+            {
+                throw new InvalidOperationException("Sản phẩm chi tiết với màu, size, chất liệu này đã tồn tại");
+            }
 
             if (entity != null)
             {

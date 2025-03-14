@@ -20,6 +20,7 @@ namespace AppData.ViewModel
         public string ThuongHieu { get; set; }
         public int idThuongHieu { get; set; }
         public decimal GiaTriGiam { get; set; }
+       
         public List<SanphamchitietViewModel> Sanphamchitiets { get; set; }
     }
 
@@ -31,15 +32,13 @@ namespace AppData.ViewModel
         public decimal? GiaSaleSanPhamChiTiet { get; set; }
         public int Soluong { get; set; }
         public int TrangThai { get; set; }
-        public List<ThuoctinhsanphamchitietViewModel> ThuocTinhs { get; set; }
+        public string? UrlHinhanh { get; set; }
+        public int soLuongBan { get; set; }
+        public int IdSize { get; set; }
+        public int IdChatLieu { get; set; }
+        public int IdMau { get; set; }
         public List<SalechitietViewModel> Sales { get; set; }
-    }
 
-    public class ThuoctinhsanphamchitietViewModel
-    {
-       
-        public string Tenthuoctinh { get; set; }
-        public string Tenthuoctinhchitiet { get; set; }
     }
 
     public class SalechitietViewModel

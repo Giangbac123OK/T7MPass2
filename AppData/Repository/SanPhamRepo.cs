@@ -97,7 +97,9 @@ namespace AppData.Repository
                              GiaSaleSanPhamChiTiet = sale.Donvi == 0
                                  ? spct.Giathoidiemhientai - (decimal)sale.Giatrigiam
                                  : spct.Giathoidiemhientai * (1 - (decimal)sale.Giatrigiam / 100m)
-                         })
+                         }),
+
+                     
                  })
          })
          .ToListAsync();
@@ -118,7 +120,7 @@ namespace AppData.Repository
                     .Where(spct => spct.MaxSale != null)
                     .OrderByDescending(spct => spct.MaxSale.GiaTriGiam)
                     .FirstOrDefault();
-
+              
                 // Tính giá bán
                 var giaban = spctWithMaxSale != null
                     ? spctWithMaxSale.Giathoidiemhientai // Giá của spct được giảm giá nhiều nhất
@@ -143,7 +145,7 @@ namespace AppData.Repository
                     ? spctWithMaxSale.MaxSale.Giatrigiam // Giá trị giảm theo %
                     : spctWithMaxSale.MaxSale.Giatrigiam) // Giá trị giảm theo VND
                     : 0,
-
+                    
                 };
             });
 
@@ -194,6 +196,11 @@ namespace AppData.Repository
                         Giathoidiemhientai = spct.Giathoidiemhientai,
                         TrangThai = spct.Trangthai,
                         Soluong = spct.Soluong,
+                        IdChatLieu = spct.IdChatLieu,
+                        IdMau = spct.IdMau,
+                        IdSize = spct.IdSize,
+                        UrlHinhanh = spct.UrlHinhanh,
+                       
                         GiaSaleSanPhamChiTiet = spct.Salechitiets?
                             .Where(salect => salect.Sale != null && salect.Sale.Trangthai == 0 && salect.Soluong > 0) // Lọc Sale có trạng thái 0
                             .Select(salect =>
@@ -395,7 +402,7 @@ namespace AppData.Repository
 
 
         public async Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(
-    List<string> tenThuocTinhs = null,
+    
     decimal? giaMin = null,
     decimal? giaMax = null,
     int? idThuongHieu = null)
@@ -486,16 +493,6 @@ namespace AppData.Repository
                             : 0,
                     };
                 });
-
-            if (tenThuocTinhs != null && tenThuocTinhs.Any())
-            {
-                result = result.Where(sp =>
-                sp.Sanphamchitiets.Any(spct =>
-                spct.ThuocTinhs.Any(tt =>
-             tenThuocTinhs.Any(ttName => tt.Tenthuoctinhchitiet.Contains(ttName)))));
-
-            }
-
 
             // Lọc theo giá bán
             if (giaMin.HasValue)
