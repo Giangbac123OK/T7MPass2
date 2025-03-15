@@ -4,6 +4,7 @@ using AppData.IService;
 using AppData.Repository;
 using AppData.Service;
 using Microsoft.EntityFrameworkCore;
+using Net.payOS;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+PayOS payOS = new PayOS(configuration["Environment:PAYOS_CLIENT_ID"] ?? throw new Exception("Cannot find environment"),
+                    configuration["Environment:PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
+                    configuration["Environment:PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
+
 // Thêm các dịch vụ vào DI container
 builder.Services.AddControllers();
 builder.Services.AddScoped<IPhuongThucThanhToanRepo, PhuongThucThanhToanRepo>();
@@ -29,6 +37,7 @@ builder.Services.AddScoped<IPhuongThucThanhToanService, PhuongThucThanhToanServi
 builder.Services.AddScoped<ISaleRepo, SaleRepo>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<ISanPhamChiTietRepo, SanPhamChiTietRepo>();
+builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IColorRepo, ColorRepo>();
 builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<IChatLieuRepo, ChatLieuRepo>();
@@ -77,7 +86,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddSingleton(payOS);
 var app = builder.Build();
 
 // 🔹 Cấu hình Middleware
@@ -90,7 +99,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // 🔹 Đặt CORS ngay sau HTTPS Redirection
-app.UseCors("AllowAll");
+app.UseCors("AllowAll"); 
+
+app.UseStaticFiles(); // Cho phép truy cập ảnh trong wwwroot
 
 app.UseAuthorization();
 

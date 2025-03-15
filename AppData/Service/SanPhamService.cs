@@ -16,11 +16,14 @@ namespace AppData.Service
     public class SanPhamService : ISanPhamService
     {
         private readonly ISanPhamRepo _repository;
-        public SanPhamService(ISanPhamRepo repository)
+        private readonly IHoaDonChiTietRepo _hoaDonChiTietRepo;
+
+        public SanPhamService(ISanPhamRepo repository, IHoaDonChiTietRepo hoaDonChiTietRepo)
         {
             _repository = repository;
-
+            _hoaDonChiTietRepo = hoaDonChiTietRepo;
         }
+
         public async Task<IEnumerable<Sanpham>> GetAllAsync()
         {
             return await _repository.GetAllAsync();
@@ -150,7 +153,13 @@ namespace AppData.Service
 
         public async Task<SanphamViewModel> GetAllSanphamViewModelsByIdSP(int idsp)
         {
-            return await _repository.GetSanphamViewModelByIdSP(idsp);
+            var spView= await _repository.GetSanphamViewModelByIdSP(idsp);
+            foreach (var item in spView.Sanphamchitiets)
+            {
+                item.soLuongBan = await GetTotalSoldQuantityAsync(item.Id);
+                
+            }
+            return spView;
         }
 
         public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamGiamGiaViewModels()
@@ -163,9 +172,22 @@ namespace AppData.Service
             return await _repository.GetAllSanphamByThuongHieu(id);
         }
 
-        public async Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(List<string> tenThuocTinhs, decimal? giaMin = null, decimal? giaMax = null, int? idThuongHieu = null)
+        public async Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh( decimal? giaMin = null, decimal? giaMax = null, int? idThuongHieu = null)
         {
-            return await _repository.GetSanphamByThuocTinh(tenThuocTinhs, giaMin, giaMax, idThuongHieu);
+            return await _repository.GetSanphamByThuocTinh( giaMin, giaMax, idThuongHieu);
+        }
+
+        public async Task<int> GetTotalSoldQuantityAsync(int idSanphamChitiet)
+        {
+            var hoaDonChiTiets = await _hoaDonChiTietRepo.GetAllAsync();
+
+            return hoaDonChiTiets
+            .Where(hdct => hdct.Idspct == idSanphamChitiet &&
+                     hdct.Hoadon.Trangthaidonhang == (int)OrderStatus.DonHangThanhCong)
+            .Select(hdct => hdct.Soluong)
+            .DefaultIfEmpty(0) 
+            .Sum();
+
         }
     }
 }

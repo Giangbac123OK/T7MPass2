@@ -23,8 +23,9 @@ namespace AppData.IService
         Task<SanphamViewModel> GetAllSanphamViewModelsByIdSP(int idsp);
         Task<IEnumerable<SanphamViewModel>> GetAllSanphamGiamGiaViewModels();
         Task<IEnumerable<SanphamViewModel>> GetAllSanphamByThuongHieu(int id);
+        Task<int> GetTotalSoldQuantityAsync(int idSanphamChitiet);
         Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(
-        List<string> tenThuocTinhs, // Danh sách tên thuộc tính cần tìm
+        // Danh sách tên thuộc tính cần tìm
         decimal? giaMin = null,
         decimal? giaMax = null,
         int? idThuongHieu = null);
