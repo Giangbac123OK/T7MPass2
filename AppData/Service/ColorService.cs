@@ -59,10 +59,15 @@ namespace AppData.Service
             var addedEntity = await _repository.AddAsync(entity);
             return new ColorDTO
             {
+                Id = addedEntity.Id,
                 Tenmau = addedEntity.Tenmau,
                 Mamau = addedEntity.Mamau,
                 Trangthai = addedEntity.Trangthai
             };
+        }
+        public async Task<List<int>> GetColorsForProductAsync(int productId)
+        {
+            return await _repository.GetUniqueColorsByProductIdAsync(productId);
         }
 
         public async Task<ColorDTO> UpdateAsync(int id, ColorDTO dto)

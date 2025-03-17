@@ -17,11 +17,16 @@ namespace AppData.Service
     {
         private readonly ISanPhamChiTietRepo _repository;
         private readonly ISanPhamRepo _isanphamchitietRepos;
-        public SanPhamChiTietService(ISanPhamChiTietRepo repository, ISanPhamRepo isanphamchitietRepos)
+        private readonly ISizeRepo _isizeRepos;
+        private readonly IChatLieuRepo _ichatlieuRepos;
+        private readonly IColorRepo _icolorRepos;
+        public SanPhamChiTietService(ISanPhamChiTietRepo repository, ISanPhamRepo isanphamchitietRepos, ISizeRepo isizeRepos, IChatLieuRepo ichatlieuRepos, IColorRepo icolorRepos)
         {
             _repository = repository;
             _isanphamchitietRepos = isanphamchitietRepos;
-
+            _isizeRepos = isizeRepos;
+            _ichatlieuRepos = ichatlieuRepos;
+            _icolorRepos = icolorRepos;
         }
         public async Task<IEnumerable<Sanphamchitiet>> GetAllAsync()
         {
@@ -98,15 +103,15 @@ namespace AppData.Service
         public async Task AddAsync(SanphamchitietDTO dto)
         {
             var sanpham = await _isanphamchitietRepos.GetByIdAsync(dto.Idsp);
-
             if (sanpham == null) throw new ArgumentNullException("Sản phẩm không tồn tại");
-            var size = await _isanphamchitietRepos.GetByIdAsync(dto.IdSize);
+
+            var size = await _isizeRepos.GetByIdAsync(dto.IdSize);
             if (size == null) throw new ArgumentNullException("Size không tồn tại");
 
-            var chatlieu = await _isanphamchitietRepos.GetByIdAsync(dto.IdChatLieu);
+            var chatlieu = await _ichatlieuRepos.GetByIdAsync(dto.IdChatLieu);
             if (chatlieu == null) throw new ArgumentNullException("Chất Liệu không tồn tại");
 
-            var mau = await _isanphamchitietRepos.GetByIdAsync(dto.IdMau);
+            var mau = await _icolorRepos.GetByIdAsync(dto.IdMau);
             if (mau == null) throw new ArgumentNullException("Màu không tồn tại");
 
             var existingSanphamchitiet = await _repository.GetAllAsync();
@@ -146,13 +151,14 @@ namespace AppData.Service
 
             var sanpham = await _isanphamchitietRepos.GetByIdAsync(dto.Idsp);
             if (sanpham == null) throw new ArgumentNullException("Sản phẩm không tồn tại");
-            var size = await _isanphamchitietRepos.GetByIdAsync(dto.IdSize);
+
+            var size = await _isizeRepos.GetByIdAsync(dto.IdSize);
             if (size == null) throw new ArgumentNullException("Size không tồn tại");
 
-            var chatlieu = await _isanphamchitietRepos.GetByIdAsync(dto.IdChatLieu);
+            var chatlieu = await _ichatlieuRepos.GetByIdAsync(dto.IdChatLieu);
             if (chatlieu == null) throw new ArgumentNullException("Chất Liệu không tồn tại");
 
-            var mau = await _isanphamchitietRepos.GetByIdAsync(dto.IdMau);
+            var mau = await _icolorRepos.GetByIdAsync(dto.IdMau);
             if (mau == null) throw new ArgumentNullException("Màu không tồn tại");
 
 

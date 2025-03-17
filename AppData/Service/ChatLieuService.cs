@@ -48,19 +48,20 @@ namespace AppData.Service
 
         public async Task<ChatLieuDTO> AddAsync(ChatLieuDTO dto)
         {
-            var entity = new Models.ChatLieu
-            {   
+            var addedEntity = await _repository.AddAsync(new Models.ChatLieu
+            {
                 Tenchatlieu = dto.Tenchatlieu,
                 Trangthai = dto.Trangthai
-            };
+            });
 
-            var addedEntity = await _repository.AddAsync(entity);
             return new ChatLieuDTO
-            {   
+            {
+                Id = addedEntity.Id, // Lúc này Id đã được sinh ra từ DB
                 Tenchatlieu = addedEntity.Tenchatlieu,
                 Trangthai = addedEntity.Trangthai
             };
         }
+
 
         public async Task<ChatLieuDTO> UpdateAsync(int id, ChatLieuDTO dto)
         {
