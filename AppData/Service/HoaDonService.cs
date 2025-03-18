@@ -219,9 +219,29 @@ namespace AppData.Service
             await _repository.DeleteAsync(id);
         }
 
-        public async Task<List<HoaDonViewModel>> TimhoadontheoIdKH(int id)
+        public async Task<List<HoadonDTO>> TimhoadontheoIdKH(int id)
         {
-            return await _repository.TimhoadontheoIdKH(id);
+            var a = await _repository.TimhoadontheoIdKH(id);
+            return a.Select(hd => new HoadonDTO
+            {
+                Id = hd.Id,
+                Idnv = hd.Idnv,
+                Idkh = hd.Idkh,
+                Trangthaithanhtoan = hd.Trangthaithanhtoan,
+                Trangthaidonhang = hd.Trangthaidonhang,
+                Thoigiandathang = hd.Thoigiandathang,
+                Diachiship = hd.Diachiship,
+                Ngaygiaothucte = hd.Ngaygiaothucte,
+                Tonggiamgia = hd.Tonggiamgia,
+                Tongtiencantra = hd.Tongtiencantra,
+                Tongtiensanpham = hd.Tongtiensanpham,
+                Sdt = hd.Sdt,
+                Idgg = hd.Idgg,
+                Trangthai = hd.Trangthai,
+                Phivanchuyen = hd.Phivanchuyen,
+                Idpttt = hd.Idpttt,
+                Ghichu = hd.Ghichu
+            }).ToList();
         }
 
         public async Task Danhandonhang(int id)
