@@ -84,6 +84,7 @@ namespace AppData.Repository
                      spct.Mota,
                      spct.Giathoidiemhientai,
                      spct.Soluong,
+                     spct.UrlHinhanh,
                      Sales = spct.Salechitiets
                          .Where(sale => sale.Sale.Trangthai == 0 && sale.Soluong > 0) // Chỉ lấy sale đang hoạt động
                          .Select(sale => new
@@ -145,7 +146,17 @@ namespace AppData.Repository
                     ? spctWithMaxSale.MaxSale.Giatrigiam // Giá trị giảm theo %
                     : spctWithMaxSale.MaxSale.Giatrigiam) // Giá trị giảm theo VND
                     : 0,
-                    
+                    Sanphamchitiets = sp.Sanphamchitiets
+                        .Select(spct => new SanphamchitietViewModel
+                        {
+                            Id = spct.Id,
+                            Mota = spct.Mota,
+                            Giathoidiemhientai = spct.Giathoidiemhientai,
+                            Soluong = spct.Soluong,
+                            UrlHinhanh = spct.UrlHinhanh,
+                            soLuongBan = spct.Soluong - spct.Soluong,
+                            
+                        }).ToList()
                 };
             });
 
