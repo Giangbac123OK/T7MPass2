@@ -15,5 +15,6 @@ namespace AppData.IService
         Task<ColorDTO> AddAsync(ColorDTO dto);
         Task<ColorDTO> UpdateAsync(int id, ColorDTO dto);
         Task<bool> DeleteAsync(int id);
+        Task<List<int>> GetColorsForProductAsync(int productId);
     }
 }
