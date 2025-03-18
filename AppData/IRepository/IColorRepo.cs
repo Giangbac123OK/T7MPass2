@@ -14,5 +14,6 @@ namespace AppData.IRepository
         Task<Color> AddAsync(Color entity);
         Task<Color> UpdateAsync(Color entity);
         Task<bool> DeleteAsync(int id);
+        Task<List<int>> GetUniqueColorsByProductIdAsync(int productId);
     }
 }

@@ -36,7 +36,7 @@ namespace AppAPI.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var result = await _service.AddAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { Tenchatlieu = result.Tenchatlieu }, result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id}")]

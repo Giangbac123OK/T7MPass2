@@ -36,7 +36,7 @@ namespace AppAPI.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var result = await _service.AddAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { tenmau = result.Tenmau }, result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id}")]
@@ -58,5 +58,14 @@ namespace AppAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("get-colors/{productId}")]
+        public async Task<ActionResult<List<int>>> GetColors(int productId)
+        {
+            var colors = await _service.GetColorsForProductAsync(productId);
+            if (colors == null || colors.Count == 0) return NotFound("Không tìm thấy màu sắc.");
+            return Ok(colors);
+        }
+
     }
 }
