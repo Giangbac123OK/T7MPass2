@@ -40,7 +40,9 @@ namespace AppData.Service
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Diemsudung = 0,
                 Trangthai = 0,
-                Idrank = dto.Idrank
+                Idrank = dto.Idrank,
+                Avatar = dto.Avatar,
+                Gioitinh = dto.Gioitinh
             };
             await _repos.AddAsync(kh);
 
@@ -93,7 +95,9 @@ namespace AppData.Service
                 Password = x.Password,
                 Diemsudung = x.Diemsudung,
                 Trangthai = x.Trangthai,
-                Idrank = x.Idrank
+                Idrank = x.Idrank,
+                Avatar = x.Avatar,
+                Gioitinh = x.Gioitinh
             });
         }
 
@@ -111,7 +115,9 @@ namespace AppData.Service
                 Password = x.Password,
                 Diemsudung = x.Diemsudung,
                 Trangthai = x.Trangthai,
-                Idrank = x.Idrank
+                Idrank = x.Idrank,
+                Avatar = x.Avatar,
+                Gioitinh = x.Gioitinh
             };
         }
 
@@ -136,7 +142,9 @@ namespace AppData.Service
                 Password = x.Password,
                 Diemsudung = x.Diemsudung,
                 Trangthai = x.Trangthai,
-                Idrank = x.Idrank
+                Idrank = x.Idrank,
+                Avatar = x.Avatar,
+                Gioitinh = x.Gioitinh
             });
         }
 
@@ -155,6 +163,8 @@ namespace AppData.Service
             a.Diemsudung = dto.Diemsudung;
             a.Trangthai = dto.Trangthai;
             a.Idrank = dto.Idrank;
+            a.Avatar = dto.Avatar;
+            a.Gioitinh = dto.Gioitinh;
 
             await _repos.UpdateAsync(a);
         }
@@ -174,6 +184,8 @@ namespace AppData.Service
             a.Diemsudung = a.Diemsudung;
             a.Trangthai = a.Trangthai;
             a.Idrank = a.Idrank;
+            a.Avatar = dto.Avatar;
+            a.Gioitinh = dto.Gioitinh;
 
             await _repos.UpdateAsync(a);
         }
@@ -198,7 +210,9 @@ namespace AppData.Service
                 Password = dto.Password,
                 Diemsudung = dto.Diemsudung,
                 Trangthai = dto.Trangthai,
-                Idrank = dto.Idrank
+                Idrank = dto.Idrank,
+                Avatar = dto.Avatar,
+                Gioitinh = dto.Gioitinh
             };
 
         }
