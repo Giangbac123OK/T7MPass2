@@ -1,5 +1,6 @@
 ﻿using AppData.DTO;
 using AppData.IService;
+using AppData.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppAPI.Controllers
@@ -27,17 +28,85 @@ namespace AppAPI.Controllers
         [HttpGet("TraHang/{id}")]
         public async Task<IActionResult> GetByIdTraHang(int id)
         {
-            var hoadon = await _Service.GetByIdTraHangAsync(id);
-            if (hoadon == null) return NotFound(new { message = "Hình ảnh trả hàng không tìm thấy" });
-            return Ok(hoadon);
+            var hinhanhs = await _Service.GetByIdTraHangAsync(id);
+
+            if (hinhanhs == null || !hinhanhs.Any())
+            {
+                return NotFound(new { message = "Không tìm thấy hình ảnh của đánh giá" });
+            }
+
+            var imageUrls = new List<object>();
+
+            foreach (var hinhanh in hinhanhs)
+            {
+                if (string.IsNullOrEmpty(hinhanh.Urlhinhanh))
+                {
+                    continue; // Bỏ qua nếu không có đường dẫn ảnh
+                }
+
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "picture", hinhanh.Urlhinhanh);
+
+                if (!System.IO.File.Exists(filePath))
+                {
+                    continue; // Bỏ qua nếu file không tồn tại
+                }
+
+                var imageUrl = $"{Request.Scheme}://{Request.Host}/picture/{hinhanh.Urlhinhanh}";
+
+                imageUrls.Add(new
+                {
+                    Url = imageUrl
+                });
+            }
+
+            if (!imageUrls.Any())
+            {
+                return NotFound(new { message = "Không có hình ảnh hợp lệ" });
+            }
+
+            return Ok(imageUrls);
         }
 
         [HttpGet("DanhGia/{id}")]
         public async Task<IActionResult> GetByIdDanhGia(int id)
         {
-            var hoadon = await _Service.GetByIdTraHangAsync(id);
-            if (hoadon == null) return NotFound(new { message = "Hình ảnh đánh giá không tìm thấy" });
-            return Ok(hoadon);
+            var hinhanhs = await _Service.GetByIdDanhGiaAsync(id);
+
+            if (hinhanhs == null || !hinhanhs.Any())
+            {
+                return NotFound(new { message = "Không tìm thấy hình ảnh của đánh giá" });
+            }
+
+            var imageUrls = new List<object>();
+
+            foreach (var hinhanh in hinhanhs)
+            {
+                if (string.IsNullOrEmpty(hinhanh.Urlhinhanh))
+                {
+                    continue; // Bỏ qua nếu không có đường dẫn ảnh
+                }
+
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "picture", hinhanh.Urlhinhanh);
+
+                if (!System.IO.File.Exists(filePath))
+                {
+                    continue; // Bỏ qua nếu file không tồn tại
+                }
+
+                var imageUrl = $"{Request.Scheme}://{Request.Host}/picture/{hinhanh.Urlhinhanh}";
+
+                imageUrls.Add(new
+                {
+                    Url = imageUrl
+                });
+            }
+
+            if (!imageUrls.Any())
+            {
+                return NotFound(new { message = "Không có hình ảnh hợp lệ" });
+            }
+
+            return Ok(imageUrls);
         }
 
         [HttpGet("{id}")]
@@ -48,7 +117,7 @@ namespace AppAPI.Controllers
             return Ok(hoadon);
         }
         [HttpPost]
-        public async Task<IActionResult> Add(HinhanhDTO dto)
+        public async Task<IActionResult> Add([FromForm] HinhanhDTO dto, IFormFile? file)
         {
             // Kiểm tra tính hợp lệ của dữ liệu
             if (!ModelState.IsValid)
@@ -57,6 +126,25 @@ namespace AppAPI.Controllers
             }
             try
             {
+                if (file != null && file.Length > 0)
+                {
+                    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "picture");
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+
+                    var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                    var filePath = Path.Combine(folderPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    // Chỉ lưu tên file vào UrlHinhanh
+                    dto.Urlhinhanh = fileName;
+                }
                 // Thêm hình ảnh (hoặc Hình ảnh trả hàng tùy theo context)
                 await _Service.AddAsync(dto);
 
