@@ -57,5 +57,6 @@ namespace AppData.Models
         public virtual ICollection<Danhgia> Danhgias { get; set; }
 		public virtual ICollection<Diachi> Diachis { get; set; }
 		public virtual ICollection<Hoadon> Hoadons { get; set; }
-	}
+		public string Avatar { get; set; }
+    }
 }
