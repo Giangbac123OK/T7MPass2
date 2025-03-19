@@ -27,7 +27,7 @@ namespace AppData.Service
         public async Task AddAsync(HinhanhDTO entity)
         {
             // Kiểm tra nếu trà hàng không tồn tại
-            if( entity.Idtrahang != null)
+            if(entity.Idtrahang != 0)
             {
                 int idtrahang = (int)entity.Idtrahang;
                 var trahang = await _THrepository.GetById(idtrahang);
@@ -35,7 +35,7 @@ namespace AppData.Service
                     throw new ArgumentNullException("Trà hàng không tồn tại");
             }
 
-            if (entity.Idtrahang != null)
+            if (entity.Iddanhgia != 0)
             {
                 int iddanhgia = (int)entity.Iddanhgia;
                 var danhgia = await _DGrepository.GetById(iddanhgia);
@@ -46,8 +46,8 @@ namespace AppData.Service
             var hinhanh = new Hinhanh
             {
                 Urlhinhanh = entity.Urlhinhanh,
-                Idtrahang = entity.Idtrahang,
-                Iddanhgia = entity.Iddanhgia
+                Idtrahang = entity.Idtrahang == 0 ? (int?)null : entity.Idtrahang,
+                Iddanhgia = entity.Iddanhgia == 0 ? (int?)null : entity.Iddanhgia
             };
 
             // Thêm hình ảnh vào cơ sở dữ liệu và đợi kết quả

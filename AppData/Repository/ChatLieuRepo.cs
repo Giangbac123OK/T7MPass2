@@ -33,8 +33,14 @@ namespace AppData.Repository
         {
             _context.Set<Models.ChatLieu>().Add(entity);
             await _context.SaveChangesAsync();
-            return entity;
+
+            // Truy vấn lại dữ liệu từ DB sau khi thêm thành công
+            return await _context.Set<Models.ChatLieu>()
+                                 .AsNoTracking()
+                                 .FirstOrDefaultAsync(x => x.Tenchatlieu == entity.Tenchatlieu
+                                                        && x.Trangthai == entity.Trangthai);
         }
+
 
         public async Task<Models.ChatLieu> UpdateAsync(Models.ChatLieu entity)
         {

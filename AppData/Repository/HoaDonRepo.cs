@@ -114,31 +114,40 @@ namespace AppData.Repository
                 throw new Exception("Lỗi không xác định khi xóa hóa đơn.", ex);
             }
         }
-        public async Task<List<HoaDonViewModel>> TimhoadontheoIdKH(int id)
+        public async Task<List<Hoadon>> TimhoadontheoIdKH(int id, string? search)
         {
-            return await _context.hoadons
+            var a = await _context.hoadons
                 .Where(hd => hd.Idkh == id)
                 .OrderByDescending(hd => hd.Thoigiandathang) // Sắp xếp giảm dần theo thời gian đặt
-                .Select(hd => new HoaDonViewModel
+                .Select(hd => new Hoadon
                 {
                     Id = hd.Id,
-                    Tongtiencantra = hd.Tongtiencantra,
-                    Trangthaidonhang = hd.Trangthaidonhang,
-                    Tongtiensanpham = _context.hoadonchitiets
-                        .Where(hdct => hdct.Idhd == hd.Id)
-                        .Sum(hdct => hdct.Giasp * hdct.Soluong),
-                    Giamgia = _context.hoadonchitiets
-                        .Where(hdct => hdct.Idhd == hd.Id)
-                        .Sum(hdct => hdct.Giamgia ?? 0),
-                    Thoigiandathang = hd.Thoigiandathang,
-
+                    Idnv = hd.Idnv,
+                    Idkh = hd.Idkh,
                     Trangthaithanhtoan = hd.Trangthaithanhtoan,
-                    Ngaygiaothucte = hd.Ngaygiaothucte,
+                    Trangthaidonhang = hd.Trangthaidonhang,
+                    Thoigiandathang = hd.Thoigiandathang,
                     Diachiship = hd.Diachiship,
-                    Tongsoluong = _context.hoadonchitiets.Where(x => x.Idhd == hd.Id).Sum(x => x.Soluong),
-                    Trangthai = hd.Trangthai
+                    Ngaygiaothucte = hd.Ngaygiaothucte,
+                    Tonggiamgia = hd.Tonggiamgia,
+                    Tongtiencantra = hd.Tongtiencantra,
+                    Tongtiensanpham = hd.Tongtiensanpham,
+                    Sdt = hd.Sdt,
+                    Idgg = hd.Idgg,
+                    Trangthai = hd.Trangthai,
+                    Phivanchuyen = hd.Phivanchuyen,
+                    Idpttt = hd.Idpttt,
+                    Ghichu = hd.Ghichu
                 })
                 .OrderByDescending(hd => hd.Thoigiandathang).ToListAsync();
+            if (search == null)
+            {
+                return a;
+            }
+            else
+            {
+                return a.Where(x=>x.Id == int.Parse(search)).ToList();
+            }
         }
 
         public async Task Danhandonhang(int id)

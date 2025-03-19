@@ -23,5 +23,6 @@ namespace AppData.DTO
 		public int Trangthai { get; set; }
 		public int Idrank { get; set; }
         public bool Gioitinh { get; set; }
-	}
+		public string Avatar { get; set; }
+    }
 }

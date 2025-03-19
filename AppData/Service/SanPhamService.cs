@@ -148,7 +148,15 @@ namespace AppData.Service
 
         public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamViewModels()
         {
-            return await _repository.GetAllSanphamViewModels();
+            var sanPham = await _repository.GetAllSanphamViewModels();
+            foreach (var item in sanPham)
+            {
+                foreach (var item1 in item.Sanphamchitiets)
+                {
+                    item1.soLuongBan = await GetTotalSoldQuantityAsync(item1.Id);
+                }
+            }
+            return sanPham;
         }
 
         public async Task<SanphamViewModel> GetAllSanphamViewModelsByIdSP(int idsp)

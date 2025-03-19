@@ -27,12 +27,31 @@ namespace AppData.Repository
         {
             return await _context.Set<Models.Color>().FindAsync(id);
         }
+        public async Task<List<int>> GetUniqueColorsByProductIdAsync(int productId)
+        {
+            var uniqueColors = await _context.colors
+                .Where(spm => _context.Sanphamchitiets
+                    .Where(spct => spct.Idsp == productId)
+                    .Select(spct => spct.IdMau)
+                    .Contains(spm.Id))
+                .Select(spm => spm.Id)
+                .Distinct()
+                .ToListAsync();
+
+            return uniqueColors;
+        }
+
 
         public async Task<Models.Color> AddAsync(Models.Color entity)
         {
             _context.Set<Models.Color>().Add(entity);
             await _context.SaveChangesAsync();
-            return entity;
+
+            // Truy vấn lại dữ liệu từ DB sau khi thêm thành công
+            return await _context.Set<Models.Color>()
+                                 .AsNoTracking()
+                                 .FirstOrDefaultAsync(x => x.Tenmau == entity.Tenmau && x.Mamau == entity.Mamau
+                                                        && x.Trangthai == entity.Trangthai);
         }
 
         public async Task<Models.Color> UpdateAsync(Models.Color entity)

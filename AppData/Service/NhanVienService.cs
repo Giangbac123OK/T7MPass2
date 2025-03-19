@@ -61,6 +61,7 @@ namespace AppData.Service
                 Hovaten = nhanvienDto.Hovaten,
                 Ngaysinh = nhanvienDto.Ngaysinh,
                 Diachi = nhanvienDto.Diachi,
+                Email = nhanvienDto.Email,
                 Gioitinh = nhanvienDto.Gioitinh,
                 Sdt = nhanvienDto.Sdt,
                 Trangthai = 0, // Mặc định "hoạt động"

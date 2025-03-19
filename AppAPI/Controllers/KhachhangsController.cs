@@ -41,7 +41,9 @@ namespace AppAPI.Controllers
                 kh.Password,
                 kh.Diemsudung,
                 Trangthai = kh.Trangthai == 0 ? "Hoạt động" : "Tài khoản bị khoá",
-                kh.Idrank
+                kh.Idrank,
+                kh.Gioitinh,
+                kh.Avatar
             }));
         }
         [HttpGet("{id}")]
@@ -62,7 +64,9 @@ namespace AppAPI.Controllers
                     kh.Password,
                     kh.Diemsudung,
                     Trangthai = kh.Trangthai == 0 ? "Hoạt động" : "Tài khoản bị khoá",
-                    kh.Idrank
+                    kh.Idrank,
+                    kh.Gioitinh,
+                    kh.Avatar
                 });
             }
             catch (KeyNotFoundException)
