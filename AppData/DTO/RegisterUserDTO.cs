@@ -14,5 +14,7 @@ namespace AppData.Dto
 		public string? Email { get; set; }
 		public string Diachi { get; set; }
 		public string? Password { get; set; }
+		public bool gioitinh { get; set; }
+
 	}
 }

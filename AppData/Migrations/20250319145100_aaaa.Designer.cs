@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppData.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250302141235_DB")]
-    partial class DB
+    [Migration("20250319145100_aaaa")]
+    partial class aaaa
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -378,6 +378,10 @@ namespace AppData.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Avatar")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Diachi")
                         .IsRequired()

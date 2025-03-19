@@ -5,6 +5,7 @@ using AppData.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.WebRequestMethods;
 
 namespace AppAPI.Controllers
 {
@@ -49,8 +50,13 @@ namespace AppAPI.Controllers
 					Ngaytaotaikhoan = DateTime.UtcNow,
 					Tichdiem = 0, // Giá trị mặc định
 					Diemsudung = 0,
+					Gioitinh = dto.gioitinh,
 					Trangthai = 0,
-					Idrank = 1 // Rank mặc định
+					Idrank = 1, 
+					Avatar = "https://example.com/default-avatar.png"
+
+					// Rank mặc định
+
 				};
 
                 await _KhachHang_Repos.AddAsync(khachHang);
