@@ -114,9 +114,9 @@ namespace AppData.Repository
                 throw new Exception("Lỗi không xác định khi xóa hóa đơn.", ex);
             }
         }
-        public async Task<List<Hoadon>> TimhoadontheoIdKH(int id)
+        public async Task<List<Hoadon>> TimhoadontheoIdKH(int id, string? search)
         {
-            return await _context.hoadons
+            var a = await _context.hoadons
                 .Where(hd => hd.Idkh == id)
                 .OrderByDescending(hd => hd.Thoigiandathang) // Sắp xếp giảm dần theo thời gian đặt
                 .Select(hd => new Hoadon
@@ -140,6 +140,14 @@ namespace AppData.Repository
                     Ghichu = hd.Ghichu
                 })
                 .OrderByDescending(hd => hd.Thoigiandathang).ToListAsync();
+            if (search == null)
+            {
+                return a;
+            }
+            else
+            {
+                return a.Where(x=>x.Id == int.Parse(search)).ToList();
+            }
         }
 
         public async Task Danhandonhang(int id)

@@ -321,11 +321,11 @@ namespace AppAPI.Controllers
             }
         }
         [HttpGet("hoa-don-theo-ma-kh-{id}")]
-        public async Task<IActionResult> Hoadontheomakh(int id)
+        public async Task<IActionResult> Hoadontheomakh(int id, [FromQuery] string? search)
         {
             try
             {
-                return Ok(await _Service.TimhoadontheoIdKH(id));
+                return Ok(await _Service.TimhoadontheoIdKH(id, search));
             }
             catch (Exception ex)
             {
