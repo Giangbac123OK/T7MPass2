@@ -165,6 +165,7 @@ namespace AppData.Service
                 Tongtiensanpham = HoadonDTO.Tongtiensanpham,
                 Ghichu = HoadonDTO.Ghichu,
                 Sdt = HoadonDTO.Sdt,
+                Idpttt = HoadonDTO.Idpttt,
                 Tonggiamgia = HoadonDTO.Tonggiamgia,
                 Idgg = HoadonDTO.Idgg == 0 ? (int?)null : HoadonDTO.Idgg,  // Nếu Idgg = 0, gán null
                 Trangthai = HoadonDTO.Trangthai,
