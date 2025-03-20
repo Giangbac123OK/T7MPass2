@@ -69,8 +69,7 @@ namespace AppAPI.Controllers
                 }
                 else
                 {
-                    _Service.UpdateSoLuongGiohangAsync(result.Id, gh);
-                    return Ok("Sản phẩm đã tồn tại trong giỏ hàng, cập nhật thành công!");
+                    return Ok();
                 }
             }
             catch (Exception ex)
