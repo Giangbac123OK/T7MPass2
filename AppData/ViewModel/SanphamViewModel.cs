@@ -20,7 +20,8 @@ namespace AppData.ViewModel
         public string ThuongHieu { get; set; }
         public int idThuongHieu { get; set; }
         public decimal GiaTriGiam { get; set; }
-       
+        public float? trungBinhDanhGia { get; set; }
+
         public List<SanphamchitietViewModel> Sanphamchitiets { get; set; }
     }
 
@@ -37,17 +38,21 @@ namespace AppData.ViewModel
         public int IdSize { get; set; }
         public int IdChatLieu { get; set; }
         public int IdMau { get; set; }
-        public List<SalechitietViewModel> Sales { get; set; }
+        public List<SalechitietViewModel>? Sales { get; set; }
 
     }
 
     public class SalechitietViewModel
     {
-    
+       public int trangThai { get; set; }
         public int Donvi { get; set; }
         public decimal Giatrigiam { get; set; }
         public int Soluong { get; set; }
-        public string TenSale { get; set; } // Tên khuyến mãi
+        public string TenSale { get; set; } 
+        public DateTime Ngaybatdau { get; set; }
+        public DateTime Ngayketthuc { get; set; }   
+
+
     }
 
 }

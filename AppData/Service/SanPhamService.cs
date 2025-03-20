@@ -17,11 +17,15 @@ namespace AppData.Service
     {
         private readonly ISanPhamRepo _repository;
         private readonly IHoaDonChiTietRepo _hoaDonChiTietRepo;
+        private readonly ISanPhamChiTietRepo _sanPhamChiTietRepo;
+        private readonly IDanhGiaRepo _danhGiaRepo;
 
-        public SanPhamService(ISanPhamRepo repository, IHoaDonChiTietRepo hoaDonChiTietRepo)
+        public SanPhamService(ISanPhamRepo repository, IHoaDonChiTietRepo hoaDonChiTietRepo, ISanPhamChiTietRepo sanPhamChiTietRepo, IDanhGiaRepo danhGiaRepo)
         {
             _repository = repository;
             _hoaDonChiTietRepo = hoaDonChiTietRepo;
+            _sanPhamChiTietRepo = sanPhamChiTietRepo;
+            _danhGiaRepo = danhGiaRepo;
         }
 
         public async Task<IEnumerable<Sanpham>> GetAllAsync()
@@ -149,15 +153,86 @@ namespace AppData.Service
         public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamViewModels()
         {
             var sanPham = await _repository.GetAllSanphamViewModels();
+
             foreach (var item in sanPham)
             {
+                var DiemDG = await TinhTrungBinhDanhGia(item.Id);
+                item.trungBinhDanhGia = DiemDG;
                 foreach (var item1 in item.Sanphamchitiets)
                 {
                     item1.soLuongBan = await GetTotalSoldQuantityAsync(item1.Id);
                 }
             }
-            return sanPham;
+
+        
+            var result = sanPham.Select(sp =>
+            {
+                // Danh sách sản phẩm chi tiết kèm mức giảm giá cao nhất
+                var spctWithMaxSale = sp.Sanphamchitiets
+                 .Select(spct => new
+                 {
+                 spct.Id,
+                 spct.Giathoidiemhientai,
+                 spct.GiaSaleSanPhamChiTiet,
+                 spct.Sales,
+                 MaxSale = spct.Sales
+                 .Where(s => s.trangThai == 0 && s.Ngaybatdau <= DateTime.Now && s.Ngayketthuc >= DateTime.Now && s.Soluong > 0)
+                 .OrderByDescending(s => s.Donvi == 1
+                 ? s.Giatrigiam * spct.Giathoidiemhientai / 100m
+                 : s.Giatrigiam)
+                 .FirstOrDefault()
+                 })
+                .Where(spct => spct.MaxSale != null)
+                .OrderByDescending(spct => spct.MaxSale.Donvi == 1
+                ? spct.MaxSale.Giatrigiam * spct.Giathoidiemhientai / 100m
+                : spct.MaxSale.Giatrigiam)
+                .FirstOrDefault();
+              
+
+                return new SanphamViewModel
+                {
+                    Id = sp.Id,
+                    Tensp = sp.Tensp,
+                    Mota = sp.Mota,
+                    Giaban = spctWithMaxSale?.Giathoidiemhientai ?? sp.Giaban,
+                    TrangThai = sp.TrangThai,
+                    Soluong = sp.Soluong,
+                    NgayThemSanPham = sp.NgayThemSanPham,
+                    ThuongHieu = sp.ThuongHieu,
+                    idThuongHieu = sp.idThuongHieu,
+                    Giasale = spctWithMaxSale?.GiaSaleSanPhamChiTiet ?? sp.Giaban,
+                    GiaTriGiam = spctWithMaxSale?.MaxSale?.Giatrigiam ?? 0,
+                    Sanphamchitiets = sp.Sanphamchitiets.Select(spct => new SanphamchitietViewModel
+                    {
+                        Id = spct.Id,
+                        Mota = spct.Mota,
+                        Giathoidiemhientai = spct.Giathoidiemhientai,
+                        GiaSaleSanPhamChiTiet = spct.GiaSaleSanPhamChiTiet,
+                        Soluong = spct.Soluong,
+                        TrangThai = spct.TrangThai,
+                        UrlHinhanh = spct.UrlHinhanh,
+                        soLuongBan = spct.soLuongBan,
+                        IdSize = spct.IdSize,
+                        IdChatLieu = spct.IdChatLieu,
+                        IdMau = spct.IdMau,
+                        Sales = spct.Sales.Select(s => new SalechitietViewModel
+                        {
+                            trangThai = s.trangThai,
+                            Donvi = s.Donvi,
+                            Giatrigiam = s.Giatrigiam,
+                            Soluong = s.Soluong,
+                            TenSale = s.TenSale,
+                            Ngaybatdau = s.Ngaybatdau,
+                            Ngayketthuc = s.Ngayketthuc
+                        }).ToList()
+                    }).ToList()
+
+                };
+            });
+
+            return result;
         }
+
 
         public async Task<SanphamViewModel> GetAllSanphamViewModelsByIdSP(int idsp)
         {
@@ -167,6 +242,7 @@ namespace AppData.Service
                 item.soLuongBan = await GetTotalSoldQuantityAsync(item.Id);
                 
             }
+
             return spView;
         }
 
@@ -191,10 +267,25 @@ namespace AppData.Service
 
             return hoaDonChiTiets
             .Where(hdct => hdct.Idspct == idSanphamChitiet &&
-                     hdct.Hoadon.Trangthaidonhang == (int)OrderStatus.DonHangThanhCong)
+                     hdct.Hoadon.Trangthai == 3)
             .Select(hdct => hdct.Soluong)
             .DefaultIfEmpty(0) 
             .Sum();
+
+        }
+        public async Task<float> TinhTrungBinhDanhGia(int idSanpham)
+        {
+             var danhgiaList = await _danhGiaRepo.GetByidSP(idSanpham);
+            if (danhgiaList == null)
+            {
+                return 0;
+            }
+            float sum = 0;
+            foreach (var item in danhgiaList)
+            {
+                sum += item.Sosao;
+            }
+            return sum / danhgiaList.Count;
 
         }
     }

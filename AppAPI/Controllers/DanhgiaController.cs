@@ -184,7 +184,7 @@ namespace AppAPI.Controllers
 
             return Ok(result); // Trả về kết quả nếu tìm thấy
         }
-        [HttpGet("{idsp}/TinhTrungBinhDanhGia")]
+        [HttpGet("TinhTrungBinhDanhGia/{idsp}")]
         public async Task<IActionResult> GetTBSaoDanhGia(int idsp)
         {
             // Kiểm tra ID
