@@ -179,7 +179,7 @@ namespace AppAPI.Controllers
             // Kiểm tra kết quả trả về
             if (result == null || !result.Any())
             {
-                return Ok(null); // Trả về null trong response
+                return Ok(); // Trả về null trong response
             }
 
             return Ok(result); // Trả về kết quả nếu tìm thấy

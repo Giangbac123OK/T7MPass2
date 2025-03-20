@@ -165,6 +165,7 @@ namespace AppData.Service
                 Tongtiensanpham = HoadonDTO.Tongtiensanpham,
                 Ghichu = HoadonDTO.Ghichu,
                 Sdt = HoadonDTO.Sdt,
+                Idpttt = HoadonDTO.Idpttt,
                 Tonggiamgia = HoadonDTO.Tonggiamgia,
                 Idgg = HoadonDTO.Idgg == 0 ? (int?)null : HoadonDTO.Idgg,  // Nếu Idgg = 0, gán null
                 Trangthai = HoadonDTO.Trangthai,
@@ -219,9 +220,9 @@ namespace AppData.Service
             await _repository.DeleteAsync(id);
         }
 
-        public async Task<List<HoadonDTO>> TimhoadontheoIdKH(int id)
+        public async Task<List<HoadonDTO>> TimhoadontheoIdKH(int id, string? search)
         {
-            var a = await _repository.TimhoadontheoIdKH(id);
+            var a = await _repository.TimhoadontheoIdKH(id, search);
             return a.Select(hd => new HoadonDTO
             {
                 Id = hd.Id,
@@ -240,7 +241,8 @@ namespace AppData.Service
                 Trangthai = hd.Trangthai,
                 Phivanchuyen = hd.Phivanchuyen,
                 Idpttt = hd.Idpttt,
-                Ghichu = hd.Ghichu
+                Ghichu = hd.Ghichu,
+                
             }).ToList();
         }
 
