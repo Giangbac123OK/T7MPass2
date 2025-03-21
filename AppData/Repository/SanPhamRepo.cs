@@ -1,5 +1,4 @@
 ﻿using AppData.IRepository;
-using AppData.Migrations;
 using AppData.Models;
 using AppData.ViewModel;
 using Microsoft.EntityFrameworkCore;
