@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AppData.Migrations
 {
-    public partial class DB : Migration
+    public partial class db : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -195,7 +195,8 @@ namespace AppData.Migrations
                     Diemsudung = table.Column<int>(type: "int", nullable: false),
                     Trangthai = table.Column<int>(type: "int", nullable: false),
                     Idrank = table.Column<int>(type: "int", nullable: false),
-                    Gioitinh = table.Column<bool>(type: "bit", nullable: false)
+                    Gioitinh = table.Column<bool>(type: "bit", nullable: false),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
