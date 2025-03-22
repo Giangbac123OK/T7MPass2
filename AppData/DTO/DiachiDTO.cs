@@ -25,5 +25,6 @@ namespace AppData.DTO
 		public string Phuongxa {  get; set; }
 
 		public string? Diachicuthe {  get; set; }
-	}
+        public string? trangthai { get; set; }
+    }
 }

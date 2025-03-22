@@ -1,6 +1,8 @@
-﻿using AppData.DTO;
+﻿using AppData;
+using AppData.DTO;
 using AppData.IService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppAPI.Controllers
 {
@@ -94,7 +96,7 @@ namespace AppAPI.Controllers
                 return BadRequest(ModelState);
 
             await _diaChiService.Create(diachi);
-            return CreatedAtAction(nameof(Getdiachis), new { id = diachi.Diachicuthe }, diachi);
+            return CreatedAtAction(nameof(Getdiachis), new { id = diachi.Id }, diachi);
 
         }
 
@@ -113,5 +115,49 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("update-default-address")]
+        public IActionResult SetDefaultAddress(int idDiaChi, int idKhachHang)
+        {
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    // Tìm địa chỉ cũ đang là mặc định (trangthai = 0)
+                    var oldDefaultAddress = context.diachis
+                        .FirstOrDefault(a => a.Idkh == idKhachHang && a.trangthai == "0");
+
+                    if (oldDefaultAddress != null)
+                    {
+                        // Chuyển trạng thái địa chỉ cũ thành 1
+                        oldDefaultAddress.trangthai = "1";
+                    }
+
+                    // Tìm địa chỉ mới để đặt làm mặc định
+                    var newDefaultAddress = context.diachis
+                        .FirstOrDefault(a => a.Id == idDiaChi && a.Idkh == idKhachHang);
+
+                    if (newDefaultAddress != null)
+                    {
+                        // Chuyển trạng thái địa chỉ mới thành 0
+                        newDefaultAddress.trangthai = "0";
+                    }
+                    else
+                    {
+                        return BadRequest("Địa chỉ không tồn tại.");
+                    }
+
+                    // Lưu thay đổi vào DB
+                    context.SaveChanges();
+                }
+
+                return Ok(new { message = "Cập nhật địa chỉ mặc định thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
     }
 }
