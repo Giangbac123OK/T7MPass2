@@ -20,7 +20,7 @@ namespace AppData.ViewModel
         public string ThuongHieu { get; set; }
         public int idThuongHieu { get; set; }
         public decimal GiaTriGiam { get; set; }
-        public float? trungBinhDanhGia { get; set; }
+        public float trungBinhDanhGia { get; set; }
 
         public List<SanphamchitietViewModel> Sanphamchitiets { get; set; }
     }

@@ -200,6 +200,7 @@ namespace AppData.Service
                     NgayThemSanPham = sp.NgayThemSanPham,
                     ThuongHieu = sp.ThuongHieu,
                     idThuongHieu = sp.idThuongHieu,
+                    trungBinhDanhGia = sp.trungBinhDanhGia,
                     Giasale = spctWithMaxSale?.GiaSaleSanPhamChiTiet ?? sp.Giaban,
                     GiaTriGiam = spctWithMaxSale?.MaxSale?.Giatrigiam ?? 0,
                     Sanphamchitiets = sp.Sanphamchitiets.Select(spct => new SanphamchitietViewModel
@@ -248,7 +249,94 @@ namespace AppData.Service
 
         public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamGiamGiaViewModels()
         {
-            return await _repository.GetAllSanphamGiamGiaViewModels();
+            var sanPham = await _repository.GetAllSanphamViewModels();
+
+            foreach (var item in sanPham)
+            {
+                var DiemDG = await TinhTrungBinhDanhGia(item.Id);
+                item.trungBinhDanhGia = DiemDG;
+                foreach (var item1 in item.Sanphamchitiets)
+                {
+                    item1.soLuongBan = await GetTotalSoldQuantityAsync(item1.Id);
+                }
+            }
+
+
+            var result = sanPham.Select(sp =>
+            {
+                // Danh sách sản phẩm chi tiết kèm mức giảm giá cao nhất
+                var spctWithMaxSale = sp.Sanphamchitiets
+                 .Select(spct => new
+                 {
+                     spct.Id,
+                     spct.Giathoidiemhientai,
+                     spct.GiaSaleSanPhamChiTiet,
+                     spct.Sales,
+                     MaxSale = spct.Sales
+                 .Where(s => s.trangThai == 0 && s.Ngaybatdau <= DateTime.Now && s.Ngayketthuc >= DateTime.Now && s.Soluong > 0)
+                 .OrderByDescending(s => s.Donvi == 1
+                 ? s.Giatrigiam * spct.Giathoidiemhientai / 100m
+                 : s.Giatrigiam)
+                 .FirstOrDefault()
+                 })
+                .Where(spct => spct.MaxSale != null)
+                .OrderByDescending(spct => spct.MaxSale.Donvi == 1
+                ? spct.MaxSale.Giatrigiam * spct.Giathoidiemhientai / 100m
+                : spct.MaxSale.Giatrigiam)
+                .FirstOrDefault();
+
+
+                return new SanphamViewModel
+                {
+                    Id = sp.Id,
+                    Tensp = sp.Tensp,
+                    Mota = sp.Mota,
+                    Giaban = spctWithMaxSale?.Giathoidiemhientai ?? sp.Giaban,
+                    TrangThai = sp.TrangThai,
+                    Soluong = sp.Soluong,
+                    NgayThemSanPham = sp.NgayThemSanPham,
+                    ThuongHieu = sp.ThuongHieu,
+                    idThuongHieu = sp.idThuongHieu,
+                    trungBinhDanhGia = sp.trungBinhDanhGia,
+                    Giasale = spctWithMaxSale?.GiaSaleSanPhamChiTiet ?? sp.Giaban,
+                    GiaTriGiam = spctWithMaxSale?.MaxSale?.Giatrigiam ?? 0,
+                    Sanphamchitiets = sp.Sanphamchitiets.Select(spct => new SanphamchitietViewModel
+                    {
+                        Id = spct.Id,
+                        Mota = spct.Mota,
+                        Giathoidiemhientai = spct.Giathoidiemhientai,
+                        GiaSaleSanPhamChiTiet = spct.GiaSaleSanPhamChiTiet,
+                        Soluong = spct.Soluong,
+                        TrangThai = spct.TrangThai,
+                        UrlHinhanh = spct.UrlHinhanh,
+                        soLuongBan = spct.soLuongBan,
+                        IdSize = spct.IdSize,
+                        IdChatLieu = spct.IdChatLieu,
+                        IdMau = spct.IdMau,
+                        Sales = spct.Sales.Select(s => new SalechitietViewModel
+                        {
+                            trangThai = s.trangThai,
+                            Donvi = s.Donvi,
+                            Giatrigiam = s.Giatrigiam,
+                            Soluong = s.Soluong,
+                            TenSale = s.TenSale,
+                            Ngaybatdau = s.Ngaybatdau,
+                            Ngayketthuc = s.Ngayketthuc
+                        }).ToList()
+                    }).ToList()
+
+                };
+            })
+            .Where(sp => sp.Giasale < sp.Giaban)
+            .ToList();
+
+            // Kiểm tra nếu không có sản phẩm nào giảm giá
+            if (!result.Any())
+            {
+                throw new Exception("Không có sản phẩm khuyến mãi.");
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamByThuongHieu(int id)
@@ -275,18 +363,22 @@ namespace AppData.Service
         }
         public async Task<float> TinhTrungBinhDanhGia(int idSanpham)
         {
-             var danhgiaList = await _danhGiaRepo.GetByidSP(idSanpham);
-            if (danhgiaList == null)
+            var danhgiaList = await _danhGiaRepo.GetByidSP(idSanpham);
+
+            if (danhgiaList == null || danhgiaList.Count == 0) // Kiểm tra null hoặc rỗng
             {
                 return 0;
             }
+
             float sum = 0;
             foreach (var item in danhgiaList)
             {
                 sum += item.Sosao;
             }
-            return sum / danhgiaList.Count;
 
+            float TB = sum / danhgiaList.Count;
+            return (float)Math.Round(TB, 1); // Làm tròn đến 1 chữ số thập phân
         }
+
     }
 }

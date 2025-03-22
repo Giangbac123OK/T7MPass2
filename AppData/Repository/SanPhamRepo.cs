@@ -88,7 +88,10 @@ namespace AppData.Repository
                 ThuongHieu = sanpham.Thuonghieu?.Tenthuonghieu ?? "N/A",
                 Soluong = sanpham.Soluong,
                 idThuongHieu = sanpham.Idth,
+                NgayThemSanPham = sanpham.NgayThemMoi,
+                
                 Sanphamchitiets = sanpham.Sanphamchitiets?
+               
                     .Where(spct => spct.Trangthai != 2)
                     .Select(spct => new SanphamchitietViewModel
                     {

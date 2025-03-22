@@ -24,6 +24,7 @@ namespace AppData.IService
         Task<IEnumerable<SanphamViewModel>> GetAllSanphamGiamGiaViewModels();
         Task<IEnumerable<SanphamViewModel>> GetAllSanphamByThuongHieu(int id);
         Task<int> GetTotalSoldQuantityAsync(int idSanphamChitiet);
+        Task<float> TinhTrungBinhDanhGia(int idSanpham);
         Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(
         // Danh sách tên thuộc tính cần tìm
         decimal? giaMin = null,
