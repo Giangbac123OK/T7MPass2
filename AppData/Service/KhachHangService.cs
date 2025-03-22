@@ -36,7 +36,6 @@ namespace AppData.Service
                 Ngaysinh = dto.Ngaysinh,
                 Tichdiem = 0,
                 Email = dto.Email,
-                Diachi = dto.Diachi,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Diemsudung = 0,
                 Trangthai = 0,
@@ -91,7 +90,6 @@ namespace AppData.Service
                 Ngaysinh = x.Ngaysinh,
                 Tichdiem = x.Tichdiem,
                 Email = x.Email,
-                Diachi = x.Diachi,
                 Password = x.Password,
                 Diemsudung = x.Diemsudung,
                 Trangthai = x.Trangthai,
@@ -111,7 +109,6 @@ namespace AppData.Service
                 Ngaysinh = x.Ngaysinh,
                 Tichdiem = x.Tichdiem,
                 Email = x.Email,
-                Diachi = x.Diachi,
                 Password = x.Password,
                 Diemsudung = x.Diemsudung,
                 Trangthai = x.Trangthai,
@@ -138,7 +135,6 @@ namespace AppData.Service
                 Ngaysinh = x.Ngaysinh,
                 Tichdiem = x.Tichdiem,
                 Email = x.Email,
-                Diachi = x.Diachi,
                 Password = x.Password,
                 Diemsudung = x.Diemsudung,
                 Trangthai = x.Trangthai,
@@ -158,7 +154,6 @@ namespace AppData.Service
             a.Ngaysinh = dto.Ngaysinh;
             a.Tichdiem = dto.Tichdiem;
             a.Email = dto.Email ?? a.Email;
-            a.Diachi = dto.Diachi ?? a.Diachi;
             a.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
             a.Diemsudung = dto.Diemsudung;
             a.Trangthai = dto.Trangthai;
@@ -179,7 +174,6 @@ namespace AppData.Service
             a.Ngaysinh = dto.Ngaysinh;
             a.Tichdiem = a.Tichdiem;
             a.Email = dto.Email ?? a.Email;
-            a.Diachi = dto.Diachi ?? a.Diachi;
             a.Password = a.Password;
             a.Diemsudung = a.Diemsudung;
             a.Trangthai = a.Trangthai;
@@ -206,7 +200,6 @@ namespace AppData.Service
                 Ngaysinh = dto.Ngaysinh,
                 Tichdiem = dto.Tichdiem,
                 Email = dto.Email,
-                Diachi = dto.Diachi,
                 Password = dto.Password,
                 Diemsudung = dto.Diemsudung,
                 Trangthai = dto.Trangthai,
