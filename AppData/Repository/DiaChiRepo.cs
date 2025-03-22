@@ -62,11 +62,8 @@ namespace AppData.Repository
 
         public async Task Update(Diachi diachi)
         {
-            var updateItem = await GetByIdAsync(diachi.Id);
-            if (updateItem != null)
-            {
-                _db.Entry(diachi).State = EntityState.Modified;
-            }
+            _db.Update(diachi);
+            await _db.SaveChangesAsync();
         }
     }
 }
