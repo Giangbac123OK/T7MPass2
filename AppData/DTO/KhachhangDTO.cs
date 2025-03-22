@@ -16,7 +16,6 @@ namespace AppData.DTO
 		public DateTime Ngaysinh { get; set; }
 		public decimal Tichdiem { get; set; }
 		public string? Email { get; set; }
-		public string Diachi { get; set; }
 		public string? Password { get; set; }
 		public DateTime? Ngaytaotaikhoan { get; set; }
 		public int Diemsudung { get; set; }

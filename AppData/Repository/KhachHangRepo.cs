@@ -62,7 +62,7 @@ namespace AppData.Repository
             else
             {
                 search = search.ToLower();
-                return await _context.khachhangs.Where(x => x.Ten.StartsWith(search) || x.Sdt.StartsWith(search) || x.Email.StartsWith(search) || x.Diachi.StartsWith(search)).ToListAsync();
+                return await _context.khachhangs.Where(x => x.Ten.StartsWith(search) || x.Sdt.StartsWith(search) || x.Email.StartsWith(search)).ToListAsync();
             }
         }
 

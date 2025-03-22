@@ -33,9 +33,6 @@ namespace AppData.Models
 		[EmailAddress(ErrorMessage = "Địa chỉ email không hợp lệ.")]
 		public string? Email { get; set; }
 
-		[Required(ErrorMessage = "Địa chỉ là bắt buộc.")]
-		public string Diachi { get; set; }
-
 		public string? Password { get; set; }
 
 		public DateTime? Ngaytaotaikhoan { get; set; }
