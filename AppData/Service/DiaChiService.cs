@@ -33,6 +33,7 @@ namespace AppData.Service
                 Phuongxa = diachi.Phuongxa,
                 Tennguoinhan = diachi.Tennguoinhan,
                 sdtnguoinhan = diachi.sdtnguoinhan,
+                trangthai = diachi.trangthai,
 
             };
             await diaChiRepos.Create(Diachi);
@@ -58,6 +59,7 @@ namespace AppData.Service
                 Idkh = diaChis.Idkh,
                 Tennguoinhan = diaChis.Tennguoinhan,
                 sdtnguoinhan = diaChis.sdtnguoinhan,
+                trangthai = diaChis.trangthai,
             });
         }
 
@@ -76,6 +78,7 @@ namespace AppData.Service
                 Idkh = diaChi.Idkh,
                 Tennguoinhan = diaChi.Tennguoinhan,
                 sdtnguoinhan = diaChi.sdtnguoinhan,
+                trangthai = diaChi.trangthai,
             };
         }
 
@@ -95,6 +98,7 @@ namespace AppData.Service
                     Diachicuthe = result.Diachicuthe,
                     Tennguoinhan = result.Tennguoinhan,
                     sdtnguoinhan = result.sdtnguoinhan,
+                    trangthai = result.trangthai,
                 }).ToList();
 
                 return dtoList;
@@ -108,6 +112,8 @@ namespace AppData.Service
         public async Task Update(int id, DiachiDTO DiachiDTO)
         {
             var diaChi = await diaChiRepos.GetByIdAsync(id);
+            if (diaChi == null) throw new KeyNotFoundException("Không tìm thấy Địa chỉ");
+
             diaChi.Quanhuyen = DiachiDTO.Quanhuyen;
             diaChi.Thanhpho = DiachiDTO.Thanhpho;
             diaChi.Diachicuthe = DiachiDTO.Diachicuthe;
@@ -115,8 +121,9 @@ namespace AppData.Service
             diaChi.Phuongxa = DiachiDTO.Phuongxa;
             diaChi.Tennguoinhan = DiachiDTO.Tennguoinhan;
             diaChi.sdtnguoinhan = DiachiDTO.sdtnguoinhan;
-            await diaChiRepos.Update(diaChi);
-            await diaChiRepos.SaveChanges();
+            diaChi.trangthai = DiachiDTO.trangthai;
+
+            await diaChiRepos.Update(diaChi); 
         }
     }
 }

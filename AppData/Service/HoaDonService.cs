@@ -134,23 +134,6 @@ namespace AppData.Service
                 if (khachhang == null) throw new ArgumentNullException("Khách hàng không tồn tại");
             }
 
-            // Kiểm tra xem mã giảm giá có tồn tại không
-            if (HoadonDTO.Idgg != 0)
-            {
-                int idgg = HoadonDTO.Idgg.Value; // Chuyển đổi từ int? sang int
-                var giamgia = await _GGrepository.GetByIdAsync(idgg);
-
-                if (giamgia == null)
-                {
-                    // Cải thiện thông báo lỗi nếu không tìm thấy mã giảm giá
-                    throw new ArgumentNullException(nameof(giamgia), "Mã giảm giá không tồn tại");
-                }
-
-                // Giảm số lượng mã giảm giá
-                giamgia.Soluong -= 1;
-                _GGrepository.UpdateAsync(giamgia);
-            }
-
             // Tạo đối tượng Hoadon từ DTO
             var hoaDon = new Hoadon
             {

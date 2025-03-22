@@ -45,7 +45,6 @@ namespace AppAPI.Controllers
 					Sdt = dto.Sdt,
 					Ngaysinh = dto.Ngaysinh,
 					Email = dto.Email,
-					Diachi = dto.Diachi,
 					Password = BCrypt.Net.BCrypt.HashPassword(dto.Password), // Băm mật khẩu
 					Ngaytaotaikhoan = DateTime.UtcNow,
 					Tichdiem = 0, // Giá trị mặc định
