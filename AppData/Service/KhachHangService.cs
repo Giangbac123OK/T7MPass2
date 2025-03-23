@@ -152,12 +152,7 @@ namespace AppData.Service
             a.Ten = dto.Ten ?? a.Ten;
             a.Sdt = dto.Sdt ?? a.Sdt;
             a.Ngaysinh = dto.Ngaysinh;
-            a.Tichdiem = dto.Tichdiem;
             a.Email = dto.Email ?? a.Email;
-            a.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            a.Diemsudung = dto.Diemsudung;
-            a.Trangthai = dto.Trangthai;
-            a.Idrank = dto.Idrank;
             a.Avatar = dto.Avatar;
             a.Gioitinh = dto.Gioitinh;
 
