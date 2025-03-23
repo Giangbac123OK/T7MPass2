@@ -21,10 +21,9 @@ namespace AppData.Models
 		[Required(ErrorMessage = "Số điện thoại là bắt buộc.")]
 		[Phone(ErrorMessage = "Số điện thoại không hợp lệ.")]
 		public string Sdt { get; set; }
-
-		[Required(ErrorMessage = "Ngày sinh là bắt buộc.")]
-		[DataType(DataType.Date, ErrorMessage = "Ngày sinh không hợp lệ.")]
-		public DateTime Ngaysinh { get; set; }
+        [Required(ErrorMessage = "Ngày sinh là bắt buộc.")]
+        [DataType(DataType.Date, ErrorMessage = "Ngày sinh không hợp lệ.")]
+        public DateTime Ngaysinh { get; set; }
 
 		[Required(ErrorMessage = "Tích điểm là bắt buộc.")]
 		[Range(0, double.MaxValue, ErrorMessage = "Tích điểm phải là số dương.")]
