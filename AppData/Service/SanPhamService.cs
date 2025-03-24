@@ -45,6 +45,7 @@ namespace AppData.Service
                 Chieudai = sanphamDto.Chieudai,
                 Chieurong = sanphamDto.Chieurong,
                 Trongluong = sanphamDto.Trongluong,
+                NgayThemMoi = DateTime.Now,
                 //Giasale = sanphamDto.Giasale,
                 Idth = sanphamDto.Idth,
                 Trangthai = sanphamDto.Soluong > 0 ? 0 : 1
@@ -237,14 +238,78 @@ namespace AppData.Service
 
         public async Task<SanphamViewModel> GetAllSanphamViewModelsByIdSP(int idsp)
         {
-            var spView= await _repository.GetSanphamViewModelByIdSP(idsp);
-            foreach (var item in spView.Sanphamchitiets)
+           
+            var sanPham = await _repository.GetSanphamViewModelByIdSP(idsp);
+
+        
+            foreach (var item in sanPham.Sanphamchitiets)
             {
                 item.soLuongBan = await GetTotalSoldQuantityAsync(item.Id);
-                
             }
 
-            return spView;
+          
+            var spctWithMaxSale = sanPham.Sanphamchitiets
+                .Select(spct => new
+                {
+                    spct.Id,
+                    spct.Giathoidiemhientai,
+                    spct.GiaSaleSanPhamChiTiet,
+                    spct.Sales,
+                    MaxSale = spct.Sales
+                        .Where(s => s.trangThai == 0 && s.Ngaybatdau <= DateTime.Now && s.Ngayketthuc >= DateTime.Now && s.Soluong > 0)
+                        .OrderByDescending(s => s.Donvi == 1
+                            ? s.Giatrigiam * spct.Giathoidiemhientai / 100m
+                            : s.Giatrigiam)
+                        .FirstOrDefault()
+                })
+                .Where(spct => spct.MaxSale != null)
+                .OrderByDescending(spct => spct.MaxSale.Donvi == 1
+                    ? spct.MaxSale.Giatrigiam * spct.Giathoidiemhientai / 100m
+                    : spct.MaxSale.Giatrigiam)
+                .FirstOrDefault();
+
+            
+            var result = new SanphamViewModel
+            {
+                Id = sanPham.Id,
+                Tensp = sanPham.Tensp,
+                Mota = sanPham.Mota,
+                Giaban = spctWithMaxSale?.Giathoidiemhientai ?? sanPham.Giaban,
+                TrangThai = sanPham.TrangThai,
+                Soluong = sanPham.Soluong,
+                NgayThemSanPham = sanPham.NgayThemSanPham,
+                ThuongHieu = sanPham.ThuongHieu,
+                idThuongHieu = sanPham.idThuongHieu,
+                trungBinhDanhGia = sanPham.trungBinhDanhGia,
+                Giasale = spctWithMaxSale?.GiaSaleSanPhamChiTiet ?? sanPham.Giaban,
+                GiaTriGiam = spctWithMaxSale?.MaxSale?.Giatrigiam ?? 0,
+                Sanphamchitiets = sanPham.Sanphamchitiets.Select(spct => new SanphamchitietViewModel
+                {
+                    Id = spct.Id,
+                    Mota = spct.Mota,
+                    Giathoidiemhientai = spct.Giathoidiemhientai,
+                    GiaSaleSanPhamChiTiet = spct.GiaSaleSanPhamChiTiet,
+                    Soluong = spct.Soluong,
+                    TrangThai = spct.TrangThai,
+                    UrlHinhanh = spct.UrlHinhanh,
+                    soLuongBan = spct.soLuongBan,
+                    IdSize = spct.IdSize,
+                    IdChatLieu = spct.IdChatLieu,
+                    IdMau = spct.IdMau,
+                    Sales = spct.Sales.Select(s => new SalechitietViewModel
+                    {
+                        trangThai = s.trangThai,
+                        Donvi = s.Donvi,
+                        Giatrigiam = s.Giatrigiam,
+                        Soluong = s.Soluong,
+                        TenSale = s.TenSale,
+                        Ngaybatdau = s.Ngaybatdau,
+                        Ngayketthuc = s.Ngayketthuc
+                    }).ToList()
+                }).ToList()
+            };
+
+            return result;
         }
 
         public async Task<IEnumerable<SanphamViewModel>> GetAllSanphamGiamGiaViewModels()
