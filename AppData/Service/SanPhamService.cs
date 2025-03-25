@@ -19,8 +19,9 @@ namespace AppData.Service
         private readonly IHoaDonChiTietRepo _hoaDonChiTietRepo;
         private readonly ISanPhamChiTietRepo _sanPhamChiTietRepo;
         private readonly IDanhGiaRepo _danhGiaRepo;
+        private readonly IThuongHieuRepo _thuonghieuRepo;
 
-        public SanPhamService(ISanPhamRepo repository, IHoaDonChiTietRepo hoaDonChiTietRepo, ISanPhamChiTietRepo sanPhamChiTietRepo, IDanhGiaRepo danhGiaRepo)
+        public SanPhamService(IThuongHieuRepo thuonghieuRepo,ISanPhamRepo repository, IHoaDonChiTietRepo hoaDonChiTietRepo, ISanPhamChiTietRepo sanPhamChiTietRepo, IDanhGiaRepo danhGiaRepo)
         {
             _repository = repository;
             _hoaDonChiTietRepo = hoaDonChiTietRepo;
