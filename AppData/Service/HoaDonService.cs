@@ -8,8 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace AppData.Service
 {
@@ -20,13 +23,19 @@ namespace AppData.Service
         private readonly IKhachHangRepo _KHrepository;
         private readonly IGiamGiaRepo _GGrepository;
         private readonly IPhuongThucThanhToanRepo _PTTTrepository;
-        public HoaDonService(IHoaDonRepo repository, INhanVienRepo NVrepository, IKhachHangRepo KHrepository, IGiamGiaRepo GGrepository, IPhuongThucThanhToanRepo PTTTrepository)
+        private readonly IHoaDonChiTietService _HDCTrepository;
+        private readonly ISanPhamChiTietRepo _SPCTrepository;
+        private readonly ISanPhamRepo _SPrepository;
+        public HoaDonService(IHoaDonRepo repository, INhanVienRepo NVrepository, IKhachHangRepo KHrepository, IGiamGiaRepo GGrepository, IPhuongThucThanhToanRepo PTTTrepository, IHoaDonChiTietService hoaDonChiTietService, IConfiguration configuration, ISanPhamChiTietRepo sPCTrepository, ISanPhamRepo sPrepository, ISizeRepo sizeRepo, IColorRepo colorRepo, IChatLieuRepo chatLieuRepo)
         {
             _repository = repository;
             _NVrepository = NVrepository;
             _KHrepository = KHrepository;
             _GGrepository = GGrepository;
             _PTTTrepository = PTTTrepository;
+            _HDCTrepository = hoaDonChiTietService;
+            _SPCTrepository = sPCTrepository;
+            _SPrepository = sPrepository;
         }
 
         public async Task UpdateTrangThaiAsync(int orderCode, int status, int trangthaiTT)
@@ -147,6 +156,7 @@ namespace AppData.Service
                 Tongtiencantra = HoadonDTO.Tongtiencantra,
                 Tongtiensanpham = HoadonDTO.Tongtiensanpham,
                 Ghichu = HoadonDTO.Ghichu,
+                Phivanchuyen = HoadonDTO.Phivanchuyen,
                 Sdt = HoadonDTO.Sdt,
                 Idpttt = HoadonDTO.Idpttt,
                 Tonggiamgia = HoadonDTO.Tonggiamgia,
@@ -225,7 +235,7 @@ namespace AppData.Service
                 Phivanchuyen = hd.Phivanchuyen,
                 Idpttt = hd.Idpttt,
                 Ghichu = hd.Ghichu,
-                
+
             }).ToList();
         }
 
