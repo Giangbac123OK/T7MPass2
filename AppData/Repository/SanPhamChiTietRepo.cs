@@ -37,7 +37,7 @@ namespace AppData.Repository
         {
             try
             {
-                var result = await _context.Sanphamchitiets.FindAsync(id);
+                var result = await _context.Sanphamchitiets.FirstOrDefaultAsync(a => a.Id == id);
                 if (result == null)
                     throw new KeyNotFoundException("Không tìm thấy sản phẩm chi tiết với ID: " + id);
                 return result;
