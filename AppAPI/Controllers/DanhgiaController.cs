@@ -11,11 +11,17 @@ namespace AppAPI.Controllers
     public class DanhgiaController : ControllerBase
     {
         private readonly IDanhGiaService _services;
+        private readonly IHinhAnhService _hinhAnhService;
 
-        public DanhgiaController(IDanhGiaService services)
+        public DanhgiaController(IDanhGiaService services, IHinhAnhService hinhAnhService)
         {
             _services = services;
+            _hinhAnhService = hinhAnhService;
         }
+
+
+
+
 
         // GET: api/Danhgias
         [HttpGet]
@@ -113,24 +119,45 @@ namespace AppAPI.Controllers
         // POST: api/Danhgias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DanhgiaDTO>> PostDanhgia(DanhgiaDTO danhgia)
+        public async Task<ActionResult<DanhgiaDTO>> PostDanhgia([FromForm] DanhgiaDTO danhgia, [FromForm] List<IFormFile> files)
         {
             try
             {
-                // Kiểm tra và chuyển đổi ngày giờ thành UTC nếu cần
-                if (danhgia.Ngaydanhgia != null)
-                {
-                    // Đảm bảo rằng NgayDanhGia được xử lý là UTC
-                    danhgia.Ngaydanhgia = DateTime.Parse(danhgia.Ngaydanhgia.ToString()).ToUniversalTime();
-                }
-                else
-                {
-                    // Nếu không có ngày, sử dụng ngày hiện tại theo UTC
-                    danhgia.Ngaydanhgia = DateTime.UtcNow;
-                }
-
-                // Thực hiện thao tác lưu vào cơ sở dữ liệu
+                // Lưu đánh giá vào cơ sở dữ liệu
                 await _services.Create(danhgia);
+
+                if (files != null && files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        // Tạo đường dẫn lưu file
+                        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "picture");
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+
+                        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                        var filePath = Path.Combine(folderPath, fileName);
+
+                        // Lưu file vào thư mục
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // Tạo đối tượng HinhanhDTO
+                        var hinhanh = new HinhanhDTO
+                        {
+                            Idtrahang = 0,
+                            Iddanhgia = danhgia.Id,
+                            Urlhinhanh = fileName
+                        };
+
+                        // Lưu thông tin hình ảnh vào cơ sở dữ liệu
+                        await _hinhAnhService.AddAsync(hinhanh);
+                    }
+                }
 
                 // Trả về kết quả sau khi tạo mới
                 return CreatedAtAction("GetDanhgia", new { id = danhgia.Id }, danhgia);
@@ -140,6 +167,8 @@ namespace AppAPI.Controllers
                 return BadRequest($"Đã xảy ra lỗi: {ex.Message}");
             }
         }
+
+
 
 
 
@@ -183,25 +212,6 @@ namespace AppAPI.Controllers
             }
 
             return Ok(result); // Trả về kết quả nếu tìm thấy
-        }
-        [HttpGet("TinhTrungBinhDanhGia/{idsp}")]
-        public async Task<IActionResult> GetTBSaoDanhGia(int idsp)
-        {
-            // Kiểm tra ID
-            if (idsp <= 0)
-            {
-                return BadRequest(new { message = "ID sản phẩm chi tiết không hợp lệ." });
-            }
-            var danhGiaList = await _services.GetByidSP(idsp);
-
-            if (danhGiaList == null || !danhGiaList.Any())
-            {
-                return Ok(new { ProductId = idsp, AverageRating = 0 }); // Không có đánh giá, trả về 0
-            }
-
-            double averageRating = danhGiaList.Average(dg => dg.Sosao);
-
-            return Ok(new { ProductId = idsp, AverageRating = averageRating });
         }
     }
 }

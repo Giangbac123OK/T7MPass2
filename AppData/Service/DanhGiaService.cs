@@ -16,10 +16,12 @@ namespace AppData.Service
     public class DanhGiaService : IDanhGiaService
     {
         private readonly IDanhGiaRepo _repos;
+        private readonly IHinhAnhRepo _hinhAnhRepo;
 
-        public DanhGiaService(IDanhGiaRepo repos)
+        public DanhGiaService(IDanhGiaRepo repos, IHinhAnhRepo hinhAnhRepo)
         {
             _repos = repos;
+            _hinhAnhRepo = hinhAnhRepo;
         }
 
         public async Task Create(DanhgiaDTO danhGiaDTO)
@@ -35,6 +37,7 @@ namespace AppData.Service
 
             await _repos.Create(danhgia);
             await _repos.SaveChanges();
+            danhGiaDTO.Id = danhgia.Id;
         }
 
         public async Task Delete(int id)
@@ -43,9 +46,17 @@ namespace AppData.Service
             await _repos.SaveChanges();
         }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is DanhGiaService service &&
+                   EqualityComparer<IDanhGiaRepo>.Default.Equals(_repos, service._repos) &&
+                   EqualityComparer<IHinhAnhRepo>.Default.Equals(_hinhAnhRepo, service._hinhAnhRepo);
+        }
+
         public async Task<List<DanhgiaDTO>> GetAll()
         {
             var list = await _repos.GetAll();
+            var anh = await _hinhAnhRepo.GetAllAsync();
             return list.Select(list => new DanhgiaDTO()
             {
                 Id = list.Id,
@@ -112,8 +123,6 @@ namespace AppData.Service
                 Sosao = item.Sosao,
             }).ToList();
         }
-
-
 
         public async Task Update(int id, DanhgiaDTO danhGiaDTO)
         {
