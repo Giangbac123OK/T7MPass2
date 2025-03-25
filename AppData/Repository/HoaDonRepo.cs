@@ -140,14 +140,12 @@ namespace AppData.Repository
                     Ghichu = hd.Ghichu
                 })
                 .OrderByDescending(hd => hd.Thoigiandathang).ToListAsync();
-            if (search == null)
+            if (search != null)
             {
-                return a;
+                var data = a.Where(x => x.Id == int.Parse(search)).ToList();
+                return data;
             }
-            else
-            {
-                return a.Where(x=>x.Id == int.Parse(search)).ToList();
-            }
+            return a;
         }
 
         public async Task Danhandonhang(int id)
