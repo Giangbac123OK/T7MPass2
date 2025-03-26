@@ -11,6 +11,7 @@ using AppData.DTO;
 using AppData.IService;
 using AppData.IRepository;
 using AppData.Dto;
+using Microsoft.Extensions.Hosting;
 
 namespace AppAPI.Controllers
 {
@@ -20,10 +21,12 @@ namespace AppAPI.Controllers
     {
         private readonly IKhachHangService _Service;
         private readonly AppDbContext _context;
-        public KhachhangsController(IKhachHangService ser, AppDbContext context)
+        private readonly IWebHostEnvironment _environment;
+        public KhachhangsController(IKhachHangService ser, AppDbContext context, IWebHostEnvironment environment)
         {
             _Service = ser;
             _context = context;
+            _environment = environment;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -252,6 +255,75 @@ namespace AppAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình đổi mật khẩu", error = ex.Message });
+            }
+        }
+
+        [HttpPost("avatar")]
+        public async Task<IActionResult> UploadAvatar([FromForm] IFormFile image, [FromForm] string oldFileName = null)
+        {
+            try
+            {
+                // Kiểm tra xem có file được gửi lên không
+                if (image == null || image.Length == 0)
+                {
+                    return BadRequest("Không có file được tải lên");
+                }
+
+                // Kiểm tra định dạng file
+                var allowedExtensions = new[] { ".png", ".jpg", ".jpeg" };
+                var fileExtension = Path.GetExtension(image.FileName).ToLowerInvariant();
+                if (string.IsNullOrEmpty(fileExtension) || !allowedExtensions.Contains(fileExtension))
+                {
+                    return BadRequest("Chỉ chấp nhận file ảnh có định dạng .png, .jpg hoặc .jpeg");
+                }
+
+                // Kiểm tra kích thước file (tối đa 10MB)
+                if (image.Length > 10 * 1024 * 1024)
+                {
+                    return BadRequest("Kích thước file quá lớn (tối đa 10MB)");
+                }
+
+                // Xóa ảnh cũ nếu có
+                if (!string.IsNullOrEmpty(oldFileName))
+                {
+                    var oldFilePath = Path.Combine(_environment.WebRootPath, "picture", oldFileName);
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+
+                // Tạo tên file mới (sử dụng Guid để tránh trùng lặp)
+                var newFileName = $"{Guid.NewGuid()}{fileExtension}";
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "picture");
+
+                // Đảm bảo thư mục tồn tại
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var filePath = Path.Combine(uploadsFolder, newFileName);
+
+                // Lưu file vào thư mục
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(fileStream);
+                }
+
+                // Trả về đường dẫn tương đối của ảnh
+                var imageUrl = $"/picture/{newFileName}";
+                return Ok(new
+                {
+                    success = true,
+                    imageUrl = imageUrl,
+                    fileName = newFileName,
+                    oldFileNameDeleted = oldFileName
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi xử lý file: {ex.Message}");
             }
         }
     }
