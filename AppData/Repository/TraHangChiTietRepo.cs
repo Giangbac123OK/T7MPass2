@@ -48,61 +48,42 @@ namespace AppData.Repository
             return await _context.trahangchitiets.FindAsync(id);
         }
 
-        public async Task<List<Trahangchitiet>> GetByMaHD(int id)
+        public async Task<List<HoadonchitietViewModel>> ListSanPhamByIdhd(int id)
         {
-            return await _context.trahangchitiets.Where(x => x.Idth == id).ToListAsync();
+            var data = await _context.hoadonchitiets
+                .Where(hdct => hdct.Idhd == id)
+                .Join(_context.Sanphamchitiets, hdct => hdct.Idspct, spct => spct.Id, (hdct, spct) => new { hdct, spct })
+                .Join(_context.sanphams, x => x.spct.Idsp, sp => sp.Id, (x, sp) => new { x.hdct, x.spct, sp })
+                .Join(_context.hoadons, x => x.hdct.Idhd, hd => hd.Id, (x, hd) => new { x.hdct, x.spct, x.sp, hd })
+                .Join(_context.colors, x => x.spct.IdMau, mau => mau.Id, (x, mau) => new { x.hdct, x.spct, x.sp, x.hd, mau })
+                .Join(_context.sizes, x => x.spct.IdSize, size => size.Id, (x, size) => new { x.hdct, x.spct, x.sp, x.hd, x.mau, size })
+                .Join(_context.thuonghieus,x=>x.sp.Idth, th => th.Id, (x, th) => new { x.hdct, x.spct, x.sp, x.hd, x.mau, x.size, th })
+                .Join(_context.chatLieus, x => x.spct.IdChatLieu, chatlieu => chatlieu.Id, (x, chatlieu) => new HoadonchitietViewModel
+                {
+                    Id = x.hdct.Id,
+                    Idhd = id,
+                    Idsp = x.sp.Id,
+                    Idspct = x.spct.Id,
+                    Tensp = $"[{x.th.Tenthuonghieu}] -  {x.sp.TenSanpham}",
+                    urlHinhanh = x.spct.UrlHinhanh,
+                    Giasp = x.hdct.Giasp,
+                    Giamgia = x.hdct.Giamgia,
+                    Soluong = x.hdct.Soluong,
+                    Trangthaihd = x.hd.Trangthai,
+                    Mau = x.mau.Tenmau,
+                    Size = x.size.Sosize,
+                    Chatlieu = chatlieu.Tenchatlieu
+                })
+                .AsNoTracking() // Giúp cải thiện hiệu suất
+                .ToListAsync();
+
+            return data ?? new List<HoadonchitietViewModel>(); // Tránh trả về null
         }
 
         public async Task Update(Trahangchitiet ct)
         {
             _context.trahangchitiets.Update(ct);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateSoluongTra(int idhdct, int soluong)
-        {
-            var hdct = await _context.hoadonchitiets.FirstOrDefaultAsync(x => x.Id == idhdct);
-            if (hdct != null)
-            {
-                var spct = await _context.Sanphamchitiets.FirstOrDefaultAsync(x => x.Id == hdct.Idspct);
-                if (spct != null)
-                {
-                    spct.Soluong += soluong;
-                    _context.Sanphamchitiets.Update(spct);
-                    var sp = await _context.sanphams.FirstOrDefaultAsync(c => c.Id == spct.Idsp);
-                    if (sp != null)
-                    {
-                        sp.Soluong += soluong;
-                        _context.sanphams.Update(sp);
-                    }
-                    await _context.SaveChangesAsync();
-                }
-            }
-        }
-
-        public async Task<List<TrahangchitietViewModel>> ViewHoadonctTheoIdth(int id)
-        {
-            var a = await (from trct in _context.trahangchitiets
-                           join tr in _context.trahangs on trct.Idth equals tr.Id
-                           join hdct in _context.hoadonchitiets on trct.Idhdct equals hdct.Id
-                           join spct in _context.Sanphamchitiets on hdct.Idspct equals spct.Id
-                           join sp in _context.sanphams on spct.Idsp equals sp.Id
-                           where trct.Idth == id
-                           select new TrahangchitietViewModel()
-                           {
-                               Id = trct.Id,
-                               Idtr = trct.Idth,
-                               Idspct = hdct.Idspct,
-                               Idsp = spct.Idsp,
-                               Tensp = sp.TenSanpham,
-                               urlHinhanh = spct.UrlHinhanh,
-                               Tongtienhoan = (trct.Soluong * hdct.Giasp) - hdct.Giamgia ?? 0,
-                               Tinhtrang = trct.Tinhtrang,
-                               Hinhthucxuly = trct.Hinhthucxuly,
-                               Soluong = trct.Soluong,
-                               Trangthaith = tr.Trangthai
-                           }).ToListAsync();
-            return a;
         }
     }
 }

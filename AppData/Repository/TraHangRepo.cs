@@ -118,24 +118,5 @@ namespace AppData.Repository
             _context.trahangs.Update(trhang);
             await _context.SaveChangesAsync();
         }
-
-        public async Task<List<TraHangViewModel>> ViewHoaDonTraByIdkh(int id)
-        {
-            var a = await _context.trahangs.Where(x => x.Idkh == id).ToListAsync();
-
-            return a.Select(x => new TraHangViewModel()
-            {
-                Id = x.Id,
-                Idkh = x.Idkh,
-                Tenkh = x.Tenkhachhang,
-                Lydotrahang = x.Lydotrahang,
-                Tongtienhoan = x.Sotienhoan ?? 0,
-                Phuongthuchoantien = x.Phuongthuchoantien,
-                Ngaytrahangdukien = x.Ngaytrahangthucte ?? null,
-                Ngaytrahangthucte = x.Ngaytrahangthucte ?? null,
-                Tongsoluong = _context.trahangchitiets.Where(th => th.Idth == x.Id).Sum(th => th.Soluong),
-                Trangthai = x.Trangthai
-            }).OrderByDescending(x => x.Ngaytrahangdukien ?? x.Ngaytrahangthucte).ToList();
-        }
     }
 }

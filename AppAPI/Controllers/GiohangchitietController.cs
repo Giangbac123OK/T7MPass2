@@ -153,5 +153,26 @@ namespace AppAPI.Controllers
                 return StatusCode(500, $"Đã xảy ra lỗi: {ex.Message}"); // Xử lý lỗi không mong muốn
             }
         }
+        [HttpGet("Sodongiohangct/{id}")]
+        public async Task<IActionResult> GetSodongiohangct(int id)
+        {
+            try
+            {
+                var giohangs = await _Service.GetAllGiohangsAsync();
+
+                if (giohangs == null)
+                {
+                    return NotFound("Không tìm thấy giỏ hàng.");
+                }
+
+                var count = giohangs.Count(x => x.Idgh == id);
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Lỗi: {ex.Message}");
+            }
+        }
+
     }
 }

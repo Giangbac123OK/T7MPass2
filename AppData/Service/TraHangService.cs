@@ -84,11 +84,6 @@ namespace AppData.Service
             };
         }
 
-        public async Task Trahangquahan()
-        {
-            await _repos.Trahangquahan();
-        }
-
         public async Task Update(int id, TrahangDTO trahang)
         {
             var a = await _repos.GetById(id);
@@ -110,11 +105,6 @@ namespace AppData.Service
                 a.Chuthich = trahang.Chuthich;
                 await _repos.Update(a);
             }
-        }
-
-        public async Task<List<TraHangViewModel>> ViewHoaDonTraByIdkh(int id)
-        {
-            return await _repos.ViewHoaDonTraByIdkh(id);
         }
     }
 }
