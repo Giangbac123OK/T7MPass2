@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AppData.Migrations
 {
-    public partial class okaaaa : Migration
+    public partial class db : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -189,7 +189,6 @@ namespace AppData.Migrations
                     Ngaysinh = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Tichdiem = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Diachi = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Ngaytaotaikhoan = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Diemsudung = table.Column<int>(type: "int", nullable: false),
@@ -249,7 +248,8 @@ namespace AppData.Migrations
                     Thanhpho = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Quanhuyen = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phuongxa = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Diachicuthe = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Diachicuthe = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    trangthai = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

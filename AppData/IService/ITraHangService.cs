@@ -16,7 +16,5 @@ namespace AppData.IService
         Task Add(TrahangDTO trahang);
         Task Update(int id, TrahangDTO trahang);
         Task DeleteById(int id);
-        Task Trahangquahan();
-        Task<List<TraHangViewModel>> ViewHoaDonTraByIdkh(int id);
     }
 }
