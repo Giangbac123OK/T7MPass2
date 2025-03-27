@@ -534,7 +534,6 @@ namespace AppData.Migrations
                     Soluong = table.Column<int>(type: "int", nullable: false),
                     Tinhtrang = table.Column<int>(type: "int", nullable: false),
                     Ghichu = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Hinhthucxuly = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Idhdct = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

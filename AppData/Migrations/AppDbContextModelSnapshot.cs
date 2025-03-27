@@ -790,10 +790,6 @@ namespace AppData.Migrations
                     b.Property<string>("Ghichu")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Hinhthucxuly")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Idhdct")
                         .HasColumnType("int");
 

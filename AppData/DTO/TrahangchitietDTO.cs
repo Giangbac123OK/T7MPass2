@@ -15,7 +15,6 @@ namespace AppData.DTO
 		public int Soluong {  get; set; }
 		public int Tinhtrang {  get; set; }
 		public string? Ghichu {  get; set; }
-		public string Hinhthucxuly {  get; set; }
 		public int Idhdct { get; set; }
 	}
 }
