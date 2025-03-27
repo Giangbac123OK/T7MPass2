@@ -194,7 +194,8 @@ namespace AppAPI.Controllers
 					trangthai = khachHang.Trangthai,
 					Ten = khachHang.Ten,
 					Email = khachHang.Email,
-					Ngaytaotaikhoan = khachHang.Ngaytaotaikhoan
+					Ngaytaotaikhoan = khachHang.Ngaytaotaikhoan,
+                    Avatar = khachHang.Avatar
 				});
 			}
 			catch (Exception ex)
