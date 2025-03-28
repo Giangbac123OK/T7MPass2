@@ -90,7 +90,7 @@ namespace AppData.Service
             {
                 return null;
             }
-
+            var anh = await _hinhAnhRepo.GetByIdDanhGiaAsync(list.Id);
 
             return new DanhgiaDTO()
             {
@@ -100,6 +100,14 @@ namespace AppData.Service
                 Ngaydanhgia = list.Ngaydanhgia,
                 Idhdct = list.Idhdct,
                 Sosao = list.Sosao  ,
+                Hinhanhs = anh.Select(item => new HinhanhDTO()
+                {
+                    Id = item.Id,
+                    Idtrahang = item.Idtrahang,
+                    Iddanhgia = item.Iddanhgia,
+                    Urlhinhanh = item.Urlhinhanh,
+                }).ToList()
+
             };
 
         }

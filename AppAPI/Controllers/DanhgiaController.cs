@@ -42,16 +42,13 @@ namespace AppAPI.Controllers
         }
 
         // GET: api/Danhgias/5
-        [HttpGet("/{id}")]
+        [HttpGet("DanhGia/{id}")]
         public async Task<ActionResult<DanhgiaDTO>> GetDanhgia(int id)
         {
             try
             {
 
-                if (await _services.GetAll() == null)
-                {
-                    return NotFound();
-                }
+              
                 var danhgia = await _services.GetById(id);
 
                 if (danhgia == null)
@@ -71,17 +68,19 @@ namespace AppAPI.Controllers
         {
             try
             {
-
-                if (await _services.GetAll() == null)
-                {
-                    return NotFound();
-                }
                 var danhgia = await _services.getByidHDCT(id);
 
                 if (danhgia == null)
                 {
-                    return NotFound();
+                    return Ok(new
+                    {
+                        success = false,
+                        message = "Không tìm thấy đánh giá cho hóa đơn chi tiết này.",
+                        data = (object)null // Ép kiểu về object
+                    });
+
                 }
+
 
                 return danhgia;
             }
@@ -93,20 +92,70 @@ namespace AppAPI.Controllers
 
         // PUT: api/Danhgias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("/{id}")]
-        public async Task<IActionResult> PutDanhgia(int id, DanhgiaDTO danhgia)
+        [HttpPut("DanhGia/{id}")]
+        public async Task<IActionResult> PutDanhgia(int id, [FromForm] DanhgiaDTO danhgia, [FromForm] List<IFormFile> files)
         {
-            if (id != danhgia.Id)
-            {
-                return BadRequest("ID trong URL không khớp với ID trong dữ liệu.");
-            }
-
+            
             try
             {
-
-
+                // Cập nhật đánh giá trong cơ sở dữ liệu
                 await _services.Update(id, danhgia);
 
+                // Lấy danh sách hình ảnh hiện tại trong cơ sở dữ liệu
+                var existingImages = await _hinhAnhService.GetByIdDanhGiaAsync(id);
+
+                // Xóa những hình ảnh không còn trong danh sách
+                var newImageFileNames = files?.Select(f => f.FileName).ToList() ?? new List<string>();
+                foreach (var image in existingImages)
+                {
+                    if (!newImageFileNames.Contains(image.Urlhinhanh))
+                    {
+                        // Xóa file vật lý
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "picture", image.Urlhinhanh);
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
+
+                        // Xóa bản ghi trong cơ sở dữ liệu
+                        await _hinhAnhService.DeleteAsync(image.Id);
+                    }
+                }
+
+                if (files != null && files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        // Tạo đường dẫn lưu file
+                        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "picture");
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+
+                        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                        var filePath = Path.Combine(folderPath, fileName);
+
+                        // Lưu file vào thư mục
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // Tạo đối tượng HinhanhDTO
+                        var hinhanh = new HinhanhDTO
+                        {
+                            Idtrahang = 0,
+                            Iddanhgia = danhgia.Id,
+                            Urlhinhanh = fileName
+                        };
+
+                        // Lưu thông tin hình ảnh mới vào cơ sở dữ liệu
+                        await _hinhAnhService.AddAsync(hinhanh);
+                    }
+                }
+
+                // Trả về kết quả không nội dung khi cập nhật thành công
                 return NoContent();
             }
             catch (Exception ex)
@@ -114,6 +163,7 @@ namespace AppAPI.Controllers
                 return BadRequest($"Đã xảy ra lỗi: {ex.Message}");
             }
         }
+
 
 
         // POST: api/Danhgias

@@ -21,5 +21,6 @@ namespace AppData.DTO
 		public int	Idhdct { get; set; }
 
         public int Sosao { get; set; }
+        public List<HinhanhDTO>? Hinhanhs { get; set; } = new List<HinhanhDTO>();
     }
 }
