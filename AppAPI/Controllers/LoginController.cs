@@ -17,49 +17,91 @@ namespace AppAPI.Controllers
 		private readonly ILogger<LoginController> _logger;
         private readonly IKhachHangRepo _KhachHang_Repos;
         private readonly IGioHangRepo _KhachHang_GHrepos;
+        private readonly IWebHostEnvironment _environment;
 
-        public LoginController(AppDbContext context, ILogger<LoginController> logger, IGioHangRepo GHrepos, IKhachHangRepo repos)
+        public LoginController(AppDbContext context, ILogger<LoginController> logger, IGioHangRepo GHrepos, IKhachHangRepo repos, IWebHostEnvironment environment)
 		{
 			_context = context;
 			_logger = logger;
 			_KhachHang_GHrepos = GHrepos;
 			_KhachHang_Repos = repos;
-		}
-		[HttpPost("_KhachHang/register")]
-		public async Task<IActionResult> Register([FromBody] RegisterUserDTO dto)
-		{
-			try
-			{
-				if (_context.khachhangs.Any(kh => kh.Email == dto.Email))
-				{
-					return BadRequest("Email đã tồn tại");
-				}
+            _environment = environment;
+
+        }
+
+        [HttpPost("_KhachHang/register")]
+        public async Task<IActionResult> Register([FromBody] RegisterUserDTO dto)
+        {
+            try
+            {
+                // Kiểm tra email và số điện thoại đã tồn tại chưa
+                if (_context.khachhangs.Any(kh => kh.Email == dto.Email))
+                {
+                    return BadRequest("Email đã tồn tại");
+                }
                 if (_context.khachhangs.Any(kh => kh.Sdt == dto.Sdt))
                 {
                     return BadRequest("Số điện thoại đã tồn tại");
                 }
 
+                // Xử lý avatar mặc định
+                string avatarPath;
+                const string defaultAvatarName = "AnhKhachHang.png";
+                string physicalAvatarPath = Path.Combine(_environment.WebRootPath, "picture", defaultAvatarName);
+
+                // Kiểm tra xem ảnh đã tồn tại trong thư mục chưa
+                if (System.IO.File.Exists(physicalAvatarPath))
+                {
+                    avatarPath = $"{defaultAvatarName}";
+                }
+                else
+                {
+                    try
+                    {
+                        // Thử tải ảnh từ URL dự phòng và lưu vào server
+                        string imageUrl = "https://i.imgur.com/3jY5r9s.png"; // URL dự phòng bạn cung cấp
+                        using (HttpClient client = new HttpClient())
+                        {
+                            // Tải ảnh từ URL
+                            byte[] imageBytes = await client.GetByteArrayAsync(imageUrl);
+
+                            // Đảm bảo thư mục tồn tại
+                            Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "picture"));
+
+                            // Lưu ảnh vào server
+                            await System.IO.File.WriteAllBytesAsync(physicalAvatarPath, imageBytes);
+
+                            avatarPath = $"{defaultAvatarName}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Không thể tải ảnh từ URL, sử dụng URL trực tiếp");
+                        // Nếu không tải được, sử dụng URL trực tiếp
+                        avatarPath = "https://i.imgur.com/3jY5r9s.png";
+                    }
+                }
+
+                // Tạo tài khoản khách hàng mới
                 var khachHang = new Khachhang
-				{
-					Ten = dto.Ten,
-					Sdt = dto.Sdt,
-					Ngaysinh = dto.Ngaysinh,
-					Email = dto.Email,
-					Password = BCrypt.Net.BCrypt.HashPassword(dto.Password), // Băm mật khẩu
-					Ngaytaotaikhoan = DateTime.UtcNow,
-					Tichdiem = 0, // Giá trị mặc định
-					Diemsudung = 0,
-					Gioitinh = dto.gioitinh,
-					Trangthai = 0,
-					Idrank = 1, 
-					Avatar = "https://example.com/default-avatar.png"
-
-					// Rank mặc định
-
-				};
+                {
+                    Ten = dto.Ten,
+                    Sdt = dto.Sdt,
+                    Ngaysinh = dto.Ngaysinh,
+                    Email = dto.Email,
+                    Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                    Ngaytaotaikhoan = DateTime.UtcNow,
+                    Tichdiem = 0,
+                    Diemsudung = 0,
+                    Gioitinh = dto.gioitinh,
+                    Trangthai = 0,
+                    Idrank = 1,
+                    Avatar = avatarPath // Sử dụng đường dẫn đã xử lý
+                };
 
                 await _KhachHang_Repos.AddAsync(khachHang);
 
+                // Tạo giỏ hàng mới
                 var gh = new Giohang()
                 {
                     Soluong = 0,
@@ -68,16 +110,13 @@ namespace AppAPI.Controllers
                 await _KhachHang_GHrepos.AddAsync(gh);
 
                 return Ok("Đăng ký thành công");
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error during registration");
-				return StatusCode(500, "Đã xảy ra lỗi trong quá trình đăng ký");
-			}
-			// Kiểm tra xem email đã tồn tại chưa
-
-
-		}
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during registration");
+                return StatusCode(500, "Đã xảy ra lỗi trong quá trình đăng ký");
+            }
+        }
 
         [HttpPost("_KhachHang/checkemail")]
         public IActionResult CheckEmail(string checkEmail)
@@ -155,7 +194,8 @@ namespace AppAPI.Controllers
 					trangthai = khachHang.Trangthai,
 					Ten = khachHang.Ten,
 					Email = khachHang.Email,
-					Ngaytaotaikhoan = khachHang.Ngaytaotaikhoan
+					Ngaytaotaikhoan = khachHang.Ngaytaotaikhoan,
+                    Avatar = khachHang.Avatar
 				});
 			}
 			catch (Exception ex)

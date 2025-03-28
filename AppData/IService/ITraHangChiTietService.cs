@@ -13,11 +13,9 @@ namespace AppData.IService
     {
         Task<List<TrahangchitietDTO>> GetAll();
         Task<TrahangchitietDTO> GetById(int id);
-        Task<List<TrahangchitietDTO>> GetByMaHD(int id);
         Task Add(TrahangchitietDTO ct);
-        Task UpdateSoluongTra(int idhdct, int soluong);
         Task Update(int id, TrahangchitietDTO ct);
         Task Delete(int id);
-        Task<List<TrahangchitietViewModel>> ViewHoadonctTheoIdth(int id);
+        Task<List<HoadonchitietViewModel>> ListSanPhamByIdhd(int id);
     }
 }

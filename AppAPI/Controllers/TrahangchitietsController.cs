@@ -21,20 +21,6 @@ namespace AppAPI.Controllers
         {
             _service = ser;
         }
-
-        [HttpPut("Updatesoluongtra/{id}")]
-        public async Task<IActionResult> Updatesoluongtra(int idhdct, int soluong)
-        {
-            try
-            {
-                await _service.UpdateSoluongTra(idhdct, soluong);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -54,20 +40,6 @@ namespace AppAPI.Controllers
             try
             {
                 var a = await _service.GetById(id);
-                if (a == null) return BadRequest("Không tồn tại");
-                return Ok(a);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-        [HttpGet("Chi-tiet-ma-hoa-don/{id}")]
-        public async Task<IActionResult> GetByMaHD(int id)
-        {
-            try
-            {
-                var a = await _service.GetByMaHD(id);
                 if (a == null) return BadRequest("Không tồn tại");
                 return Ok(a);
             }
@@ -125,12 +97,12 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("View-Hoadonct-Theo-Idth-{id}")]
-        public async Task<IActionResult> ViewHoadonctTheoIdth(int id)
+        [HttpGet("ListSanPhamByIdhd/{id}")]
+        public async Task<IActionResult> ListSanPhamByIdhd(int id)
         {
             try
             {
-                return Ok(await _service.ViewHoadonctTheoIdth(id));
+                return Ok(await _service.ListSanPhamByIdhd(id));
             }
             catch (Exception ex)
             {

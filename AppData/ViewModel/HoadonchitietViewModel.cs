@@ -13,11 +13,13 @@ namespace AppData.ViewModel
         public int Idspct {  get; set; }
         public int Idsp { get; set; }
         public string Tensp {  get; set; }
-        public string urlHinhanh {  get; set; }
+        public string? urlHinhanh {  get; set; }
         public decimal Giasp {  get; set; }
         public decimal? Giamgia {  get; set; }
         public int Soluong {  get; set; }
         public int Trangthaihd { get; set; }
-
+        public string Mau { get; set; }
+        public int Size { get; set; }
+        public string Chatlieu { get; set; }
     }
 }

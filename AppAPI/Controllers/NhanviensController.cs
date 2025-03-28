@@ -29,9 +29,11 @@ namespace AppAPI.Controllers
             var result = await _Service.GetAllNhanviensAsync();
             return Ok(result.Select(nv => new
             {
+                nv.Id,
                 nv.Hovaten,
                 nv.Ngaysinh,
                 nv.Diachi,
+                nv.Email,
                 Gioitinh = nv.Gioitinh == true ? "Nam" : "Nữ",
                 nv.Sdt,
                 Trangthai = nv.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
@@ -48,9 +50,11 @@ namespace AppAPI.Controllers
                 var nhanvien = await _Service.GetNhanvienByIdAsync(id);
                 return Ok(new
                 {
+                    nhanvien.Id,
                     nhanvien.Hovaten,
                     nhanvien.Ngaysinh,
                     nhanvien.Diachi,
+                    nhanvien.Email,
                     Gioitinh = nhanvien.Gioitinh == false ? "Nam" : "Nữ",
                     nhanvien.Sdt,
                     Trangthai = nhanvien.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",

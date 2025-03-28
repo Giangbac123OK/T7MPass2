@@ -44,7 +44,6 @@ namespace AppData.Service
                 Soluong = ct.Soluong,
                 Tinhtrang = ct.Tinhtrang,
                 Ghichu = ct.Ghichu,
-                Hinhthucxuly = ct.Hinhthucxuly,
                 Idhdct = ct.Idhdct
             };
             await _repos.Add(a);
@@ -67,7 +66,6 @@ namespace AppData.Service
                 Soluong = x.Soluong,
                 Tinhtrang = x.Tinhtrang,
                 Ghichu = x.Ghichu,
-                Hinhthucxuly = x.Hinhthucxuly,
                 Idhdct = x.Idhdct
             }).ToList();
         }
@@ -82,24 +80,13 @@ namespace AppData.Service
                 Soluong = x.Soluong,
                 Tinhtrang = x.Tinhtrang,
                 Ghichu = x.Ghichu,
-                Hinhthucxuly = x.Hinhthucxuly,
                 Idhdct = x.Idhdct
             };
         }
 
-        public async Task<List<TrahangchitietDTO>> GetByMaHD(int id)
+        public async Task<List<HoadonchitietViewModel>> ListSanPhamByIdhd(int id)
         {
-            var a = await _repos.GetByMaHD(id);
-            return a.Select(x => new TrahangchitietDTO
-            {
-                Id = x.Id,
-                Idth = x.Idth,
-                Soluong = x.Soluong,
-                Tinhtrang = x.Tinhtrang,
-                Ghichu = x.Ghichu,
-                Hinhthucxuly = x.Hinhthucxuly,
-                Idhdct = x.Idhdct
-            }).ToList();
+            return await _repos.ListSanPhamByIdhd(id);
         }
 
         public async Task Update(int id, TrahangchitietDTO ct)
@@ -125,7 +112,6 @@ namespace AppData.Service
                 a.Soluong = ct.Soluong;
                 a.Tinhtrang = ct.Tinhtrang;
                 a.Ghichu = ct.Ghichu;
-                a.Hinhthucxuly = ct.Hinhthucxuly;
                 a.Idhdct = ct.Idhdct;
                 await _repos.Update(a);
             }
@@ -133,16 +119,6 @@ namespace AppData.Service
             {
                 throw new KeyNotFoundException("Không tồn tại!");
             }
-        }
-
-        public async Task UpdateSoluongTra(int idhdct, int soluong)
-        {
-            await _repos.UpdateSoluongTra(idhdct, soluong);
-        }
-
-        public async Task<List<TrahangchitietViewModel>> ViewHoadonctTheoIdth(int id)
-        {
-            return await _repos.ViewHoadonctTheoIdth(id);
         }
     }
 }

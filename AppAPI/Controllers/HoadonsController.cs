@@ -199,6 +199,7 @@ namespace AppAPI.Controllers
                 <td>{size?.Sosize ?? 0}</td>
                 <td>{chatlieu?.Tenchatlieu ?? "N/A"}</td>
                 <td>{ct.Soluong}</td>
+                <td>{ct.Soluong*(ct.Giasp-(ct.Giamgia??0)):#,##0 VNĐ}</td>
                 {priceHtml}
             </tr>");
                 }
@@ -239,6 +240,7 @@ namespace AppAPI.Controllers
                     <th>Chất liệu</th>
                     <th>Số lượng</th>
                     <th>Giá</th>
+                    <th>Thành tiền</th>
                 </tr>
                 {productListHtml}
             </table>

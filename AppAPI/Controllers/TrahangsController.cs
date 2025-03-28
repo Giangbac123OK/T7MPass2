@@ -93,29 +93,13 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("tra-hang-qua-han")]
-        public async Task<IActionResult> DeleteTrahangQua15Days()
+        [HttpPut("UpdateTrangThaiHd/{id}")]
+        public async Task<IActionResult> UpdateTrangThaiHd(int id)
         {
             try
             {
-                await _ser.Trahangquahan();///a
-                return NoContent(); // HTTP 204 - Thành công, không trả về nội dung
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message }); // HTTP 404 - Không tìm thấy
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Lỗi hệ thống", details = ex.Message }); // HTTP 500 - Lỗi server
-            }
-        }
-        [HttpGet("View-Hoa-Don-Tra-By-Idkh/{id}")]
-        public async Task<IActionResult> ViewHoaDonTraByIdkh(int id)
-        {
-            try
-            {
-                return Ok(await _ser.ViewHoaDonTraByIdkh(id));
+                await _ser.UpdateTrangThaiHd(id);
+                return Ok("Sửa thành công!");
             }
             catch (Exception ex)
             {

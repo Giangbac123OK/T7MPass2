@@ -84,11 +84,6 @@ namespace AppData.Service
             };
         }
 
-        public async Task Trahangquahan()
-        {
-            await _repos.Trahangquahan();
-        }
-
         public async Task Update(int id, TrahangDTO trahang)
         {
             var a = await _repos.GetById(id);
@@ -112,9 +107,25 @@ namespace AppData.Service
             }
         }
 
-        public async Task<List<TraHangViewModel>> ViewHoaDonTraByIdkh(int id)
+        public async Task UpdateTrangThaiHd(int id)
         {
-            return await _repos.ViewHoaDonTraByIdkh(id);
+            try
+            {
+                var a = await _repos.GetById(id);
+                if (a == null)
+                {
+                    throw new KeyNotFoundException("Không tồn tại!");
+                }
+                else
+                {
+                    a.Trangthai = 5;
+                    await _repos.Update(a);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
         }
     }
 }
