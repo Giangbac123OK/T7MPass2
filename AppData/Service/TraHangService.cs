@@ -106,5 +106,26 @@ namespace AppData.Service
                 await _repos.Update(a);
             }
         }
+
+        public async Task UpdateTrangThaiHd(int id)
+        {
+            try
+            {
+                var a = await _repos.GetById(id);
+                if (a == null)
+                {
+                    throw new KeyNotFoundException("Không tồn tại!");
+                }
+                else
+                {
+                    a.Trangthai = 5;
+                    await _repos.Update(a);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
+        }
     }
 }

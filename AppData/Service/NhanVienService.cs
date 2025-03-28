@@ -25,11 +25,13 @@ namespace AppData.Service
             var nhanviens = await _repository.GetAllAsync();
             return nhanviens.Select(n => new NhanvienDTO
             {
+                Id = n.Id,
                 Hovaten = n.Hovaten,
                 Ngaysinh = n.Ngaysinh,
                 Diachi = n.Diachi,
                 Gioitinh = n.Gioitinh,
                 Sdt = n.Sdt,
+                Email = n.Email,
                 Trangthai = n.Trangthai,
                 Password = n.Password,
                 Role = n.Role
@@ -43,11 +45,13 @@ namespace AppData.Service
 
             return new NhanvienDTO
             {
+                Id = nhanvien.Id,
                 Hovaten = nhanvien.Hovaten,
                 Ngaysinh = nhanvien.Ngaysinh,
                 Diachi = nhanvien.Diachi,
                 Gioitinh = nhanvien.Gioitinh,
                 Sdt = nhanvien.Sdt,
+                Email = nhanvien.Email,
                 Trangthai = nhanvien.Trangthai,
                 Password = nhanvien.Password,
                 Role = nhanvien.Role
@@ -95,6 +99,7 @@ namespace AppData.Service
             var nhanviens = await _repository.TimKiemNhanvienAsync(search);
             return nhanviens.Select(n => new NhanvienDTO
             {
+                Id = n.Id,
                 Hovaten = n.Hovaten,
                 Ngaysinh = n.Ngaysinh,
                 Diachi = n.Diachi,
