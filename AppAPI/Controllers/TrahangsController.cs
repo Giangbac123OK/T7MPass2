@@ -93,5 +93,18 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPut("UpdateTrangThaiHd/{id}")]
+        public async Task<IActionResult> UpdateTrangThaiHd(int id)
+        {
+            try
+            {
+                await _ser.UpdateTrangThaiHd(id);
+                return Ok("Sửa thành công!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
