@@ -47,10 +47,23 @@ namespace AppAPI.Controllers
                 nv.Sdt,
                 Trangthai = nv.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
                 nv.Password,
-                Role = nv.Role == 0 ? "Quản lý" : "Nhân viên"
-            }));
-        }
+                Role = nv.Role == 0 ? "Admin" : (nv.Role == 1 ? "Quản lý" : "Nhân viên")
 
+        }));
+        }
+        [HttpPost("Send_Account_Creation_Email")]
+        public async Task<IActionResult> SendAccountCreationEmail(string toEmail, string hoten, string password, int role)
+        {
+            try
+            {
+                await _Service.SendAccountCreationEmail(toEmail, hoten, password, role);
+                return Ok("✅ Email đã được gửi thành công.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

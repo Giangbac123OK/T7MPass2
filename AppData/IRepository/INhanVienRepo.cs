@@ -13,7 +13,8 @@ namespace AppData.IRepository
         Task<Nhanvien> GetByIdAsync(int id);
         Task AddAsync(Nhanvien nhanvien);
         Task UpdateAsync(Nhanvien nhanvien);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(int id); 
+        Task SendAccountCreationEmail(string toEmail, string hoten, string password, int role);
         Task<IEnumerable<Nhanvien>> TimKiemNhanvienAsync(string search);
     }
 }
