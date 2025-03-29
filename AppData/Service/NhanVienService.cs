@@ -2,11 +2,15 @@
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Models;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -57,7 +61,36 @@ namespace AppData.Service
                 Role = nhanvien.Role
             };
         }
+        public async Task SendAccountCreationEmail(string toEmail, string hoten, string password, int role)
+        {
+            await _repository.SendAccountCreationEmail(toEmail, hoten, password, role);
+        }
+        private string GenerateSecurePassword(int length = 6)
+        {
+            const string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string lowerCase = "abcdefghijklmnopqrstuvwxyz";
+            const string numbers = "0123456789";
+            const string specialChars = "!@#$%^&*";
 
+            Random random = new Random();
+
+            // Chọn ít nhất 1 ký tự từ mỗi nhóm
+            char[] password = new char[length];
+            password[0] = upperCase[random.Next(upperCase.Length)];
+            password[1] = lowerCase[random.Next(lowerCase.Length)];
+            password[2] = numbers[random.Next(numbers.Length)];
+            password[3] = specialChars[random.Next(specialChars.Length)];
+
+            // Các ký tự còn lại chọn ngẫu nhiên từ tất cả nhóm
+            string allChars = upperCase + lowerCase + numbers + specialChars;
+            for (int i = 4; i < length; i++)
+            {
+                password[i] = allChars[random.Next(allChars.Length)];
+            }
+
+            // Trộn ngẫu nhiên thứ tự ký tự
+            return new string(password.OrderBy(_ => random.Next()).ToArray());
+        }
         public async Task AddNhanvienAsync(NhanvienDTO nhanvienDto)
         {
             var nhanvien = new Nhanvien
@@ -68,13 +101,25 @@ namespace AppData.Service
                 Email = nhanvienDto.Email,
                 Gioitinh = nhanvienDto.Gioitinh,
                 Sdt = nhanvienDto.Sdt,
-                Trangthai = 0, // Mặc định "hoạt động"
-                Password = nhanvienDto.Password,
-                Role = nhanvienDto.Role // 0: Quản lý, 1: Nhân viên
+                Trangthai = 0, // Mặc định "hoạt động",
+                PasswordDefault = GenerateSecurePassword(),
+                Password = GenerateSecurePassword(),
+                Role = nhanvienDto.Role // 0: Admin, 1: Quản lý, 2: Nhân viên
             };
             await _repository.AddAsync(nhanvien);
         }
-
+        public async Task ChangePasswordAfter24h()
+        {
+            var data = await _repository.GetAllAsync();
+            foreach (var item in data)
+            {
+                if (DateTime.Now - item.Ngaytaotaikhoan >= TimeSpan.FromHours(24))
+                {
+                    item.Trangthai = 1;
+                    await _repository.UpdateAsync(item);
+                }
+            }
+        }
         public async Task UpdateNhanvienAsync(int id, NhanvienDTO nhanvienDto)
         {
             var nhanvien = await _repository.GetByIdAsync(id);

@@ -47,8 +47,11 @@ namespace AppData.Models
 		[Required(ErrorMessage = "Mật khẩu không được để trống")]
 		[StringLength(20, MinimumLength = 6, ErrorMessage = "Mật khẩu phải có độ dài từ 6 đến 20 ký tự")]
 		public string Password { get; set; }
+        [Required(ErrorMessage = "Mật khẩu không được để trống")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "Mật khẩu phải có độ dài từ 6 đến 20 ký tự")]
+        public string PasswordDefault { get; set; }
 
-		[Required(ErrorMessage = "Vai trò không được để trống")]
+        [Required(ErrorMessage = "Vai trò không được để trống")]
 		[Range(0, 1, ErrorMessage = "Vai trò là nhân viên hoặc quản lý")]
 		public int Role { get; set; }// 0: Quản lý, 1: Nhân viên
 

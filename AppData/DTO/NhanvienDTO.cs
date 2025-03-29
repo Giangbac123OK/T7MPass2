@@ -20,7 +20,8 @@ namespace AppData.DTO
 		public string Email { get; set; }
 		public int Trangthai { get; set; }
 		public string Password { get; set; }
-		public int Role { get; set; }
+        public string PasswordDefault { get; set; }
+        public int Role { get; set; }
 
         public DateTime Ngaytaotaikhoan { get; set; }
 	}
