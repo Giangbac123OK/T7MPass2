@@ -145,6 +145,7 @@ namespace AppData.Service
 
             await _repos.Update(itemUpdate);
             await _repos.SaveChanges();
+            danhGiaDTO.Id = itemUpdate.Id;
         }
     }
 }
