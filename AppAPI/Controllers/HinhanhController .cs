@@ -97,6 +97,7 @@ namespace AppAPI.Controllers
 
                 imageUrls.Add(new
                 {
+                    id = hinhanh.Id,
                     Url = imageUrl
                 });
             }
