@@ -45,7 +45,6 @@ namespace AppData.Models
 
 
 		[Required(ErrorMessage = "Mật khẩu không được để trống")]
-		[StringLength(20, MinimumLength = 6, ErrorMessage = "Mật khẩu phải có độ dài từ 6 đến 20 ký tự")]
 		public string Password { get; set; }
 
 		[Required(ErrorMessage = "Vai trò không được để trống")]
@@ -53,6 +52,8 @@ namespace AppData.Models
 		public int Role { get; set; }// 0: Quản lý, 1: Nhân viên
 
         public DateTime Ngaytaotaikhoan { get; set; }
+
+        public string Avatar { get; set; }
 
         public virtual ICollection<Hoadon> Hoadons { get; set; }
 		public virtual ICollection<Trahang> Trahangs { get; set; }

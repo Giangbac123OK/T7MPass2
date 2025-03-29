@@ -10,6 +10,9 @@ using AppData.Models;
 using AppData.DTO;
 using AppData.IRepository;
 using AppData.IService;
+using AppData.Dto;
+using Aspose.Email.Clients.Activity;
+using Microsoft.Extensions.Hosting;
 
 namespace AppAPI.Controllers
 {
@@ -18,9 +21,15 @@ namespace AppAPI.Controllers
     public class NhanviensController : ControllerBase
     {
         private readonly INhanVienService _Service;
-        public NhanviensController(INhanVienService service)
+        private readonly ILogger<LoginController> _logger;
+        private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _environment;
+        public NhanviensController(INhanVienService service, ILogger<LoginController> logger, AppDbContext context, IWebHostEnvironment environment)
         {
             _Service = service;
+            _logger = logger;
+            _context = context;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -76,6 +85,44 @@ namespace AppAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Xử lý avatar mặc định
+            string avatarPath;
+            const string defaultAvatarName = "AnhNhanVien.png";
+            string physicalAvatarPath = Path.Combine(_environment.WebRootPath, "picture", defaultAvatarName);
+
+            // Kiểm tra xem ảnh đã tồn tại trong thư mục chưa
+            if (System.IO.File.Exists(physicalAvatarPath))
+            {
+                avatarPath = $"{defaultAvatarName}";
+            }
+            else
+            {
+                try
+                {
+                    // Thử tải ảnh từ URL dự phòng và lưu vào server
+                    string imageUrl = "https://i.pinimg.com/736x/e9/3d/c7/e93dc787759b6a3451f99441684d77b3.jpg"; // URL dự phòng bạn cung cấp
+                    using (HttpClient client = new HttpClient())
+                    {
+                        // Tải ảnh từ URL
+                        byte[] imageBytes = await client.GetByteArrayAsync(imageUrl);
+
+                        // Đảm bảo thư mục tồn tại
+                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "picture"));
+
+                        // Lưu ảnh vào server
+                        await System.IO.File.WriteAllBytesAsync(physicalAvatarPath, imageBytes);
+
+                        avatarPath = $"{defaultAvatarName}";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Không thể tải ảnh từ URL, sử dụng URL trực tiếp");
+                    // Nếu không tải được, sử dụng URL trực tiếp
+                    avatarPath = "https://i.pinimg.com/736x/e9/3d/c7/e93dc787759b6a3451f99441684d77b3.jpg";
+                }
+            }
+            nhanvienDto.Avatar = avatarPath;
             await _Service.AddNhanvienAsync(nhanvienDto);
             return CreatedAtAction(nameof(GetById), new { id = nhanvienDto.Hovaten }, nhanvienDto);
         }
@@ -107,5 +154,51 @@ namespace AppAPI.Controllers
                 return NotFound("Nhân viên không tồn tại.");
             }
         }
+
+        [HttpPost("Nhanvien/login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserDTO dto)
+        {
+            try
+            {
+                _logger.LogInformation($"Login attempt for email: {dto.Email}");
+                if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Password))
+                {
+                    _logger.LogWarning("Email or password is empty");
+                    return BadRequest("Email và mật khẩu không được để trống");
+                }
+                var khachHang = await _context.nhanviens
+                    .FirstOrDefaultAsync(kh => kh.Email == dto.Email);
+                if (khachHang == null)
+                {
+                    _logger.LogWarning($"Account not found for email: {dto.Email}");
+                    return NotFound("Tài khoản không tồn tại");
+
+                }
+                bool passwordValid = BCrypt.Net.BCrypt.Verify(dto.Password, khachHang.Password);
+                _logger.LogInformation($"Password validation result: {passwordValid}");
+                if (!passwordValid)
+                {
+                    _logger.LogWarning($"Invalid password for email: {dto.Email}");
+                    return Unauthorized("Mật khẩu không đúng");
+                }
+                _logger.LogInformation($"Login successful for email: {dto.Email}");
+                return Ok(new
+                {
+                    Message = "Đăng nhập thành công",
+                    id = khachHang.Id,
+                    trangthai = khachHang.Trangthai,
+                    Ten = khachHang.Hovaten,
+                    email = khachHang.Email,
+                    avatar = khachHang.Avatar,
+                    role = khachHang.Role
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during login process");
+                return StatusCode(500, "Đã xảy ra lỗi trong quá trình đăng nhập");
+            }
+        }
+
     }
 }

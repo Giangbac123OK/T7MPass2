@@ -23,5 +23,6 @@ namespace AppData.DTO
 		public int Role { get; set; }
 
         public DateTime Ngaytaotaikhoan { get; set; }
-	}
+        public string Avatar { get; set; }
+    }
 }
