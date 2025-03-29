@@ -103,8 +103,10 @@ namespace AppData.Service
                 Sdt = nhanvienDto.Sdt,
                 Trangthai = 0, // Mặc định "hoạt động",
                 PasswordDefault = GenerateSecurePassword(),
-                Password = GenerateSecurePassword(),
-                Role = nhanvienDto.Role // 0: Admin, 1: Quản lý, 2: Nhân viên
+                Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password),
+                Role = nhanvienDto.Role, // 0: Admin, 1: Quản lý, 2: Nhân viên
+                Ngaytaotaikhoan = nhanvienDto.Ngaytaotaikhoan,
+                Avatar = nhanvienDto.Avatar
             };
             await _repository.AddAsync(nhanvien);
         }
@@ -130,7 +132,7 @@ namespace AppData.Service
             nhanvien.Diachi = nhanvienDto.Diachi;
             nhanvien.Gioitinh = nhanvienDto.Gioitinh;
             nhanvien.Sdt = nhanvienDto.Sdt;
-            nhanvien.Password = nhanvienDto.Password;
+            nhanvien.Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password);
 
             await _repository.UpdateAsync(nhanvien);
         }

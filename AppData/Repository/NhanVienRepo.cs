@@ -34,9 +34,9 @@ namespace AppData.Repository
             return await _context.Set<Nhanvien>().FindAsync(id);
         }
 
-        public async Task AddAsync(Nhanvien nhanvien)
+        public async Task AddAsync(Nhanvien kh)
         {
-            await _context.Set<Nhanvien>().AddAsync(nhanvien);
+            await _context.nhanviens.AddAsync(kh);
             await _context.SaveChangesAsync();
         }
 
