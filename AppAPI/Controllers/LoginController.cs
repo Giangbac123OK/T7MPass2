@@ -95,7 +95,7 @@ namespace AppAPI.Controllers
                     Diemsudung = 0,
                     Gioitinh = dto.gioitinh,
                     Trangthai = 0,
-                    Idrank = 1,
+                    Idrank = _context.ranks.FirstOrDefault(x => x.MinMoney == 0).Id,
                     Avatar = avatarPath // Sử dụng đường dẫn đã xử lý
                 };
 
