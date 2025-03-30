@@ -16,9 +16,11 @@ namespace AppData.Service
     public class TraHangService : ITraHangService
     {
         private readonly ITraHangRepo _repos;
-        public TraHangService(ITraHangRepo repos)
+        private readonly IHoaDonRepo _HDrepos;
+        public TraHangService(ITraHangRepo repos, IHoaDonRepo hDrepos)
         {
             _repos = repos;
+            _HDrepos = hDrepos;
         }
         public async Task Add(TrahangDTO trahang)
         {
@@ -111,7 +113,7 @@ namespace AppData.Service
         {
             try
             {
-                var a = await _repos.GetById(id);
+                var a = await _HDrepos.GetByIdAsync(id);
                 if (a == null)
                 {
                     throw new KeyNotFoundException("Không tồn tại!");
@@ -119,7 +121,7 @@ namespace AppData.Service
                 else
                 {
                     a.Trangthai = 5;
-                    await _repos.Update(a);
+                    await _HDrepos.UpdateAsync(a);
                 }
             }
             catch (Exception ex)
