@@ -14,7 +14,8 @@ namespace AppData.Models
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id {  get; set; }
 
-		public int Idth {  get; set; }
+        
+        public int Idth {  get; set; }
 		[ForeignKey("Idth")]
 		public virtual Trahang Trahang { get; set; }
 

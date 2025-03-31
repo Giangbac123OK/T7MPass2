@@ -51,7 +51,9 @@ namespace AppData.Models
 		public string? Chuthich {  get; set; }
 
         public string? Hinhthucxuly { get; set; }
-
+        public string? Tennganhang { get; set; }
+        public string? Sotaikhoan { get; set; }
+        public string? Tentaikhoan { get; set; }
         public virtual ICollection<Hinhanh> Hinhanhs { get; set; }
 		public virtual ICollection<Trahangchitiet> Trahangchitiets { get; set; }
 
