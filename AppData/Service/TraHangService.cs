@@ -35,7 +35,10 @@ namespace AppData.Service
                 Phuongthuchoantien = trahang.Phuongthuchoantien,
                 Ngaytrahangdukien = trahang.Ngaytrahangdukien != null ? trahang.Ngaytrahangdukien : null,
                 Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null,
-                Chuthich = trahang.Chuthich != null ? trahang.Chuthich : null
+                Chuthich = trahang.Chuthich != null ? trahang.Chuthich : null,
+                Tennganhang = trahang.Tennganhang != null ? trahang.Tennganhang : null,
+                Sotaikhoan = trahang.Sotaikhoan != null ? trahang.Sotaikhoan : null,
+                Tentaikhoan = trahang.Tentaikhoan != null ? trahang.Tentaikhoan : null,
             };
 
 
@@ -64,7 +67,10 @@ namespace AppData.Service
                 Phuongthuchoantien = x.Phuongthuchoantien,
                 Ngaytrahangdukien = x.Ngaytrahangdukien,
                 Ngaytrahangthucte = x.Ngaytrahangthucte,
-                Chuthich = x.Chuthich
+                Chuthich = x.Chuthich,
+                Tennganhang = x.Tennganhang,
+                Sotaikhoan = x.Sotaikhoan,
+                Tentaikhoan = x.Tentaikhoan
             }).ToList();
         }
         public async Task<TrahangDTO> GetById(int id)
@@ -82,7 +88,10 @@ namespace AppData.Service
                 Phuongthuchoantien = x.Phuongthuchoantien,
                 Ngaytrahangdukien = x.Ngaytrahangdukien,
                 Ngaytrahangthucte = x.Ngaytrahangthucte,
-                Chuthich = x.Chuthich
+                Chuthich = x.Chuthich,
+                Tennganhang = x.Tennganhang,
+                Sotaikhoan = x.Sotaikhoan,
+                Tentaikhoan = x.Tentaikhoan
             };
         }
 
@@ -105,6 +114,9 @@ namespace AppData.Service
                 a.Ngaytrahangdukien = trahang.Ngaytrahangdukien;
                 a.Ngaytrahangthucte = trahang.Ngaytrahangthucte;
                 a.Chuthich = trahang.Chuthich;
+                a.Tennganhang = trahang.Tennganhang;
+                a.Sotaikhoan = trahang.Sotaikhoan;
+                a.Tentaikhoan = trahang.Tentaikhoan;
                 await _repos.Update(a);
             }
         }

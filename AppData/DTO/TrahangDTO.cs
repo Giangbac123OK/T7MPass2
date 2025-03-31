@@ -11,7 +11,7 @@ namespace AppData.DTO
 {
     public class TrahangDTO
 	{
-		public int Id {  get; set; }
+        public int Id {  get; set; }
 		public string Tenkhachhang {  get; set; }
 		public int? Idnv { get; set; }
 		public int Idkh { get; set; }
@@ -23,5 +23,8 @@ namespace AppData.DTO
 		public DateTime? Ngaytrahangthucte {  get; set; }
 		public string? Chuthich {  get; set; }
         public string? Hinhthucxuly { get; set; }
+		public string? Tennganhang { get; set; }
+        public string? Sotaikhoan { get; set; }
+        public string? Tentaikhoan { get; set; }
     }
 }
