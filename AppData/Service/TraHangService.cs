@@ -36,9 +36,9 @@ namespace AppData.Service
                 Ngaytrahangdukien = trahang.Ngaytrahangdukien != null ? trahang.Ngaytrahangdukien : null,
                 Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null,
                 Chuthich = trahang.Chuthich != null ? trahang.Chuthich : null,
-                Tennganhang = trahang.Tennganhang != null ? trahang.Tennganhang : null,
-                Sotaikhoan = trahang.Sotaikhoan != null ? trahang.Sotaikhoan : null,
-                Tentaikhoan = trahang.Tentaikhoan != null ? trahang.Tentaikhoan : null,
+                Tennganhang = BCrypt.Net.BCrypt.HashPassword(trahang.Tennganhang) != null ? trahang.Tennganhang : null,
+                Sotaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Sotaikhoan) != null ? trahang.Sotaikhoan : null,
+                Tentaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Tentaikhoan) != null ? trahang.Tentaikhoan : null
             };
 
 
@@ -114,9 +114,9 @@ namespace AppData.Service
                 a.Ngaytrahangdukien = trahang.Ngaytrahangdukien;
                 a.Ngaytrahangthucte = trahang.Ngaytrahangthucte;
                 a.Chuthich = trahang.Chuthich;
-                a.Tennganhang = trahang.Tennganhang;
-                a.Sotaikhoan = trahang.Sotaikhoan;
-                a.Tentaikhoan = trahang.Tentaikhoan;
+                a.Tennganhang = BCrypt.Net.BCrypt.HashPassword(trahang.Tennganhang) != null ? trahang.Tennganhang : null;
+                a.Sotaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Sotaikhoan) != null ? trahang.Sotaikhoan : null;
+                a.Tentaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Tentaikhoan) != null ? trahang.Tentaikhoan : null;
                 await _repos.Update(a);
             }
         }
