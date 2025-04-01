@@ -29,7 +29,7 @@ namespace AppData.Service
                 Tenkhachhang = trahang.Tenkhachhang,
                 Idkh = trahang.Idkh,
                 Idnv = trahang.Idnv != null ? trahang.Idnv : null,
-                Sotienhoan = trahang.Sotienhoan,
+                Sotienhoan = trahang.Sotienhoan != null ? trahang.Idnv : null,
                 Lydotrahang = trahang.Lydotrahang != null ? trahang.Lydotrahang : null,
                 Trangthai = trahang.Trangthai,
                 Phuongthuchoantien = trahang.Phuongthuchoantien,
@@ -38,10 +38,9 @@ namespace AppData.Service
                 Chuthich = trahang.Chuthich != null ? trahang.Chuthich : null,
                 Tennganhang = BCrypt.Net.BCrypt.HashPassword(trahang.Tennganhang) != null ? trahang.Tennganhang : null,
                 Sotaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Sotaikhoan) != null ? trahang.Sotaikhoan : null,
-                Tentaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Tentaikhoan) != null ? trahang.Tentaikhoan : null
+                Tentaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Tentaikhoan) != null ? trahang.Tentaikhoan : null,
+                Hinhthucxuly = trahang.Hinhthucxuly != null? trahang.Hinhthucxuly:null
             };
-
-
             await _repos.Add(a);
 
             trahang.Id = a.Id;
@@ -70,7 +69,8 @@ namespace AppData.Service
                 Chuthich = x.Chuthich,
                 Tennganhang = x.Tennganhang,
                 Sotaikhoan = x.Sotaikhoan,
-                Tentaikhoan = x.Tentaikhoan
+                Tentaikhoan = x.Tentaikhoan,
+                Hinhthucxuly = x.Hinhthucxuly
             }).ToList();
         }
         public async Task<TrahangDTO> GetById(int id)
@@ -91,7 +91,8 @@ namespace AppData.Service
                 Chuthich = x.Chuthich,
                 Tennganhang = x.Tennganhang,
                 Sotaikhoan = x.Sotaikhoan,
-                Tentaikhoan = x.Tentaikhoan
+                Tentaikhoan = x.Tentaikhoan,
+                Hinhthucxuly = x.Hinhthucxuly
             };
         }
 
@@ -117,6 +118,7 @@ namespace AppData.Service
                 a.Tennganhang = BCrypt.Net.BCrypt.HashPassword(trahang.Tennganhang) != null ? trahang.Tennganhang : null;
                 a.Sotaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Sotaikhoan) != null ? trahang.Sotaikhoan : null;
                 a.Tentaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Tentaikhoan) != null ? trahang.Tentaikhoan : null;
+                a.Hinhthucxuly = trahang.Hinhthucxuly;
                 await _repos.Update(a);
             }
         }
