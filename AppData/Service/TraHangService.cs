@@ -36,9 +36,9 @@ namespace AppData.Service
                 Ngaytrahangdukien = trahang.Ngaytrahangdukien != null ? trahang.Ngaytrahangdukien : null,
                 Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null,
                 Chuthich = trahang.Chuthich != null ? trahang.Chuthich : null,
-                Tennganhang = BCrypt.Net.BCrypt.HashPassword(trahang.Tennganhang) != null ? trahang.Tennganhang : null,
-                Sotaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Sotaikhoan) != null ? trahang.Sotaikhoan : null,
-                Tentaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Tentaikhoan) != null ? trahang.Tentaikhoan : null,
+                Tennganhang = trahang.Tennganhang != null ? trahang.Tennganhang : null,
+                Sotaikhoan = trahang.Sotaikhoan != null ? trahang.Sotaikhoan : null,
+                Tentaikhoan = trahang.Tentaikhoan != null ? trahang.Tentaikhoan : null,
                 Hinhthucxuly = trahang.Hinhthucxuly != null? trahang.Hinhthucxuly:null
             };
             await _repos.Add(a);
