@@ -12,15 +12,20 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace AppData.Repository
 {
     public class NhanVienRepo : INhanVienRepo
     {
         private readonly AppDbContext _context;
-        public NhanVienRepo(AppDbContext context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public NhanVienRepo(AppDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
 
         }
 
@@ -45,7 +50,6 @@ namespace AppData.Repository
             _context.Set<Nhanvien>().Update(nhanvien);
             await _context.SaveChangesAsync();
         }
-
         public async Task DeleteAsync(int id)
         {
             var nhanvien = await GetByIdAsync(id);

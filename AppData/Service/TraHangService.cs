@@ -39,7 +39,7 @@ namespace AppData.Service
                 Tennganhang = trahang.Tennganhang != null ? trahang.Tennganhang : null,
                 Sotaikhoan = trahang.Sotaikhoan != null ? trahang.Sotaikhoan : null,
                 Tentaikhoan = trahang.Tentaikhoan != null ? trahang.Tentaikhoan : null,
-                Hinhthucxuly = trahang.Hinhthucxuly != null? trahang.Hinhthucxuly:null
+                Hinhthucxuly = trahang.Hinhthucxuly != null ? trahang.Hinhthucxuly : null
             };
             await _repos.Add(a);
 
