@@ -28,7 +28,7 @@ namespace AppData.Service
             {
                 Tenkhachhang = trahang.Tenkhachhang,
                 Idkh = trahang.Idkh,
-                Idnv = trahang.Idnv != null ? trahang.Idnv : null,
+                Idnv = (trahang.Idnv != null && trahang.Idnv != 0) ? trahang.Idnv : (int?)null,
                 Sotienhoan = trahang.Sotienhoan != null ? trahang.Idnv : null,
                 Lydotrahang = trahang.Lydotrahang != null ? trahang.Lydotrahang : null,
                 Trangthai = trahang.Trangthai,
