@@ -13,6 +13,9 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.PeopleService.v1;
+using Google.Apis.Services;
 
 namespace AppData.Service
 {

@@ -12,20 +12,16 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Net.Http;
-using Microsoft.AspNetCore.Http;
 
 namespace AppData.Repository
 {
     public class NhanVienRepo : INhanVienRepo
     {
         private readonly AppDbContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public NhanVienRepo(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+        public NhanVienRepo(AppDbContext context)
         {
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
 
         }
 
