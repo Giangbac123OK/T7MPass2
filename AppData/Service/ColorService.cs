@@ -14,12 +14,13 @@ namespace AppData.Service
     public class ColorService : IColorService
     {
         private readonly IColorRepo _repository;
+        private readonly ISanPhamChiTietRepo _phamChiTietRepo;
 
-        public ColorService(IColorRepo repos)
+        public ColorService(IColorRepo repository, ISanPhamChiTietRepo phamChiTietRepo)
         {
-            _repository = repos;
+            _repository = repository;
+            _phamChiTietRepo = phamChiTietRepo;
         }
-
 
         public async Task<IEnumerable<ColorDTO>> GetAllAsync()
         {
@@ -29,7 +30,9 @@ namespace AppData.Service
                 Id = e.Id,
                 Tenmau = e.Tenmau,
                 Mamau = e.Mamau,
-                Trangthai = e.Trangthai
+                Trangthai = e.Trangthai,
+                IsUsedInProduct = IsColorUsedInProduct(e.Id) 
+
             });
         }
 
@@ -92,5 +95,15 @@ namespace AppData.Service
         {
             return await _repository.DeleteAsync(id);
         }
+        public bool IsColorUsedInProduct(int colorId)
+        {
+            // Kiểm tra nếu có sản phẩm nào sử dụng màu này
+            var productWithColor = _phamChiTietRepo.GetAllAsync()
+                .Result
+                .FirstOrDefault(p => p.IdMau == colorId); // Kiểm tra nếu sản phẩm có ColorId là colorId
+
+            return productWithColor != null; // Nếu có sản phẩm sử dụng màu này, trả về true
+        }
+
     }
 }
