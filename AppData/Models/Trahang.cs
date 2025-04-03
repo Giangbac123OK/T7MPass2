@@ -43,10 +43,6 @@ namespace AppData.Models
 		public int Trangthai {  get; set; }
 
 		public string Phuongthuchoantien {  get; set; }
-
-
-		public DateTime? Ngaytrahangthucte {  get; set; }
-
 		public string? Chuthich {  get; set; }
 
         public string? Hinhthucxuly { get; set; }
@@ -56,7 +52,7 @@ namespace AppData.Models
         public virtual ICollection<Hinhanh> Hinhanhs { get; set; }
 		public virtual ICollection<Trahangchitiet> Trahangchitiets { get; set; }
 
-        // Trạng thái hiển thị dưới dạng chuỗi
+        // Trạng thái hiển thị dưới dạng chuỗiaaaa
         public string TrangthaiStr => GetEnumDescription((TraHangStatus)Trangthai);
 
         // Phương thức để lấy giá trị mô tả từ enum

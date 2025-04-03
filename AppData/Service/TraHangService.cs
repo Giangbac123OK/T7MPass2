@@ -33,7 +33,6 @@ namespace AppData.Service
                 Lydotrahang = trahang.Lydotrahang != null ? trahang.Lydotrahang : null,
                 Trangthai = trahang.Trangthai,
                 Phuongthuchoantien = trahang.Phuongthuchoantien,
-                Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null,
                 Chuthich = trahang.Chuthich != null ? trahang.Chuthich : null,
                 Tennganhang = trahang.Tennganhang != null ? trahang.Tennganhang : null,
                 Sotaikhoan = trahang.Sotaikhoan != null ? trahang.Sotaikhoan : null,
@@ -63,7 +62,6 @@ namespace AppData.Service
                 Lydotrahang = x.Lydotrahang,
                 Trangthai = x.Trangthai,
                 Phuongthuchoantien = x.Phuongthuchoantien,
-                Ngaytrahangthucte = x.Ngaytrahangthucte,
                 Chuthich = x.Chuthich,
                 Tennganhang = x.Tennganhang,
                 Sotaikhoan = x.Sotaikhoan,
@@ -84,7 +82,6 @@ namespace AppData.Service
                 Lydotrahang = x.Lydotrahang,
                 Trangthai = x.Trangthai,
                 Phuongthuchoantien = x.Phuongthuchoantien,
-                Ngaytrahangthucte = x.Ngaytrahangthucte,
                 Chuthich = x.Chuthich,
                 Tennganhang = x.Tennganhang,
                 Sotaikhoan = x.Sotaikhoan,
@@ -109,7 +106,6 @@ namespace AppData.Service
                 a.Lydotrahang = trahang.Lydotrahang;
                 a.Trangthai = trahang.Trangthai;
                 a.Phuongthuchoantien = trahang.Phuongthuchoantien;
-                a.Ngaytrahangthucte = trahang.Ngaytrahangthucte;
                 a.Chuthich = trahang.Chuthich;
                 a.Tennganhang = BCrypt.Net.BCrypt.HashPassword(trahang.Tennganhang) != null ? trahang.Tennganhang : null;
                 a.Sotaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Sotaikhoan) != null ? trahang.Sotaikhoan : null;
