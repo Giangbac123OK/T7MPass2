@@ -1,5 +1,6 @@
 ﻿using AppData.DTO;
 using AppData.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace AppData.IService
         Task<ColorDTO> UpdateAsync(int id, ColorDTO dto);
         Task<bool> DeleteAsync(int id);
         Task<List<int>> GetColorsForProductAsync(int productId);
+         bool IsColorUsedInProduct(int colorId);
+        
     }
 }
