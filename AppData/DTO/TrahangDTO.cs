@@ -20,7 +20,6 @@ namespace AppData.DTO
 		public int Trangthai {  get; set; }
 		public string Phuongthuchoantien {  get; set; }
 		public DateTime? Ngaytrahangdukien {  get; set; }
-		public DateTime? Ngaytrahangthucte {  get; set; }
 		public string? Chuthich {  get; set; }
         public string? Hinhthucxuly { get; set; }
 		public string? Tennganhang { get; set; }
