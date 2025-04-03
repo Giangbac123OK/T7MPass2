@@ -67,7 +67,6 @@ namespace AppData.Repository
             }
         }
 
-        
         public async Task Update(Trahang trhang)
         {
             _context.trahangs.Update(trhang);
