@@ -67,52 +67,6 @@ namespace AppData.Repository
             }
         }
 
-        public async Task Trahangquahan()
-        {
-            // Tìm bản ghi trả hàng thỏa mãn điều kiện
-            var th = await _context.trahangs
-                .FirstOrDefaultAsync(x =>
-                    (x.Ngaytrahangdukien != null && EF.Functions.DateDiffDay(x.Ngaytrahangdukien.Value, DateTime.Today) >= 15)
-                    || x.Trangthai == 0);
-
-            if (th != null)
-            {
-                // Lấy danh sách chi tiết trả hàng liên quan
-                var thctList = await _context.trahangchitiets
-                    .Where(x => x.Idth == th.Id)
-                    .ToListAsync();
-
-                // Lấy tất cả ID hóa đơn chi tiết liên quan đến trả hàng chi tiết
-                var idhdctList = thctList.Select(x => x.Idhdct).ToList();
-
-                // Lấy danh sách hóa đơn tương ứng
-                var hoadons = await _context.hoadons
-                    .Where(hd => idhdctList.Contains(hd.Id))
-                    .ToListAsync();
-
-                // Cập nhật trạng thái hóa đơn
-                foreach (var hoadon in hoadons)
-                {
-                    hoadon.Trangthai = 3;
-                }
-
-                // Cập nhật dữ liệu
-                _context.hoadons.UpdateRange(hoadons);
-
-                // Nếu có chi tiết trả hàng, xóa trước
-                if (thctList.Any())
-                {
-                    _context.trahangchitiets.RemoveRange(thctList);
-                }
-
-                // Xóa bản ghi trả hàng
-                _context.trahangs.Remove(th);
-
-                // Lưu tất cả thay đổi vào cơ sở dữ liệu
-                await _context.SaveChangesAsync();
-            }
-        }
-
         public async Task Update(Trahang trhang)
         {
             _context.trahangs.Update(trhang);

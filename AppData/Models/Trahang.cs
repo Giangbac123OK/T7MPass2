@@ -44,7 +44,6 @@ namespace AppData.Models
 
 		public string Phuongthuchoantien {  get; set; }
 
-		public DateTime? Ngaytrahangdukien {  get; set; }
 
 		public DateTime? Ngaytrahangthucte {  get; set; }
 
