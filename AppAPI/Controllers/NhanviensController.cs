@@ -13,6 +13,7 @@ using AppData.IService;
 using AppData.Dto;
 using Aspose.Email.Clients.Activity;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 
 namespace AppAPI.Controllers
 {
@@ -47,7 +48,8 @@ namespace AppAPI.Controllers
                 nv.Sdt,
                 Trangthai = nv.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
                 nv.Password,
-                Role = nv.Role == 0 ? "Admin" : (nv.Role == 1 ? "Quản lý" : "Nhân viên")
+                Role = nv.Role == 0 ? "Admin" : (nv.Role == 1 ? "Quản lý" : "Nhân viên"),
+                nv.Avatar
 
         }));
         }
@@ -97,45 +99,7 @@ namespace AppAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            // Xử lý avatar mặc định
-            string avatarPath;
-            const string defaultAvatarName = "AnhNhanVien.png";
-            string physicalAvatarPath = Path.Combine(_environment.WebRootPath, "picture", defaultAvatarName);
-
-            // Kiểm tra xem ảnh đã tồn tại trong thư mục chưa
-            if (System.IO.File.Exists(physicalAvatarPath))
-            {
-                avatarPath = $"{defaultAvatarName}";
-            }
-            else
-            {
-                try
-                {
-                    // Thử tải ảnh từ URL dự phòng và lưu vào server
-                    string imageUrl = "https://i.pinimg.com/736x/e9/3d/c7/e93dc787759b6a3451f99441684d77b3.jpg"; // URL dự phòng bạn cung cấp
-                    using (HttpClient client = new HttpClient())
-                    {
-                        // Tải ảnh từ URL
-                        byte[] imageBytes = await client.GetByteArrayAsync(imageUrl);
-
-                        // Đảm bảo thư mục tồn tại
-                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "picture"));
-
-                        // Lưu ảnh vào server
-                        await System.IO.File.WriteAllBytesAsync(physicalAvatarPath, imageBytes);
-
-                        avatarPath = $"{defaultAvatarName}";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Không thể tải ảnh từ URL, sử dụng URL trực tiếp");
-                    // Nếu không tải được, sử dụng URL trực tiếp
-                    avatarPath = "https://i.pinimg.com/736x/e9/3d/c7/e93dc787759b6a3451f99441684d77b3.jpg";
-                }
-            }
-            nhanvienDto.Avatar = avatarPath;
+        
             await _Service.AddNhanvienAsync(nhanvienDto);
             return CreatedAtAction(nameof(GetById), new { id = nhanvienDto.Hovaten }, nhanvienDto);
         }
@@ -167,7 +131,6 @@ namespace AppAPI.Controllers
                 return NotFound("Nhân viên không tồn tại.");
             }
         }
-
         [HttpPost("Nhanvien/login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO dto)
         {
