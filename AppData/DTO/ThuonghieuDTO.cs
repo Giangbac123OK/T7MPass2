@@ -12,6 +12,7 @@ namespace AppData.DTO
 	{
 		public int Id {  get; set; }
 		public string Tenthuonghieu { get; set; }
-        public int Tinhtrang { get; set; } 
-	}
+        public int Tinhtrang { get; set; }
+        public bool IsUsedInProduct { get; set; }
+    }
 }

@@ -16,5 +16,6 @@ namespace AppData.DTO
 
         public int Trangthai { get; set; }
 
+        public bool IsUsedInProduct { get; set; }
     }
 }

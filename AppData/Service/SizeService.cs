@@ -16,12 +16,13 @@ namespace AppData.Service
     public class SizeService : ISizeService
     {
         private readonly ISizeRepo _repository;
+        private readonly ISanPhamChiTietRepo _phamChiTietRepo;
 
-        public SizeService(ISizeRepo repos)
+        public SizeService(ISizeRepo repository, ISanPhamChiTietRepo phamChiTietRepo)
         {
-            _repository = repos;
+            _repository = repository;
+            _phamChiTietRepo = phamChiTietRepo;
         }
-
 
         public async Task<IEnumerable<SizeDTO>> GetAllAsync()
         {
@@ -30,7 +31,9 @@ namespace AppData.Service
             {
                 Id = e.Id,
                 Sosize = e.Sosize,
-                Trangthai = e.Trangthai
+                Trangthai = e.Trangthai,
+                IsUsedInProduct = IsSizeUsedInProduct(e.Id) 
+
             });
         }
 
@@ -83,6 +86,14 @@ namespace AppData.Service
         public async Task<bool> DeleteAsync(int id)
         {
             return await _repository.DeleteAsync(id);
+        }
+        public bool IsSizeUsedInProduct(int sizeId)
+        {
+            // Kiểm tra xem kích thước có được sử dụng trong sản phẩm không
+            var isUsed = _phamChiTietRepo.GetAllAsync().Result
+                .FirstOrDefault(spct => spct.IdSize == sizeId);
+            return isUsed != null;
+
         }
 
     }
