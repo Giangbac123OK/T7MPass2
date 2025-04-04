@@ -131,6 +131,9 @@ namespace AppData.Repository
                     Giasp = x.Giasp,
                     Giamgia = x.Giamgia ?? 0,
                     Soluong = x.Soluong,
+                    Mau = _context.colors.FirstOrDefault(e => e.Id == _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).IdMau).Tenmau,
+                    Size = _context.sizes.FirstOrDefault(e => e.Id == _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).IdSize).Sosize,
+                    Chatlieu = _context.chatLieus.FirstOrDefault(e => e.Id == _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).IdChatLieu).Tenchatlieu,
                     Trangthaihd = _context.hoadons.FirstOrDefault(e => e.Id == x.Idhd).Trangthai
                 })
                 .ToListAsync();
