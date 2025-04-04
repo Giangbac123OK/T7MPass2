@@ -200,7 +200,7 @@ namespace AppAPI.Controllers
                 <td>{chatlieu?.Tenchatlieu ?? "N/A"}</td>
                 <td>{ct.Soluong}</td>
                 {priceHtml}
-                <td>{ct.Soluong*(ct.Giasp-(ct.Giamgia??0)):#,##0 VNĐ}</td>
+                <td>{ct.Soluong * (ct.Giasp - (ct.Giamgia ?? 0)):#,##0 VNĐ}</td>
             </tr>");
                 }
 
@@ -336,7 +336,7 @@ namespace AppAPI.Controllers
                 return NotFound(new { message = "Hoá đơn không tìm thấy" });
             }
 
-            if (existingHoadon.Idgg != null)
+            if (existingHoadon.Idgg != null && trangthai == 4)
             {
                 var voucher = await _context.giamgias.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idgg);
                 if (voucher == null)
@@ -349,7 +349,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthai == 1 || existingHoadon.Trangthai == 0)
+            if (existingHoadon.Trangthai == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -394,12 +394,15 @@ namespace AppAPI.Controllers
 
                 _context.hoadons.Update(existingHoadon);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetById), new { id = existingHoadon.Id }, existingHoadon);
+                return Ok();
             }
             catch (Exception ex)
             {
-                // Xử lý lỗi nếu có khi cập nhật hoá đơn
-                return StatusCode(500, new { message = "Lỗi khi cập nhật hoá đơn", error = ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi cập nhật hoá đơn",
+                    error = ex.Message
+                });
             }
         }
 
