@@ -15,5 +15,6 @@ namespace AppData.DTO
         public int Sosize { get; set; }
 
         public int Trangthai { get; set; }
+        public bool IsUsedInProduct { get; set; }
     }
 }

@@ -15,12 +15,13 @@ namespace AppData.Service
     public class ChatLieuService : IChatLieuService
     {
         private readonly IChatLieuRepo _repository;
+        private readonly ISanPhamChiTietRepo _phamChiTietRepo;
 
-        public ChatLieuService(IChatLieuRepo repos)
+        public ChatLieuService(IChatLieuRepo repository, ISanPhamChiTietRepo phamChiTietRepo)
         {
-            _repository = repos;
+            _repository = repository;
+            _phamChiTietRepo = phamChiTietRepo;
         }
-
 
         public async Task<IEnumerable<ChatLieuDTO>> GetAllAsync()
         {
@@ -29,7 +30,9 @@ namespace AppData.Service
             {
                 Id = e.Id,
                 Tenchatlieu = e.Tenchatlieu,
-                Trangthai = e.Trangthai
+                Trangthai = e.Trangthai,
+                IsUsedInProduct = IsChatLieuUsedInProduct(e.Id) // Kiểm tra xem chất liệu có được sử dụng trong sản phẩm không
+
             });
         }
 
@@ -39,7 +42,7 @@ namespace AppData.Service
             if (entity == null) return null;
 
             return new ChatLieuDTO
-            {   
+            {
                 Id = entity.Id,
                 Tenchatlieu = entity.Tenchatlieu,
                 Trangthai = entity.Trangthai
@@ -73,7 +76,7 @@ namespace AppData.Service
 
             var updatedEntity = await _repository.UpdateAsync(entity);
             return new ChatLieuDTO
-            { 
+            {
                 Tenchatlieu = updatedEntity.Tenchatlieu,
                 Trangthai = updatedEntity.Trangthai
             };
@@ -82,6 +85,13 @@ namespace AppData.Service
         public async Task<bool> DeleteAsync(int id)
         {
             return await _repository.DeleteAsync(id);
+        }
+
+        public bool IsChatLieuUsedInProduct(int chatlieuId)
+        {
+            var isUsed =  _phamChiTietRepo.GetAllAsync().Result
+               .FirstOrDefault(spct => spct.IdChatLieu == chatlieuId);
+            return isUsed != null;
         }
     }
 }

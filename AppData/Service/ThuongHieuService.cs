@@ -15,12 +15,13 @@ namespace AppData.Service
     public class ThuongHieuService : IThuongHieuService
     {
         private readonly IThuongHieuRepo _repository;
+        private readonly ISanPhamRepo _sanPhamRepo;
 
-        public ThuongHieuService(IThuongHieuRepo repos)
+        public ThuongHieuService(IThuongHieuRepo repository, ISanPhamRepo sanPhamRepo)
         {
-            _repository = repos;
+            _repository = repository;
+            _sanPhamRepo = sanPhamRepo;
         }
-
 
         public async Task<IEnumerable<ThuonghieuDTO>> GetAllAsync()
         {
@@ -29,7 +30,8 @@ namespace AppData.Service
             {
                 Id = e.Id,
                 Tenthuonghieu = e.Tenthuonghieu,
-                Tinhtrang = e.Tinhtrang
+                Tinhtrang = e.Tinhtrang,
+                IsUsedInProduct = IsThuongHieuUsedInProduct(e.Id) 
             });
         }
 
@@ -80,6 +82,12 @@ namespace AppData.Service
         public async Task<bool> DeleteAsync(int id)
         {
             return await _repository.DeleteAsync(id);
+        }
+        public bool IsThuongHieuUsedInProduct(int thuonghieuId)
+        {
+            var isUsed = _sanPhamRepo.GetAllAsync().Result
+                .FirstOrDefault(sp => sp.Idth == thuonghieuId);
+            return isUsed != null;
         }
     }
 }
