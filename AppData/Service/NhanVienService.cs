@@ -42,7 +42,8 @@ namespace AppData.Service
                 Trangthai = n.Trangthai,
                 Password = n.Password,
                 Role = n.Role,
-                Avatar = n.Avatar
+                Avatar = n.Avatar,
+                Ngaytaotaikhoan = n.Ngaytaotaikhoan
             });
         }
 
@@ -63,7 +64,8 @@ namespace AppData.Service
                 Trangthai = nhanvien.Trangthai,
                 Password = nhanvien.Password,
                 Role = nhanvien.Role,
-                Avatar = nhanvien.Avatar
+                Avatar = nhanvien.Avatar,
+                Ngaytaotaikhoan = nhanvien.Ngaytaotaikhoan
             };
         }
         public async Task SendAccountCreationEmail(string toEmail, string hoten, string password, int role)
@@ -134,7 +136,8 @@ namespace AppData.Service
                 Trangthai = n.Trangthai,
                 Password = n.Password,
                 Role = n.Role,
-                Avatar = n.Avatar
+                Avatar = n.Avatar,
+                Ngaytaotaikhoan = n.Ngaytaotaikhoan
             });
         }
     }

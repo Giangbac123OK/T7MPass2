@@ -48,9 +48,9 @@ namespace AppAPI.Controllers
                 nv.Sdt,
                 Trangthai = nv.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
                 nv.Password,
-                Role = nv.Role == 0 ? "Admin" : (nv.Role == 1 ? "Quản lý" : "Nhân viên"),
-                nv.Avatar
-
+                Role = nv.Role,
+                nv.Avatar,
+                nv.Ngaytaotaikhoan
         }));
         }
         [HttpPost("Send_Account_Creation_Email")]
@@ -83,7 +83,8 @@ namespace AppAPI.Controllers
                     nhanvien.Sdt,
                     Trangthai = nhanvien.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
                     nhanvien.Password,
-                    Role = nhanvien.Role == 0 ? "Quản lý" : "Nhân viên"
+                    Role = nhanvien.Role == 0 ? "Quản lý" : "Nhân viên",
+                    nhanvien.Ngaytaotaikhoan
                 });
             }
             catch (KeyNotFoundException)

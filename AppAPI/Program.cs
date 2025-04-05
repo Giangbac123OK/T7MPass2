@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Net.payOS;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSession();
 // 🔹 Thêm cấu hình CORS
 builder.Services.AddCors(options =>
 {
@@ -87,20 +86,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton(payOS);
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = "localhost";  // Thay bằng máy chủ Redis của bạn
-    options.InstanceName = "SampleInstance";
-});
-
-// Đăng ký các dịch vụ session
-builder.Services.AddSession(options =>
-{
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-builder.Services.AddDistributedMemoryCache();
 var app = builder.Build();
 
 // 🔹 Cấu hình Middleware
@@ -109,7 +94,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseSession();
 app.UseHttpsRedirection();
 
 // 🔹 Đặt CORS ngay sau HTTPS Redirection
