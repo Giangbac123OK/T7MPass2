@@ -11,7 +11,7 @@ namespace AppData.IService
 {
     public interface ISanPhamService
     {
-        Task<IEnumerable<Sanpham>> GetAllAsync();
+        Task<IEnumerable<SanphamDTO>> GetAllAsync();
         Task<SanphamDTO> GetByIdAsync(int id);
         Task AddAsync(SanphamDTO sanphamDto);
         Task UpdateAsync(int id, SanphamDTO sanphamDto);
