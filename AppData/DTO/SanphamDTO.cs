@@ -15,6 +15,7 @@ namespace AppData.DTO
 		public string? Mota { get; set; }
 		public int Trangthai { get; set; }
         public int Soluong { get; set; }
+        public int Chieucao { get; set; }
         public decimal GiaBan { get; set; }
         public DateTime NgayThemMoi { get; set; }
         public int Chieudai { get; set; }

@@ -36,6 +36,7 @@ namespace AppData.Models
         public int Chieudai { get; set; }
 
         public int Chieurong { get; set; }
+        public int Chieucao { get; set; }
 
         public int Trongluong { get; set; }
 
