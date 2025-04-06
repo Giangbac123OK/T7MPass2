@@ -29,10 +29,50 @@ namespace AppData.Service
             _danhGiaRepo = danhGiaRepo;
         }
 
-        public async Task<IEnumerable<Sanpham>> GetAllAsync()
+        public async Task<IEnumerable<SanphamDTO>> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            var sanphams = await _repository.GetAllAsync();
+            var sanphamchitiets = await _sanPhamChiTietRepo.GetAllAsync();
 
+            if (sanphams == null || !sanphams.Any())
+            {
+                throw new Exception("Không có sản phẩm nào trong danh sách.");
+            }
+
+            var sanphamDTOs = new List<SanphamDTO>();
+
+            foreach (var item in sanphams)
+            {
+                var tongSoLuong = sanphamchitiets
+                    .Where(spct => spct.Idsp == item.Id)
+                    .Sum(spct => spct.Soluong);
+
+                item.Soluong = tongSoLuong;
+
+                if (item.Soluong <= 0 && item.Trangthai != 1)
+                {
+                    item.Trangthai = 1;
+                }
+
+                await _repository.UpdateAsync(item);
+
+                sanphamDTOs.Add(new SanphamDTO()
+                {
+                    Id = item.Id,
+                    TenSanpham = item.TenSanpham,
+                    Mota = item.Mota,
+                    Trangthai = item.Trangthai,
+                    Soluong = item.Soluong,
+                    GiaBan = item.GiaBan,
+                    NgayThemMoi = item.NgayThemMoi,
+                    Chieudai = item.Chieudai,
+                    Chieurong = item.Chieurong,
+                    Trongluong = item.Trongluong,
+                    Idth = item.Idth
+                });
+            }
+
+            return sanphamDTOs;
         }
 
         public async Task AddAsync(SanphamDTO sanphamDto)
@@ -53,6 +93,7 @@ namespace AppData.Service
             };
 
             await _repository.AddAsync(sanpham);
+            sanphamDto.Id = sanpham.Id;
         }
 
         public async Task UpdateAsync(int id, SanphamDTO sanphamDto)

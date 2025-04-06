@@ -37,7 +37,7 @@ namespace AppAPI.Controllers
         public async Task<IActionResult> Add(SanphamDTO sanphamDto)
         {
             await _service.AddAsync(sanphamDto);
-            return CreatedAtAction(nameof(GetById), new { id = sanphamDto.Idth }, sanphamDto);
+            return CreatedAtAction(nameof(GetById), new { id = sanphamDto.Id }, sanphamDto);
         }
 
         [HttpPut("{id}")]
