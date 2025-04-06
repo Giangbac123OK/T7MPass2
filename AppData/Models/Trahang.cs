@@ -27,8 +27,10 @@ namespace AppData.Models
 		public int Id {  get; set; }
 
 		public string Tenkhachhang {  get; set; }
-
-		public int? Idnv { get; set; }
+        [StringLength(200, ErrorMessage = "Địa chỉ ship không được vượt quá 200 ký tự.")]
+        public string? Diachiship { get; set; }
+        public DateTime? Ngaytrahangthucte { get; set; }
+        public int? Idnv { get; set; }
 		[ForeignKey("Idnv")]
 		public virtual Nhanvien Nhanvien { get; set; }
 
@@ -41,8 +43,8 @@ namespace AppData.Models
 		public string? Lydotrahang {  get; set; }
 
 		public int Trangthai {  get; set; }
-
-		public string Phuongthuchoantien {  get; set; }
+        
+        public string Phuongthuchoantien {  get; set; }
 		public string? Chuthich {  get; set; }
 
         public string? Hinhthucxuly { get; set; }
