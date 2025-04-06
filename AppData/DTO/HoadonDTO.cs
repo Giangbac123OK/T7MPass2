@@ -30,4 +30,14 @@ namespace AppData.DTO
         public int Idpttt { get; set; }
         public string? Ghichu { get; set; }
     }
+    public class OrderNotificationDto
+    {
+        public int Id { get; set; }
+        public string OrderCode { get; set; }
+        public DateTime OrderDate { get; set; }
+        public decimal TotalAmount { get; set; }
+        public string CustomerName { get; set; }
+        public bool IsRead { get; set; }
+        public string Status { get; set; }
+    }
 }

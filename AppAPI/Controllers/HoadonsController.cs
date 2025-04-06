@@ -13,6 +13,10 @@ using AppData.IRepository;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System.Text.Json;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace AppAPI.Controllers
 {
@@ -33,8 +37,10 @@ namespace AppAPI.Controllers
         private readonly IHoaDonRepo _repository;
         private readonly INhanVienRepo _NVrepository;
         private readonly IKhachHangRepo _KHrepository;
+        private readonly IWebHostEnvironment _env;
+        private readonly string _filePath;
 
-        public HoadonsController(IHoaDonService service, AppDbContext context, IHoaDonChiTietService HDCTservice, IHoaDonRepo repository, INhanVienRepo NVrepository, IKhachHangRepo KHrepository, IHoaDonChiTietService hoaDonChiTietService, IConfiguration configuration, ISanPhamChiTietRepo sPCTrepository, ISanPhamRepo sPrepository, ISizeRepo sizeRepo, IColorRepo colorRepo, IChatLieuRepo chatLieuRepo)
+        public HoadonsController(IHoaDonService service, AppDbContext context, IHoaDonChiTietService HDCTservice, IHoaDonRepo repository, INhanVienRepo NVrepository, IKhachHangRepo KHrepository, IHoaDonChiTietService hoaDonChiTietService, IConfiguration configuration, ISanPhamChiTietRepo sPCTrepository, ISanPhamRepo sPrepository, ISizeRepo sizeRepo, IColorRepo colorRepo, IChatLieuRepo chatLieuRepo, IWebHostEnvironment env)
         {
             _Service = service;
             _context = context;
@@ -49,6 +55,15 @@ namespace AppAPI.Controllers
             _repository = repository;
             _NVrepository = NVrepository;
             _KHrepository = KHrepository;
+            _env = env;
+            _filePath = Path.Combine(_env.WebRootPath, "data", "read_orders.json");
+
+            // Đảm bảo thư mục tồn tại
+            var directory = Path.GetDirectoryName(_filePath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
         }
         [HttpPut("da-nhan-don-hang-{id}")]
         public async Task<IActionResult> Danhandonhang(int id)
@@ -407,6 +422,98 @@ namespace AppAPI.Controllers
         }
 
         // API để cập nhật hoá đơn
+        [HttpPut("trangthaiNV/{id}")]
+        public async Task<IActionResult> UpdatetrangthaiNV(int id, int trangthai, int idnv)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Trả về lỗi nếu DTO không hợp lệ
+            }
+
+            var existingHoadon = await _context.hoadons.FirstOrDefaultAsync(kh => kh.Id == id);
+            if (existingHoadon == null)
+            {
+                return NotFound(new { message = "Hoá đơn không tìm thấy" });
+            }
+
+            var existingNV = await _context.nhanviens.FirstOrDefaultAsync(kh => kh.Id == idnv);
+            if (existingNV == null)
+            {
+                return NotFound(new { message = "Nhân viên không tìm thấy" });
+            }
+
+            if (existingHoadon.Idgg != null && trangthai == 4)
+            {
+                var voucher = await _context.giamgias.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idgg);
+                if (voucher == null)
+                {
+                    return NotFound(new { message = "Voucher không tìm thấy" });
+                }
+                // Giảm số lượng mã giảm giá
+                voucher.Soluong += 1;
+                _context.giamgias.Update(voucher);
+                await _context.SaveChangesAsync();
+            }
+
+            if (existingHoadon.Trangthai == 4)
+            {
+                await _HDCTservice.ReturnProductAsync(id);
+            }
+
+            // Cập nhật điểm khách hàng nếu trạng thái là 3 và có sử dụng điểm
+            if (trangthai == 3)
+            {
+                var khachhang = await _context.khachhangs.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idkh);
+                if (khachhang == null)
+                {
+                    return NotFound(new { message = "Khách hàng không tìm thấy" });
+                }
+
+                // Tính điểm từ hoá đơn và cập nhật điểm khách hàng
+                int diemhoadon = (int)existingHoadon.Tongtiencantra / 100; // Quy đổi 100 VND = 1 điểm
+                khachhang.Diemsudung += diemhoadon;
+                khachhang.Tichdiem += diemhoadon;
+
+                // Kiểm tra và cập nhật rank khách hàng
+                var currentRank = await _context.ranks.FirstOrDefaultAsync(r => r.Id == khachhang.Idrank);
+                if (currentRank != null && khachhang.Tichdiem > currentRank.MaxMoney)
+                {
+                    // Tìm rank tiếp theo phù hợp với điểm hiện tại
+                    var nextRank = await _context.ranks
+                        .Where(r => r.MinMoney <= khachhang.Tichdiem)
+                        .OrderByDescending(r => r.MinMoney)
+                        .FirstOrDefaultAsync();
+
+                    if (nextRank != null && nextRank.Id != currentRank.Id)
+                    {
+                        khachhang.Idrank = nextRank.Id; // Cập nhật rank mới
+                    }
+                }
+
+                _context.khachhangs.Update(khachhang);
+                await _context.SaveChangesAsync();
+            }
+
+            try
+            {
+                existingHoadon.Trangthai = trangthai;
+                existingHoadon.Idnv = idnv;
+
+                _context.hoadons.Update(existingHoadon);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi cập nhật hoá đơn",
+                    error = ex.Message
+                });
+            }
+        }
+
+        // API để cập nhật hoá đơn
         [HttpPut("trangthaitrahang/{id}")]
         public async Task<IActionResult> Updatetrangthaitrahang(int id, int trangthai)
         {
@@ -517,6 +624,68 @@ namespace AppAPI.Controllers
                 // Xử lý lỗi nếu có khi xóa hoá đơn
                 return StatusCode(500, new { message = "Lỗi khi xóa hoá đơn", error = ex.Message });
             }
+        }
+
+        [HttpGet("unread-orders")]
+        public IActionResult GetUnreadOrders()
+        {
+            var allOrders = GetBaseOrdersQuery();
+            var readOrderIds = GetReadOrderIds();
+
+            var unreadOrders = allOrders
+                .Where(o => !readOrderIds.Contains(o.Id))
+                .ToList();
+
+            return Ok(unreadOrders);
+        }
+
+        [HttpGet("read-orders")]
+        public IActionResult GetReadOrders()
+        {
+            var allOrders = GetBaseOrdersQuery();
+            var readOrderIds = GetReadOrderIds();
+
+            var readOrders = allOrders
+                .Where(o => readOrderIds.Contains(o.Id))
+                .ToList();
+
+            return Ok(readOrders);
+        }
+
+        [HttpGet("old-orders")]
+        public IActionResult GetOldOrders()
+        {
+            var cutoffDate = DateTime.Now.AddDays(-7);
+            var allOrders = GetBaseOrdersQuery()
+                .Where(o => o.OrderDate < cutoffDate)
+                .ToList();
+
+            return Ok(allOrders);
+        }
+
+        private IQueryable<OrderNotificationDto> GetBaseOrdersQuery()
+        {
+            return _context.hoadons
+                .OrderByDescending(o => o.Thoigiandathang)
+                .Select(o => new OrderNotificationDto
+                {
+                    Id = o.Id,
+                    OrderCode = $"HD{o.Id.ToString().PadLeft(6, '0')}",
+                    OrderDate = o.Thoigiandathang,
+                    TotalAmount = o.Tongtiencantra,
+                    CustomerName = o.Khachhang != null ? o.Khachhang.Ten : "Khách vãng lai",
+                    Status = o.TrangthaiStr
+                });
+        }
+
+        private List<int> GetReadOrderIds()
+        {
+            if (System.IO.File.Exists(_filePath))
+            {
+                var json = System.IO.File.ReadAllText(_filePath);
+                return JsonSerializer.Deserialize<List<int>>(json) ?? new List<int>();
+            }
+            return new List<int>();
         }
     }
 }
