@@ -37,7 +37,9 @@ namespace AppData.Service
                 Tennganhang = trahang.Tennganhang != null ? trahang.Tennganhang : null,
                 Sotaikhoan = trahang.Sotaikhoan != null ? trahang.Sotaikhoan : null,
                 Tentaikhoan = trahang.Tentaikhoan != null ? trahang.Tentaikhoan : null,
-                Hinhthucxuly = trahang.Hinhthucxuly != null ? trahang.Hinhthucxuly : null
+                Hinhthucxuly = trahang.Hinhthucxuly != null ? trahang.Hinhthucxuly : null,
+                Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null,
+                Diachiship = trahang.Diachiship
             };
             await _repos.Add(a);
 
@@ -66,7 +68,9 @@ namespace AppData.Service
                 Tennganhang = x.Tennganhang,
                 Sotaikhoan = x.Sotaikhoan,
                 Tentaikhoan = x.Tentaikhoan,
-                Hinhthucxuly = x.Hinhthucxuly
+                Hinhthucxuly = x.Hinhthucxuly,
+                Diachiship = x.Diachiship,
+                Ngaytrahangthucte = x.Ngaytrahangthucte
             }).ToList();
         }
         public async Task<TrahangDTO> GetById(int id)
@@ -86,7 +90,9 @@ namespace AppData.Service
                 Tennganhang = x.Tennganhang,
                 Sotaikhoan = x.Sotaikhoan,
                 Tentaikhoan = x.Tentaikhoan,
-                Hinhthucxuly = x.Hinhthucxuly
+                Hinhthucxuly = x.Hinhthucxuly,
+                Diachiship = x.Diachiship,
+                Ngaytrahangthucte = x.Ngaytrahangthucte
             };
         }
 
@@ -111,6 +117,8 @@ namespace AppData.Service
                 a.Sotaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Sotaikhoan) != null ? trahang.Sotaikhoan : null;
                 a.Tentaikhoan = BCrypt.Net.BCrypt.HashPassword(trahang.Tentaikhoan) != null ? trahang.Tentaikhoan : null;
                 a.Hinhthucxuly = trahang.Hinhthucxuly;
+                a.Diachiship = trahang.Diachiship;
+                a.Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null;
                 await _repos.Update(a);
             }
         }
