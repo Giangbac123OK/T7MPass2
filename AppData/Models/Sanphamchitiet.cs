@@ -15,9 +15,6 @@ namespace AppData.Models
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id {  get; set; }
 
-		[StringLength(200, ErrorMessage = "Mô tả không được quá 200 ký tự")]
-		public string? Mota {  get; set; }
-
 		[Range(0, 3, ErrorMessage = "Trạng thái không hợp lệ")]
 		public int Trangthai { get; set; }
 

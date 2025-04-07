@@ -254,7 +254,6 @@ namespace AppData.Service
                     Sanphamchitiets = sp.Sanphamchitiets.Select(spct => new SanphamchitietViewModel
                     {
                         Id = spct.Id,
-                        Mota = spct.Mota,
                         Giathoidiemhientai = spct.Giathoidiemhientai,
                         GiaSaleSanPhamChiTiet = spct.GiaSaleSanPhamChiTiet,
                         Soluong = spct.Soluong,
@@ -333,7 +332,6 @@ namespace AppData.Service
                 Sanphamchitiets = sanPham.Sanphamchitiets.Select(spct => new SanphamchitietViewModel
                 {
                     Id = spct.Id,
-                    Mota = spct.Mota,
                     Giathoidiemhientai = spct.Giathoidiemhientai,
                     GiaSaleSanPhamChiTiet = spct.GiaSaleSanPhamChiTiet,
                     Soluong = spct.Soluong,
@@ -415,7 +413,6 @@ namespace AppData.Service
                     Sanphamchitiets = sp.Sanphamchitiets.Select(spct => new SanphamchitietViewModel
                     {
                         Id = spct.Id,
-                        Mota = spct.Mota,
                         Giathoidiemhientai = spct.Giathoidiemhientai,
                         GiaSaleSanPhamChiTiet = spct.GiaSaleSanPhamChiTiet,
                         Soluong = spct.Soluong,

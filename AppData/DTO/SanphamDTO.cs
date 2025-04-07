@@ -21,6 +21,6 @@ namespace AppData.DTO
         public int Chieudai { get; set; }
         public int Chieurong { get; set; }
         public int Trongluong { get; set; }
-		public int Idth { get; set; }
+        public int Idth { get; set; }
     }
 }

@@ -11,7 +11,6 @@ namespace AppData.DTO
 	public class SanphamchitietDTO
 	{
 		public int Id {  get; set; }
-		public string? Mota {  get; set; }
 		public int Trangthai { get; set; }
 		public decimal Giathoidiemhientai { get; set; }
 		public int Soluong {  get; set; }

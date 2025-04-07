@@ -35,7 +35,6 @@ namespace AppData.Service
             return sanphamchitiets.Select(sanphamchitiet => new Sanphamchitiet
             {
                 Id = sanphamchitiet.Id,
-                Mota = sanphamchitiet.Mota,
                 UrlHinhanh = sanphamchitiet.UrlHinhanh,
                 Trangthai = sanphamchitiet.Trangthai,
                 Giathoidiemhientai = sanphamchitiet.Giathoidiemhientai,
@@ -55,7 +54,6 @@ namespace AppData.Service
             return new Sanphamchitiet
             {
                 Id = entity.Id,
-                Mota = entity.Mota,
                 Trangthai = entity.Trangthai,
                 UrlHinhanh = entity.UrlHinhanh,
                 Giathoidiemhientai = entity.Giathoidiemhientai,
@@ -81,7 +79,6 @@ namespace AppData.Service
                 var dtoList = results.Select(result => new SanphamchitietDTO
                 {
                     Id = result.Id,
-                    Mota = result.Mota,
                     Trangthai = result.Trangthai,
                     Giathoidiemhientai = result.Giathoidiemhientai,
                     UrlHinhanh = result.UrlHinhanh,
@@ -128,7 +125,6 @@ namespace AppData.Service
             }
             var sanphamchitiet = new Sanphamchitiet
             {
-                Mota = dto.Mota,
                 Trangthai = dto.Trangthai,
                 Giathoidiemhientai = dto.Giathoidiemhientai,
                 UrlHinhanh = dto.UrlHinhanh,
@@ -177,7 +173,6 @@ namespace AppData.Service
 
             if (entity != null)
             {
-                entity.Mota = dto.Mota;
                 entity.Trangthai = dto.Trangthai;
                 entity.Giathoidiemhientai = dto.Giathoidiemhientai;
                 entity.UrlHinhanh = dto.UrlHinhanh;

@@ -28,7 +28,6 @@ namespace AppData.ViewModel
     public class SanphamchitietViewModel
     {
         public int Id { get; set; }
-        public string Mota { get; set; }
         public decimal Giathoidiemhientai { get; set; }
         public decimal? GiaSaleSanPhamChiTiet { get; set; }
         public int Soluong { get; set; }

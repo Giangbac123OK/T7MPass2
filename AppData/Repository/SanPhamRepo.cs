@@ -95,7 +95,6 @@ namespace AppData.Repository
                     .Select(spct => new SanphamchitietViewModel
                     {
                         Id = spct.Id,
-                        Mota = spct.Mota,
                         Giathoidiemhientai = spct.Giathoidiemhientai,
                         TrangThai = spct.Trangthai,
                         Soluong = spct.Soluong,
@@ -166,7 +165,6 @@ namespace AppData.Repository
                     .Select(spct => new SanphamchitietViewModel
                     {
                         Id = spct.Id,
-                        Mota = spct.Mota,
                         Giathoidiemhientai = spct.Giathoidiemhientai,
                         TrangThai = spct.Trangthai,
                         Soluong = spct.Soluong,
@@ -219,7 +217,6 @@ namespace AppData.Repository
                 .Select(spct => new
                 {
                     spct.Id,
-                    spct.Mota,
                     spct.Giathoidiemhientai,
                     spct.Soluong,
                     spct.Trangthai,
@@ -304,7 +301,6 @@ namespace AppData.Repository
                  .Select(spct => new
                  {
                      spct.Id,
-                     spct.Mota,
                      spct.Giathoidiemhientai,
                      spct.Soluong,
                      Sales = spct.Salechitiets
@@ -400,7 +396,6 @@ namespace AppData.Repository
                       .Select(spct => new
                       {
                           spct.Id,
-                          spct.Mota,
                           spct.Giathoidiemhientai,
                           spct.Soluong,
                           spct.Color,
