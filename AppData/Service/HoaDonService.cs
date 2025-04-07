@@ -67,6 +67,7 @@ namespace AppData.Service
                 Ngaygiaothucte = hoaDon.Ngaygiaothucte,
                 Tongtiencantra = hoaDon.Tongtiencantra,
                 Tongtiensanpham = hoaDon.Tongtiensanpham,
+                Phivanchuyen = hoaDon.Phivanchuyen,
                 Sdt = hoaDon.Sdt,
                 Tonggiamgia = hoaDon.Tonggiamgia,
                 Ghichu = hoaDon.Ghichu,
@@ -127,6 +128,7 @@ namespace AppData.Service
                 Ngaygiaothucte = entity.Ngaygiaothucte,
                 Tongtiencantra = entity.Tongtiencantra,
                 Tongtiensanpham = entity.Tongtiensanpham,
+                Phivanchuyen = entity.Phivanchuyen,
                 Sdt = entity.Sdt,
                 Tonggiamgia = entity.Tonggiamgia,
                 Ghichu = entity.Ghichu,
@@ -197,6 +199,7 @@ namespace AppData.Service
                 entity.Diachiship = dto.Diachiship;
                 entity.Ngaygiaothucte = dto.Ngaygiaothucte;
                 entity.Tongtiencantra = dto.Tongtiencantra;
+                entity.Phivanchuyen = dto.Phivanchuyen;
                 entity.Tongtiensanpham = dto.Tongtiensanpham;
                 entity.Sdt = dto.Sdt;
                 entity.Tonggiamgia = dto.Tonggiamgia;

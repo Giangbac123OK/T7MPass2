@@ -62,6 +62,7 @@ namespace AppData.Service
                     TenSanpham = item.TenSanpham,
                     Mota = item.Mota,
                     Trangthai = item.Trangthai,
+                    Chieucao = item.Chieucao,
                     Soluong = item.Soluong,
                     GiaBan = item.GiaBan,
                     NgayThemMoi = item.NgayThemMoi,
@@ -85,6 +86,7 @@ namespace AppData.Service
                 GiaBan = sanphamDto.GiaBan,
                 Chieudai = sanphamDto.Chieudai,
                 Chieurong = sanphamDto.Chieurong,
+                Chieucao = sanphamDto.Chieucao,
                 Trongluong = sanphamDto.Trongluong,
                 NgayThemMoi = DateTime.Now,
                 //Giasale = sanphamDto.Giasale,
@@ -107,6 +109,7 @@ namespace AppData.Service
             sanpham.GiaBan = sanphamDto.GiaBan;
             sanpham.Chieudai = sanphamDto.Chieudai;
             sanpham.Chieurong = sanphamDto.Chieurong;
+            sanpham.Chieucao = sanphamDto.Chieucao;
             sanpham.Trongluong = sanphamDto.Trongluong;
             //sanpham.Giasale = sanphamDto.Giasale;
             sanpham.Idth = sanphamDto.Idth;
@@ -130,6 +133,7 @@ namespace AppData.Service
                 GiaBan = sp.GiaBan,
                 //Giasale = sp.Giasale,
                 Chieudai = sp.Chieudai,
+                Chieucao = sp.Chieucao,
                 Chieurong = sp.Chieurong,
                 Trongluong = sp.Trongluong,
                 Idth = sp.Idth
@@ -187,6 +191,7 @@ namespace AppData.Service
                 GiaBan = sanpham.GiaBan,
                 //Giasale = sanpham.Giasale,
                 Chieudai = sanpham.Chieudai,
+                Chieucao = sanpham.Chieucao,
                 Chieurong = sanpham.Chieurong,
                 Trongluong = sanpham.Trongluong,
                 Idth = sanpham.Idth
