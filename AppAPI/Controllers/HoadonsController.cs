@@ -687,5 +687,32 @@ namespace AppAPI.Controllers
             }
             return new List<int>();
         }
+        [HttpPost("mark-as-read")]
+        public IActionResult MarkAsRead([FromBody] List<int> orderIds)
+        {
+            List<int> readOrders = new List<int>();
+
+            // Đọc file nếu tồn tại
+            if (System.IO.File.Exists(_filePath))
+            {
+                var json = System.IO.File.ReadAllText(_filePath);
+                readOrders = JsonSerializer.Deserialize<List<int>>(json) ?? new List<int>();
+            }
+
+            // Thêm ID chưa có vào
+            foreach (var id in orderIds)
+            {
+                if (!readOrders.Contains(id))
+                {
+                    readOrders.Add(id);
+                }
+            }
+
+            // Ghi lại vào file
+            var updatedJson = JsonSerializer.Serialize(readOrders);
+            System.IO.File.WriteAllText(_filePath, updatedJson);
+
+            return Ok(new { success = true });
+        }
     }
 }
