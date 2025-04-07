@@ -89,6 +89,19 @@ namespace AppData.Service
             return await _repos.ListSanPhamByIdhd(id);
         }
 
+        public async Task<List<SanPhamTraHang>> SanphamByThct()
+        {
+
+            try
+            {
+                return await _repos.SanphamByThct();
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
+        }
+
         public async Task Update(int id, TrahangchitietDTO ct)
         {
 
