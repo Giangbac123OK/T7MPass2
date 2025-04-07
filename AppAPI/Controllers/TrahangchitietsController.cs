@@ -9,6 +9,7 @@ using AppData;
 using AppData.Models;
 using AppData.DTO;
 using AppData.IService;
+using AppData.ViewModel;
 
 namespace AppAPI.Controllers
 {
@@ -107,6 +108,19 @@ namespace AppAPI.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("SanphamByThct")]
+        public async Task<IActionResult> SanphamByThct()
+        {
+
+            try
+            {
+                return Ok(await _service.SanphamByThct());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
             }
         }
     }

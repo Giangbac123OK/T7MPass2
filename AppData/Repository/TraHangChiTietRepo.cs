@@ -85,5 +85,41 @@ namespace AppData.Repository
             _context.trahangchitiets.Update(ct);
             await _context.SaveChangesAsync();
         }
+        public async Task<List<SanPhamTraHang>> SanphamByThct()
+        {
+            try
+            {
+                List<SanPhamTraHang> a = await (from thct in _context.trahangchitiets
+                                                join hdct in _context.hoadonchitiets on thct.Idhdct equals hdct.Id
+                                                join spct in _context.Sanphamchitiets on hdct.Idspct equals spct.Id
+                                                join sp in _context.sanphams on spct.Idsp equals sp.Id
+                                                join thuonghieu in _context.thuonghieus on sp.Idth equals thuonghieu.Id
+                                                join size in _context.sizes on spct.IdSize equals size.Id
+                                                join chatlieu in _context.chatLieus on spct.IdChatLieu equals chatlieu.Id
+                                                join mau in _context.colors on spct.IdMau equals mau.Id
+                                                select new SanPhamTraHang
+                                                {
+                                                    Id = thct.Id,
+                                                    Idth = thct.Idth,
+                                                    Soluong = thct.Soluong,
+                                                    Tinhtrang = thct.Tinhtrang,
+                                                    Ghichu = thct.Ghichu,
+                                                    Idsp = sp.Id,
+                                                    UrlAnh = spct.UrlHinhanh,
+                                                    Tensp = sp.TenSanpham,
+                                                    Tenthuonghieu = thuonghieu.Tenthuonghieu,
+                                                    Giasp = hdct.Giasp - (hdct.Giamgia ?? 0),
+                                                    Tenmau = mau.Tenmau,
+                                                    Tensize = size.Sosize,
+                                                    Tenchatlieu = chatlieu.Tenchatlieu
+                                                }).ToListAsync();
+                return a;
+            }
+            catch(Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
+            
+        }
     }
 }
