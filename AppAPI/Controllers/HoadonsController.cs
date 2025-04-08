@@ -421,6 +421,54 @@ namespace AppAPI.Controllers
             }
         }
 
+        [HttpPut("trangthaiNV1/{id}")]
+        public async Task<IActionResult> UpdatetrangthaiNV1(int id, int trangthai, int idnv, DateTime? ngaygiaohang)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingHoadon = await _context.hoadons.FirstOrDefaultAsync(kh => kh.Id == id);
+            if (existingHoadon == null)
+            {
+                return NotFound(new { message = "Hoá đơn không tìm thấy" });
+            }
+
+            var existingNV = await _context.nhanviens.FirstOrDefaultAsync(kh => kh.Id == idnv);
+            if (existingNV == null)
+            {
+                return NotFound(new { message = "Nhân viên không tìm thấy" });
+            }
+
+            // ... (các logic voucher, cập nhật điểm giữ nguyên)
+
+            try
+            {
+                existingHoadon.Trangthai = trangthai;
+                existingHoadon.Idnv = idnv;
+
+                // ➕ Gán ngày giao hàng nếu có
+                if (ngaygiaohang.HasValue)
+                {
+                    existingHoadon.Ngaygiaothucte = ngaygiaohang.Value;
+                }
+
+                _context.hoadons.Update(existingHoadon);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi cập nhật hoá đơn",
+                    error = ex.Message
+                });
+            }
+        }
+
+
         // API để cập nhật hoá đơn
         [HttpPut("trangthaiNV/{id}")]
         public async Task<IActionResult> UpdatetrangthaiNV(int id, int trangthai, int idnv)
