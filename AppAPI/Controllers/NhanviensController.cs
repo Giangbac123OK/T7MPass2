@@ -48,11 +48,12 @@ namespace AppAPI.Controllers
                 nv.Sdt,
                 Trangthai = nv.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
                 nv.Password,
-                Role = nv.Role,
+                Role = nv.Role == 0 ? "Quản lý" : "Nhân viên",
                 nv.Avatar,
                 nv.Ngaytaotaikhoan
-        }));
+            }));
         }
+
         [HttpPost("Send_Account_Creation_Email")]
         public async Task<IActionResult> SendAccountCreationEmail(string toEmail, string hoten, string password, int role)
         {
