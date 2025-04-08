@@ -74,6 +74,31 @@ namespace AppData.Service
         }
         public async Task AddNhanvienAsync(NhanvienDTO nhanvienDto)
         {
+            // Tạo tên file ngẫu nhiên
+            string fileName = Guid.NewGuid().ToString() + ".png";
+
+            // Đường dẫn thư mục lưu ảnh
+            string folderPath = Path.Combine("D:\\DATNSD76\\BackEnd\\AppAPI\\wwwroot\\picture");
+            string filePath = Path.Combine(folderPath, fileName);
+
+            // Tạo thư mục nếu chưa có
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            // Xử lý ảnh base64
+            if (!string.IsNullOrEmpty(nhanvienDto.Avatar) && nhanvienDto.Avatar.StartsWith("data:image"))
+            {
+                var base64Data = nhanvienDto.Avatar.Substring(nhanvienDto.Avatar.IndexOf(",") + 1);
+                byte[] imageBytes = Convert.FromBase64String(base64Data);
+                await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
+
+                // Lưu đường dẫn ảnh tương đối để client sử dụng
+                nhanvienDto.Avatar = fileName;
+            }
+            else
+            {
+                nhanvienDto.Avatar = null;
+            }
 
             var nhanvien = new Nhanvien
             {
