@@ -44,11 +44,11 @@ namespace AppAPI.Controllers
                 nv.Ngaysinh,
                 nv.Diachi,
                 nv.Email,
-                Gioitinh = nv.Gioitinh == true ? "Nam" : "Nữ",
+                nv.Gioitinh,
                 nv.Sdt,
-                Trangthai = nv.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
+                nv.Trangthai,
                 nv.Password,
-                Role = nv.Role,
+                nv.Role,
                 nv.Avatar,
                 nv.Ngaytaotaikhoan
         }));
@@ -79,11 +79,12 @@ namespace AppAPI.Controllers
                     nhanvien.Ngaysinh,
                     nhanvien.Diachi,
                     nhanvien.Email,
-                    Gioitinh = nhanvien.Gioitinh == false ? "Nam" : "Nữ",
+                    nhanvien.Gioitinh,
                     nhanvien.Sdt,
-                    Trangthai = nhanvien.Trangthai == 0 ? "Hoạt động" : "Dừng hoạt động",
+                    nhanvien.Trangthai,
                     nhanvien.Password,
-                    Role = nhanvien.Role == 0 ? "Quản lý" : "Nhân viên",
+                    nhanvien.Avatar,
+                    nhanvien.Role,
                     nhanvien.Ngaytaotaikhoan
                 });
             }
@@ -96,42 +97,164 @@ namespace AppAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] NhanvienDTO nhanvienDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-        
-            await _Service.AddNhanvienAsync(nhanvienDto);
-            return CreatedAtAction(nameof(GetById), new { id = nhanvienDto.Hovaten }, nhanvienDto);
-        }
+        public async Task<IActionResult> Create([FromForm] NhanvienDTO nhanvienDto, IFormFile? avatarFile)
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] NhanvienDTO nhanvienDto)
         {
             try
             {
+
+                string fileName = "AnhNhanVien.png"; // Tên ảnh mặc định
+                var uploadPath = Path.Combine(_environment.WebRootPath, "picture");
+
+                if (!Directory.Exists(uploadPath))
+                    Directory.CreateDirectory(uploadPath);
+
+                if (avatarFile != null && avatarFile.Length > 0 && avatarFile.FileName != null)
+                {
+                    var allowedExtensions = new[] { ".png", ".jpg", ".jpeg" };
+                    var extension = Path.GetExtension(avatarFile.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(extension))
+                        return BadRequest("Chỉ chấp nhận ảnh định dạng .png, .jpg, .jpeg");
+
+                    if (avatarFile.Length > 10 * 1024 * 1024)
+                        return BadRequest("Kích thước ảnh tối đa là 10MB");
+
+                    fileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await avatarFile.CopyToAsync(stream);
+                    }
+                }
+                else
+                {
+                    // ✅ Không có ảnh -> Tải ảnh từ URL
+                    string imageUrl = "https://i.pinimg.com/736x/11/5e/8a/115e8a22e7ee37d2c662d1a1714a90bf.jpg";
+                    fileName = "AnhNhanVien.png";
+                    var filePath = Path.Combine(uploadPath, fileName);
+
+                    using (HttpClient client = new HttpClient())
+                    {
+                        try
+                        {
+                            var imageBytes = await client.GetByteArrayAsync(imageUrl);
+                            await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
+                        }
+                        catch (Exception ex)
+                        {
+                            return BadRequest($"Không thể tải ảnh mặc định: {ex.Message}");
+                        }
+                    }
+                }
+
+                nhanvienDto.Avatar = fileName;
+
+                var result = await _Service.AddNhanvienAsync(nhanvienDto);
+
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Thêm nhân viên thành công",
+                    Data = new { id = result }
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception here (using your preferred logging method)
+                return StatusCode(500, new
+                {
+                    Success = false,
+                    Message = "Đã xảy ra lỗi khi thêm nhân viên",
+                    Error = ex.Message
+                });
+            }
+        }
+
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromForm] NhanvienDTO nhanvienDto, IFormFile? avatarFile)
+        {
+            try
+            {
+                var nhanvien = await _Service.GetNhanvienByIdAsync(id);
+                if (nhanvien == null)
+                    return NotFound("Nhân viên không tồn tại.");
+
+                string fileName = nhanvien.Avatar; // giữ ảnh cũ nếu không thay đổi
+                var uploadPath = Path.Combine(_environment.WebRootPath, "picture");
+
+                if (!Directory.Exists(uploadPath))
+                    Directory.CreateDirectory(uploadPath);
+
+                if (avatarFile != null && avatarFile.Length > 0)
+                {
+                    // Xoá ảnh cũ (nếu không phải là ảnh mặc định)
+                    if (!string.IsNullOrEmpty(nhanvien.Avatar) && nhanvien.Avatar != "AnhNhanVien.png")
+                    {
+                        var oldPath = Path.Combine(uploadPath, nhanvien.Avatar);
+                        if (System.IO.File.Exists(oldPath))
+                            System.IO.File.Delete(oldPath);
+                    }
+
+                    var allowedExtensions = new[] { ".png", ".jpg", ".jpeg" };
+                    var extension = Path.GetExtension(avatarFile.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(extension))
+                        return BadRequest("Chỉ chấp nhận ảnh định dạng .png, .jpg, .jpeg");
+
+                    if (avatarFile.Length > 10 * 1024 * 1024)
+                        return BadRequest("Kích thước ảnh tối đa là 10MB");
+
+                    fileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await avatarFile.CopyToAsync(stream);
+                    }
+                }
+
+                nhanvienDto.Avatar = fileName;
                 await _Service.UpdateNhanvienAsync(id, nhanvienDto);
-                return NoContent();
+
+                return Ok(new { Success = true, Message = "Cập nhật thành công" });
             }
             catch (KeyNotFoundException)
             {
                 return NotFound("Nhân viên không tồn tại.");
             }
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
+                var nhanvien = await _Service.GetNhanvienByIdAsync(id);
+                if (nhanvien == null)
+                    return NotFound("Nhân viên không tồn tại.");
+
+                // Xoá ảnh nếu không phải ảnh mặc định
+                if (!string.IsNullOrEmpty(nhanvien.Avatar) && nhanvien.Avatar != "AnhNhanVien.png")
+                {
+                    var filePath = Path.Combine(_environment.WebRootPath, "picture", nhanvien.Avatar);
+                    if (System.IO.File.Exists(filePath))
+                        System.IO.File.Delete(filePath);
+                }
+
                 await _Service.DeleteNhanvienAsync(id);
-                return NoContent();
+                return Ok(new { Success = true, Message = "Xóa thành công" });
             }
             catch (KeyNotFoundException)
             {
                 return NotFound("Nhân viên không tồn tại.");
             }
         }
+
         [HttpPost("Nhanvien/login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO dto)
         {

@@ -72,9 +72,8 @@ namespace AppData.Service
         {
             await _repository.SendAccountCreationEmail(toEmail, hoten, password, role);
         }
-        public async Task AddNhanvienAsync(NhanvienDTO nhanvienDto)
+        public async Task<int> AddNhanvienAsync(NhanvienDTO nhanvienDto)
         {
-
             var nhanvien = new Nhanvien
             {
                 Hovaten = nhanvienDto.Hovaten,
@@ -83,14 +82,20 @@ namespace AppData.Service
                 Email = nhanvienDto.Email,
                 Gioitinh = nhanvienDto.Gioitinh,
                 Sdt = nhanvienDto.Sdt,
-                Trangthai = 0, // Mặc định "hoạt động",
+                Trangthai = 0, // Mặc định "hoạt động"
                 Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password),
                 Role = nhanvienDto.Role, // 0: Admin, 1: Quản lý, 2: Nhân viên
                 Ngaytaotaikhoan = nhanvienDto.Ngaytaotaikhoan,
                 Avatar = nhanvienDto.Avatar
             };
-            await _repository.AddAsync(nhanvien);
+
+            // Gọi AddAsync và chờ kết quả
+            var result = _repository.AddAsync(nhanvien);
+
+            // Trả về Id của nhân viên vừa thêm
+            return result.Id;
         }
+
         public async Task ChangePasswordAfter24h()
         {
             var data = await _repository.GetAllAsync();
