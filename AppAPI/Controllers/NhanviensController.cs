@@ -48,7 +48,7 @@ namespace AppAPI.Controllers
                 nv.Sdt,
                 nv.Trangthai,
                 nv.Password,
-                Role = nv.Role == 0 ? "Quản lý" : "Nhân viên,
+                nv.Role,
                 nv.Avatar,
                 nv.Ngaytaotaikhoan
             }));
@@ -176,7 +176,7 @@ namespace AppAPI.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] NhanvienDTO nhanvienDto, IFormFile? avatarFile)
+        public async Task<IActionResult> Update(int id, [FromForm] NhanvienUpdateDTO nhanvienDto, IFormFile? avatarFile)
         {
             try
             {
