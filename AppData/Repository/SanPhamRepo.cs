@@ -61,6 +61,7 @@ namespace AppData.Repository
         {
             var sanphams = await _context.sanphams
                 .AsNoTracking()
+                .Where(sp => sp.Trangthai == 0 || sp.Trangthai == 1)
                 .Include(sp => sp.Sanphamchitiets)
                     .ThenInclude(spct => spct.Salechitiets)
                         .ThenInclude(sale => sale.Sale)
@@ -88,10 +89,11 @@ namespace AppData.Repository
                 Soluong = sanpham.Soluong,
                 idThuongHieu = sanpham.Idth,
                 NgayThemSanPham = sanpham.NgayThemMoi,
-                
+                TrangThai = sanpham.Trangthai,
+
                 Sanphamchitiets = sanpham.Sanphamchitiets?
                
-                    .Where(spct => spct.Trangthai != 2)
+                    .Where(spct => spct.Trangthai == 0 || spct.Trangthai == 1)
                     .Select(spct => new SanphamchitietViewModel
                     {
                         Id = spct.Id,
