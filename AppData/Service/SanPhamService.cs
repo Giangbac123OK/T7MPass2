@@ -184,6 +184,7 @@ namespace AppData.Service
             // Chuyển đổi đối tượng Sanpham thành SanphamDTO
             return new SanphamDTO
             {
+                Id = sanpham.Id,
                 TenSanpham = sanpham.TenSanpham,
                 Mota = sanpham.Mota,
                 Trangthai = sanpham.Trangthai,
