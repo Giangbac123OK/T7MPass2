@@ -108,7 +108,7 @@ namespace AppData.Service
                 }
             }
         }
-        public async Task UpdateNhanvienAsync(int id, NhanvienDTO nhanvienDto)
+        public async Task UpdateNhanvienAsync(int id, NhanvienUpdateDTO nhanvienDto)
         {
             var nhanvien = await _repository.GetByIdAsync(id);
             if (nhanvien == null) throw new KeyNotFoundException("Nhân viên không tồn tại.");
@@ -118,7 +118,7 @@ namespace AppData.Service
             nhanvien.Diachi = nhanvienDto.Diachi;
             nhanvien.Gioitinh = nhanvienDto.Gioitinh;
             nhanvien.Sdt = nhanvienDto.Sdt;
-            nhanvien.Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password);
+            nhanvien.Email = nhanvienDto.Email;
             nhanvien.Avatar = nhanvienDto.Avatar;
             await _repository.UpdateAsync(nhanvien);
         }
