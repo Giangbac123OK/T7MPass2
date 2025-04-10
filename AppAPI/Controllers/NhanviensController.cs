@@ -175,7 +175,7 @@ namespace AppAPI.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] NhanvienDTO nhanvienDto, IFormFile? avatarFile)
+        public async Task<IActionResult> Update(int id, [FromForm] NhanvienUpdateDTO nhanvienDto, IFormFile? avatarFile)
         {
             try
             {
