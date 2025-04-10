@@ -46,6 +46,7 @@ namespace AppData.Repository
             var sanpham = await GetByIdAsync(id);
             if (sanpham != null)
             {
+               
                 _context.sanphams.Remove(sanpham);
                 await _context.SaveChangesAsync();
             }

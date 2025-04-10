@@ -140,8 +140,6 @@ namespace AppData.Service
 
         public async Task UpdateAsync(int id, SanphamchitietDTO dto)
         {
-
-
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null) throw new KeyNotFoundException("Không tìm thấy sản phẩm chi tiết.");
 
@@ -157,9 +155,9 @@ namespace AppData.Service
             var mau = await _icolorRepos.GetByIdAsync(dto.IdMau);
             if (mau == null) throw new ArgumentNullException("Màu không tồn tại");
 
-
             var existingSanphamchitiet = await _repository.GetAllAsync();
             bool exists = existingSanphamchitiet.Any(spct =>
+                spct.Id != id && 
                 spct.Idsp == dto.Idsp &&
                 spct.IdSize == dto.IdSize &&
                 spct.IdMau == dto.IdMau &&
@@ -171,20 +169,19 @@ namespace AppData.Service
                 throw new InvalidOperationException("Sản phẩm chi tiết với màu, size, chất liệu này đã tồn tại");
             }
 
-            if (entity != null)
-            {
-                entity.Trangthai = dto.Trangthai;
-                entity.Giathoidiemhientai = dto.Giathoidiemhientai;
-                entity.UrlHinhanh = dto.UrlHinhanh;
-                entity.Soluong = dto.Soluong;
-                entity.Idsp = dto.Idsp;
-                entity.IdSize = dto.IdSize;
-                entity.IdMau = dto.IdMau;
-                entity.IdChatLieu = dto.IdChatLieu;
+           
+            entity.Trangthai = dto.Trangthai;
+            entity.Giathoidiemhientai = dto.Giathoidiemhientai;
+            entity.UrlHinhanh = dto.UrlHinhanh;
+            entity.Soluong = dto.Soluong;
+            entity.Idsp = dto.Idsp;
+            entity.IdSize = dto.IdSize;
+            entity.IdMau = dto.IdMau;
+            entity.IdChatLieu = dto.IdChatLieu;
 
-                await _repository.UpdateAsync(entity);
-            }
+            await _repository.UpdateAsync(entity);
         }
+
 
         public async Task DeleteAsync(int id)
         {
