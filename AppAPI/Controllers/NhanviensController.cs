@@ -53,6 +53,20 @@ namespace AppAPI.Controllers
                 nv.Ngaytaotaikhoan
             }));
         }
+
+        [HttpPost("Send_Account_Creation_Email")]
+        public async Task<IActionResult> SendAccountCreationEmail(string toEmail, string hoten, string password, int role)
+        {
+            try
+            {
+                await _Service.SendAccountCreationEmail(toEmail, hoten, password, role);
+                return Ok("✅ Email đã được gửi thành công.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
