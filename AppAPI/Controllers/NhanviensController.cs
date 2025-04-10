@@ -51,9 +51,8 @@ namespace AppAPI.Controllers
                 nv.Role,
                 nv.Avatar,
                 nv.Ngaytaotaikhoan
-            }));
+        }));
         }
-
         [HttpPost("Send_Account_Creation_Email")]
         public async Task<IActionResult> SendAccountCreationEmail(string toEmail, string hoten, string password, int role)
         {
