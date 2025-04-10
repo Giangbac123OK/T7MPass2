@@ -72,34 +72,8 @@ namespace AppData.Service
         {
             await _repository.SendAccountCreationEmail(toEmail, hoten, password, role);
         }
-        public async Task AddNhanvienAsync(NhanvienDTO nhanvienDto)
+        public async Task<int> AddNhanvienAsync(NhanvienDTO nhanvienDto)
         {
-            // Tạo tên file ngẫu nhiên
-            string fileName = Guid.NewGuid().ToString() + ".png";
-
-            // Đường dẫn thư mục lưu ảnh
-            string folderPath = Path.Combine("D:\\DATNSD76\\BackEnd\\AppAPI\\wwwroot\\picture");
-            string filePath = Path.Combine(folderPath, fileName);
-
-            // Tạo thư mục nếu chưa có
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
-
-            // Xử lý ảnh base64
-            if (!string.IsNullOrEmpty(nhanvienDto.Avatar) && nhanvienDto.Avatar.StartsWith("data:image"))
-            {
-                var base64Data = nhanvienDto.Avatar.Substring(nhanvienDto.Avatar.IndexOf(",") + 1);
-                byte[] imageBytes = Convert.FromBase64String(base64Data);
-                await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
-
-                // Lưu đường dẫn ảnh tương đối để client sử dụng
-                nhanvienDto.Avatar = fileName;
-            }
-            else
-            {
-                nhanvienDto.Avatar = null;
-            }
-
             var nhanvien = new Nhanvien
             {
                 Hovaten = nhanvienDto.Hovaten,
@@ -108,14 +82,20 @@ namespace AppData.Service
                 Email = nhanvienDto.Email,
                 Gioitinh = nhanvienDto.Gioitinh,
                 Sdt = nhanvienDto.Sdt,
-                Trangthai = 0, // Mặc định "hoạt động",
+                Trangthai = 0, // Mặc định "hoạt động"
                 Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password),
                 Role = nhanvienDto.Role, // 0: Admin, 1: Quản lý, 2: Nhân viên
                 Ngaytaotaikhoan = nhanvienDto.Ngaytaotaikhoan,
                 Avatar = nhanvienDto.Avatar
             };
-            await _repository.AddAsync(nhanvien);
+
+            // Gọi AddAsync và chờ kết quả
+            var result = _repository.AddAsync(nhanvien);
+
+            // Trả về Id của nhân viên vừa thêm
+            return result.Id;
         }
+
         public async Task ChangePasswordAfter24h()
         {
             var data = await _repository.GetAllAsync();
@@ -128,7 +108,7 @@ namespace AppData.Service
                 }
             }
         }
-        public async Task UpdateNhanvienAsync(int id, NhanvienDTO nhanvienDto)
+        public async Task UpdateNhanvienAsync(int id, NhanvienUpdateDTO nhanvienDto)
         {
             var nhanvien = await _repository.GetByIdAsync(id);
             if (nhanvien == null) throw new KeyNotFoundException("Nhân viên không tồn tại.");
@@ -138,7 +118,7 @@ namespace AppData.Service
             nhanvien.Diachi = nhanvienDto.Diachi;
             nhanvien.Gioitinh = nhanvienDto.Gioitinh;
             nhanvien.Sdt = nhanvienDto.Sdt;
-            nhanvien.Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password);
+            nhanvien.Email = nhanvienDto.Email;
             nhanvien.Avatar = nhanvienDto.Avatar;
             await _repository.UpdateAsync(nhanvien);
         }
