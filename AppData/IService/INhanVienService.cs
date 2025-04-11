@@ -16,7 +16,6 @@ namespace AppData.IService
         Task<int> AddNhanvienAsync(NhanvienDTO nhanvienDto);
         Task UpdateNhanvienAsync(int id, NhanvienUpdateDTO nhanvienDto);
         Task DeleteNhanvienAsync(int id);
-        Task SendAccountCreationEmail(string toEmail, string hoten, string password, int role);
         Task<IEnumerable<NhanvienDTO>> TimKiemNhanvienAsync(string search);
     }
 }

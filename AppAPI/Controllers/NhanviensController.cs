@@ -51,20 +51,7 @@ namespace AppAPI.Controllers
                 nv.Role,
                 nv.Avatar,
                 nv.Ngaytaotaikhoan
-        }));
-        }
-        [HttpPost("Send_Account_Creation_Email")]
-        public async Task<IActionResult> SendAccountCreationEmail(string toEmail, string hoten, string password, int role)
-        {
-            try
-            {
-                await _Service.SendAccountCreationEmail(toEmail, hoten, password, role);
-                return Ok("✅ Email đã được gửi thành công.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            }));
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -229,7 +216,7 @@ namespace AppAPI.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -237,15 +224,6 @@ namespace AppAPI.Controllers
                 var nhanvien = await _Service.GetNhanvienByIdAsync(id);
                 if (nhanvien == null)
                     return NotFound("Nhân viên không tồn tại.");
-
-                // Xoá ảnh nếu không phải ảnh mặc định
-                if (!string.IsNullOrEmpty(nhanvien.Avatar) && nhanvien.Avatar != "AnhNhanVien.png")
-                {
-                    var filePath = Path.Combine(_environment.WebRootPath, "picture", nhanvien.Avatar);
-                    if (System.IO.File.Exists(filePath))
-                        System.IO.File.Delete(filePath);
-                }
-
                 await _Service.DeleteNhanvienAsync(id);
                 return Ok(new { Success = true, Message = "Xóa thành công" });
             }

@@ -90,8 +90,22 @@ namespace AppData.Repository
                 var sanphamchitiet = await _context.Sanphamchitiets.FindAsync(id);
                 if (sanphamchitiet == null)
                     throw new KeyNotFoundException("Không tìm thấy sản phẩm chi tiết với ID: " + id);
+                bool isReferenced = await _context.hoadonchitiets.AnyAsync(x => x.Idspct == id)
+                                    || await _context.giohangchitiets.AnyAsync(x => x.Idspct == id)
+                                    || await _context.salechitiets.AnyAsync(x => x.Idspct == id);
+  
 
-                _context.Sanphamchitiets.Remove(sanphamchitiet);
+                if (isReferenced)
+                {
+                    sanphamchitiet.Soluong = 0;
+                    sanphamchitiet.Trangthai = 3;
+                    _context.Sanphamchitiets.Update(sanphamchitiet);
+                }
+                else
+                {
+                    _context.Sanphamchitiets.Remove(sanphamchitiet);
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException ex)
@@ -99,5 +113,6 @@ namespace AppData.Repository
                 throw new Exception("Lỗi khi xóa sản phẩm chi tiết: " + ex.InnerException?.Message ?? ex.Message);
             }
         }
+
     }
 }

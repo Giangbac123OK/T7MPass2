@@ -30,7 +30,7 @@ namespace AppData.Service
         public async Task<IEnumerable<NhanvienDTO>> GetAllNhanviensAsync()
         {
             var nhanviens = await _repository.GetAllAsync();
-            return nhanviens.Select(n => new NhanvienDTO
+            return nhanviens.Where(x=>x.Trangthai==1||x.Trangthai==0).Select(n => new NhanvienDTO
             {
                 Id = n.Id,
                 Hovaten = n.Hovaten,
@@ -68,32 +68,58 @@ namespace AppData.Service
                 Ngaytaotaikhoan = nhanvien.Ngaytaotaikhoan
             };
         }
-        public async Task SendAccountCreationEmail(string toEmail, string hoten, string password, int role)
-        {
-            await _repository.SendAccountCreationEmail(toEmail, hoten, password, role);
-        }
         public async Task<int> AddNhanvienAsync(NhanvienDTO nhanvienDto)
         {
-            var nhanvien = new Nhanvien
+            var list = await _repository.GetAllAsync();
+
+            var checkEmail = list.FirstOrDefault(x => x.Email == nhanvienDto.Email&&x.Trangthai==2);
+            var checkSdt = list.FirstOrDefault(x => x.Sdt == nhanvienDto.Sdt && x.Trangthai == 2);
+
+            // Nếu cả Email và SĐT đều chưa tồn tại → thêm mới
+            if (checkEmail == null && checkSdt == null)
             {
-                Hovaten = nhanvienDto.Hovaten,
-                Ngaysinh = nhanvienDto.Ngaysinh,
-                Diachi = nhanvienDto.Diachi,
-                Email = nhanvienDto.Email,
-                Gioitinh = nhanvienDto.Gioitinh,
-                Sdt = nhanvienDto.Sdt,
-                Trangthai = 0, // Mặc định "hoạt động"
-                Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password),
-                Role = nhanvienDto.Role, // 0: Admin, 1: Quản lý, 2: Nhân viên
-                Ngaytaotaikhoan = nhanvienDto.Ngaytaotaikhoan,
-                Avatar = nhanvienDto.Avatar
-            };
+                var nhanvien = new Nhanvien
+                {
+                    Hovaten = nhanvienDto.Hovaten,
+                    Ngaysinh = nhanvienDto.Ngaysinh,
+                    Diachi = nhanvienDto.Diachi,
+                    Email = nhanvienDto.Email,
+                    Gioitinh = nhanvienDto.Gioitinh,
+                    Sdt = nhanvienDto.Sdt,
+                    Trangthai = 0,
+                    Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password),
+                    Role = nhanvienDto.Role,
+                    Ngaytaotaikhoan = nhanvienDto.Ngaytaotaikhoan,
+                    Avatar = nhanvienDto.Avatar
+                };
 
-            // Gọi AddAsync và chờ kết quả
-            var result = _repository.AddAsync(nhanvien);
+                var result = _repository.AddAsync(nhanvien);
+                return result.Id;
+            }
 
-            // Trả về Id của nhân viên vừa thêm
-            return result.Id;
+            // Nếu một trong hai đã tồn tại, ưu tiên cập nhật theo Email nếu có
+            var existing = checkEmail ?? checkSdt;
+
+            existing.Hovaten = nhanvienDto.Hovaten;
+            existing.Ngaysinh = nhanvienDto.Ngaysinh;
+            existing.Diachi = nhanvienDto.Diachi;
+            existing.Gioitinh = nhanvienDto.Gioitinh;
+            existing.Trangthai = 0;
+            existing.Password = BCrypt.Net.BCrypt.HashPassword(nhanvienDto.Password);
+            existing.Role = nhanvienDto.Role;
+            existing.Ngaytaotaikhoan = nhanvienDto.Ngaytaotaikhoan;
+            existing.Avatar = nhanvienDto.Avatar;
+
+            // Nếu chỉ email trùng, cập nhật sdt mới
+            if (checkEmail != null && checkSdt == null)
+                existing.Sdt = nhanvienDto.Sdt;
+
+            // Nếu chỉ sdt trùng, cập nhật email mới
+            if (checkEmail == null && checkSdt != null)
+                existing.Email = nhanvienDto.Email;
+
+            await _repository.UpdateAsync(existing);
+            return existing.Id;
         }
 
         public async Task ChangePasswordAfter24h()
@@ -125,7 +151,10 @@ namespace AppData.Service
 
         public async Task DeleteNhanvienAsync(int id)
         {
-            await _repository.DeleteAsync(id);
+            var a = await _repository.GetByIdAsync(id);
+            if (a == null) throw new KeyNotFoundException("Nhân viên không tồn tại.");
+            a.Trangthai = 2;
+            await _repository.UpdateAsync(a);
         }
         public async Task<IEnumerable<NhanvienDTO>> TimKiemNhanvienAsync(string search)
         {

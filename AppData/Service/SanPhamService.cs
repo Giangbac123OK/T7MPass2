@@ -49,9 +49,13 @@ namespace AppData.Service
 
                 item.Soluong = tongSoLuong;
 
-                if (item.Soluong <= 0 && item.Trangthai != 1)
+                if (item.Soluong <= 0 && item.Trangthai != 1 && item.Trangthai != 2 && item.Trangthai != 3)
                 {
                     item.Trangthai = 1;
+                }
+                if (item.Soluong > 0 && item.Trangthai != 0 && item.Trangthai != 2 && item.Trangthai != 3)
+                {
+                    item.Trangthai = 0;
                 }
 
                 await _repository.UpdateAsync(item);
@@ -91,7 +95,7 @@ namespace AppData.Service
                 NgayThemMoi = DateTime.Now,
                 //Giasale = sanphamDto.Giasale,
                 Idth = sanphamDto.Idth,
-                Trangthai = sanphamDto.Soluong > 0 ? 0 : 1
+                Trangthai = sanphamDto.Trangthai
             };
 
             await _repository.AddAsync(sanpham);
@@ -113,12 +117,22 @@ namespace AppData.Service
             sanpham.Trongluong = sanphamDto.Trongluong;
             //sanpham.Giasale = sanphamDto.Giasale;
             sanpham.Idth = sanphamDto.Idth;
-            sanpham.Trangthai = sanphamDto.Soluong > 0 ? 0 : 1;
+            sanpham.Trangthai = sanphamDto.Trangthai ;
 
             await _repository.UpdateAsync(sanpham);
+            sanpham.Idth = sanphamDto.Id;
         }
 
-        public async Task DeleteAsync(int id) => await _repository.DeleteAsync(id);
+        public async Task DeleteAsync(int id)
+        {
+           var item = await _sanPhamChiTietRepo.GetByIdSPAsync(id);
+            foreach (var item1 in item)
+            {
+                await _sanPhamChiTietRepo.DeleteAsync(item1.Id);
+
+            }
+           
+        }
 
         public async Task<IEnumerable<SanphamDTO>> SearchByNameAsync(string name)
         {
