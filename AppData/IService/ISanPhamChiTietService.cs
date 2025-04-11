@@ -16,5 +16,6 @@ namespace AppData.IService
         Task AddAsync(SanphamchitietDTO dto);
         Task UpdateAsync(int id, SanphamchitietDTO dto);
         Task DeleteAsync(int id);
+        Task<List<Sanphamchitiet>> GetListByIdsAsync(List<int> ids);
     }
 }

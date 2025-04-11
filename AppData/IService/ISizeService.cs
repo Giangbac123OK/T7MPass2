@@ -15,5 +15,6 @@ namespace AppData.IService
         Task<SizeDTO> AddAsync(SizeDTO dto);
         Task<SizeDTO> UpdateAsync(int id, SizeDTO dto);
         Task<bool> DeleteAsync(int id);
+        Task<List<Models.Size>> GetListByIdsAsync();
     }
 }

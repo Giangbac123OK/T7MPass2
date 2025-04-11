@@ -93,5 +93,9 @@ namespace AppData.Service
                .FirstOrDefault(spct => spct.IdChatLieu == chatlieuId);
             return isUsed != null;
         }
+        public Task<List<ChatLieu>> GetListByIdsAsync()
+        {
+            return _repository.GetListByIdsAsync();
+        }
     }
 }

@@ -528,5 +528,13 @@ namespace AppData.Repository
             return result.ToList();
         }
 
+        public async Task<List<Sanpham>> GetListByIdsAsync(List<int> ids)
+        {
+            var sanphams = await _context.sanphams
+                .Where(dg => ids.Contains(dg.Id))
+                .ToListAsync();
+
+            return sanphams;
+        }
     }
 }

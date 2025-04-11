@@ -18,6 +18,7 @@ namespace AppData.IService
         Task<bool> DeleteAsync(int id);
         Task<List<int>> GetColorsForProductAsync(int productId);
          bool IsColorUsedInProduct(int colorId);
-        
+        Task<List<Color>> GetListByIdsAsync();
+
     }
 }

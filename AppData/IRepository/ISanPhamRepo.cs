@@ -20,6 +20,7 @@ namespace AppData.IRepository
         Task<SanphamViewModel> GetSanphamViewModelByIdSP(int idsp);
         Task<IEnumerable<SanphamViewModel>> GetAllSanphamGiamGiaViewModels();
         Task<IEnumerable<SanphamViewModel>> GetAllSanphamByThuongHieu(int id);
+        Task<List<Sanpham>> GetListByIdsAsync(List<int> ids);
         Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(
 
           decimal? giaMin = null,

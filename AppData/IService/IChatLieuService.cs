@@ -15,5 +15,6 @@ namespace AppData.IService
         Task<ChatLieuDTO> AddAsync(ChatLieuDTO dto);
         Task<ChatLieuDTO> UpdateAsync(int id, ChatLieuDTO dto);
         Task<bool> DeleteAsync(int id);
+        Task<List<ChatLieu>> GetListByIdsAsync();
     }
 }

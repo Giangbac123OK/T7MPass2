@@ -1,8 +1,10 @@
 ﻿using AppData.DTO;
 using AppData.IRepository;
+using AppData.Migrations;
 using AppData.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -114,5 +116,16 @@ namespace AppData.Repository
             }
         }
 
+        public async Task<List<Sanphamchitiet>> GetListByIdsAsync(List<int> ids)
+        {
+            var spct = await _context.Sanphamchitiets
+                                     .Include(h => h.Color)
+                                     .Include(h => h.Size)
+                                     .Include(h => h.ChatLieu)
+                .Where(dg => ids.Contains(dg.Id))
+                .ToListAsync();
+
+            return spct;
+        }
     }
 }
