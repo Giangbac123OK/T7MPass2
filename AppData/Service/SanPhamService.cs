@@ -125,13 +125,8 @@ namespace AppData.Service
 
         public async Task DeleteAsync(int id)
         {
-           var item = await _sanPhamChiTietRepo.GetByIdSPAsync(id);
-            foreach (var item1 in item)
-            {
-                await _sanPhamChiTietRepo.DeleteAsync(item1.Id);
+           await _repository.DeleteAsync(id);
 
-            }
-           
         }
 
         public async Task<IEnumerable<SanphamDTO>> SearchByNameAsync(string name)
