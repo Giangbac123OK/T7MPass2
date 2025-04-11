@@ -176,6 +176,7 @@ namespace AppAPI.Controllers
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
 
+                // Xử lý khi có upload file ảnh
                 if (avatarFile != null && avatarFile.Length > 0)
                 {
                     // Xoá ảnh cũ (nếu không phải là ảnh mặc định)
@@ -203,6 +204,20 @@ namespace AppAPI.Controllers
                         await avatarFile.CopyToAsync(stream);
                     }
                 }
+                // Xử lý khi nhận URL cụ thể
+                else if (nhanvienDto.Avatar == "https://i.pinimg.com/736x/11/5e/8a/115e8a22e7ee37d2c662d1a1714a90bf.jpg")
+                {
+                    // Xoá ảnh cũ nếu có và không phải là ảnh mặc định
+                    if (!string.IsNullOrEmpty(nhanvien.Avatar) && nhanvien.Avatar != "AnhNhanVien.png")
+                    {
+                        var oldPath = Path.Combine(uploadPath, nhanvien.Avatar);
+                        if (System.IO.File.Exists(oldPath))
+                            System.IO.File.Delete(oldPath);
+                    }
+
+                    // Set về ảnh mặc định
+                    fileName = "AnhNhanVien.png";
+                }
 
                 nhanvienDto.Avatar = fileName;
                 await _Service.UpdateNhanvienAsync(id, nhanvienDto);
@@ -213,10 +228,14 @@ namespace AppAPI.Controllers
             {
                 return NotFound("Nhân viên không tồn tại.");
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
+            }
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
