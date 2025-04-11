@@ -43,14 +43,56 @@ namespace AppData.Repository
 
         public async Task DeleteAsync(int id)
         {
-            var sanpham = await GetByIdAsync(id);
-            if (sanpham != null)
+            try
             {
-               
-                _context.sanphams.Remove(sanpham);
+                var sanpham = await _context.sanphams.FindAsync(id);
+                if (sanpham == null)
+                    throw new Exception("Không tìm thấy sản phẩm.");
+
+                var variants = await _context.Sanphamchitiets.Where(v => v.Idsp == id).ToListAsync();
+                bool hasReferencedVariant = false;
+
+                foreach (var variant in variants)
+                {
+                    bool isReferenced = await _context.hoadonchitiets.AnyAsync(x => x.Idspct == variant.Id)
+                                     || await _context.giohangchitiets.AnyAsync(x => x.Idspct == variant.Id)
+                                     || await _context.salechitiets.AnyAsync(x => x.Idspct == variant.Id);
+
+                    if (isReferenced)
+                    {
+                        // Nếu được tham chiếu → không xóa mà chuyển trạng thái
+                        variant.Soluong = 0;
+                        variant.Trangthai = 3;
+                        _context.Sanphamchitiets.Update(variant);
+                        hasReferencedVariant = true;
+                    }
+                    else
+                    {
+                        // Không được tham chiếu → có thể xóa
+                        _context.Sanphamchitiets.Remove(variant);
+                    }
+                }
+
+                if (hasReferencedVariant)
+                {
+                    sanpham.Trangthai = 3;
+                    sanpham.Soluong = 0;
+                    _context.sanphams.Update(sanpham);
+                }
+                else
+                {
+                    _context.sanphams.Remove(sanpham);
+                }
+
                 await _context.SaveChangesAsync();
             }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Lỗi khi xóa sản phẩm: " + ex.InnerException?.Message ?? ex.Message);
+            }
         }
+
+
 
         public async Task<IEnumerable<Sanpham>> SearchByNameAsync(string name) =>
         await _context.sanphams
