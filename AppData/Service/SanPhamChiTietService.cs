@@ -2,6 +2,7 @@
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Models;
+using AppData.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -186,6 +187,11 @@ namespace AppData.Service
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        public async Task<List<Sanphamchitiet>> GetListByIdsAsync(List<int> ids)
+        {
+            return await _repository.GetListByIdsAsync(ids);
         }
     }
 }

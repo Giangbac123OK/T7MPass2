@@ -58,5 +58,13 @@ namespace AppData.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<ChatLieu>> GetListByIdsAsync()
+        {
+            var chatLieus = await _context.chatLieus
+            .ToListAsync();
+
+            return chatLieus;
+        }
     }
 }

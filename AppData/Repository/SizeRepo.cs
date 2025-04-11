@@ -54,5 +54,12 @@ namespace AppData.Repository
             return true;
         }
 
+        public Task<List<Models.Size>> GetListByIdsAsync()
+        {
+            var sizes = _context.sizes
+            .ToListAsync();
+
+            return sizes;
+        }
     }
 }

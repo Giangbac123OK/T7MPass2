@@ -17,6 +17,7 @@ namespace AppData.IRepository
         Task DeleteAsync(int id);
         Task<List<Hoadonchitiet>> HoadonchitietByIDHD(int id);
         Task<List<HoadonchitietViewModel>> HoadonchitietTheoMaHD(int id);
+        Task<List<HoadonchitietViewModel>> HoadonchitietTheoMaHD1(int id);
         Task<List<HoadonchitietViewModel>> Checksoluong(int id);
     }
 }

@@ -504,5 +504,10 @@ namespace AppData.Service
             return (float)Math.Round(TB, 1); // Làm tròn đến 1 chữ số thập phân
         }
 
+        public async Task<List<Sanpham>> GetListByIdsAsync(List<int> ids)
+        {
+            return await _repository.GetListByIdsAsync(ids);
+        }
+
     }
 }

@@ -15,5 +15,6 @@ namespace AppData.IRepository
         Task<Size> AddAsync(Size entity);
         Task<Size> UpdateAsync(Size entity);
         Task<bool> DeleteAsync(int id);
+        Task<List<Size>> GetListByIdsAsync();
     }
 }

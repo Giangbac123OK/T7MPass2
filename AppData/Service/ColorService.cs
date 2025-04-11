@@ -105,5 +105,9 @@ namespace AppData.Service
             return productWithColor != null; // Nếu có sản phẩm sử dụng màu này, trả về true
         }
 
+        public Task<List<Color>> GetListByIdsAsync()
+        {
+            return _repository.GetListByIdsAsync();
+        }
     }
 }

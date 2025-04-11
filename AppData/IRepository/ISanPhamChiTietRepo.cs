@@ -14,6 +14,7 @@ namespace AppData.IRepository
         Task<List<Sanphamchitiet>> GetByIdSPAsync(int idsp);
         Task<Sanphamchitiet> AddAsync(Sanphamchitiet entity);
         Task<Sanphamchitiet> UpdateAsync(Sanphamchitiet entity);
+        Task<List<Sanphamchitiet>> GetListByIdsAsync(List<int> ids);
         Task DeleteAsync(int id);
     }
 }

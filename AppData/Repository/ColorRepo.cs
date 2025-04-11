@@ -70,5 +70,13 @@ namespace AppData.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public Task<List<Color>> GetListByIdsAsync()
+        {
+            var colors = _context.colors
+            .ToListAsync();
+
+            return colors;
+        }
     }
 }

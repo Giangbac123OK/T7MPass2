@@ -179,6 +179,11 @@ namespace AppData.Service
             return await _repository.HoadonchitietTheoMaHD(id);
         }
 
+        public Task<List<HoadonchitietViewModel>> HoadonchitietTheoMaHD1(int id)
+        {
+            return _repository.HoadonchitietTheoMaHD1(id);
+        }
+
         public async Task<List<HoadonchitietViewModel>> Checksoluong(int id)
         {
             return await _repository.Checksoluong(id);

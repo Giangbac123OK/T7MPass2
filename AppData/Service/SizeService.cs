@@ -96,5 +96,10 @@ namespace AppData.Service
 
         }
 
+        public Task<List<Models.Size>> GetListByIdsAsync()
+        {
+            return _repository.GetListByIdsAsync();
+        }
+
     }
 }

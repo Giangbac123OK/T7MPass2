@@ -139,6 +139,28 @@ namespace AppData.Repository
                 .ToListAsync();
         }
 
+        public Task<List<HoadonchitietViewModel>> HoadonchitietTheoMaHD1(int id)
+        {
+            return _context.hoadonchitiets.Where(x => x.Idhd == id)
+                .Select(x => new HoadonchitietViewModel
+                {
+                    Id = x.Id,
+                    Idhd = x.Idhd,
+                    Idspct = x.Idspct,
+                    Idsp = _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).Idsp,
+                    Tensp = _context.sanphams.FirstOrDefault(e => e.Id == _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).Idsp).TenSanpham,
+                    urlHinhanh = _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).UrlHinhanh,
+                    Giasp = x.Giasp,
+                    Giamgia = x.Giamgia ?? 0,
+                    Soluong = x.Soluong,
+                    Mau = _context.colors.FirstOrDefault(e => e.Id == _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).IdMau).Tenmau,
+                    Size = _context.sizes.FirstOrDefault(e => e.Id == _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).IdSize).Sosize,
+                    Chatlieu = _context.chatLieus.FirstOrDefault(e => e.Id == _context.Sanphamchitiets.FirstOrDefault(e => e.Id == x.Idspct).IdChatLieu).Tenchatlieu,
+                    Trangthaihd = _context.hoadons.FirstOrDefault(e => e.Id == x.Idhd).Trangthai
+                })
+                .ToListAsync();
+        }
+
         public async Task<List<HoadonchitietViewModel>> Checksoluong(int id)
         {
             var a = await _context.hoadonchitiets.Where(x => x.Idhd == id)

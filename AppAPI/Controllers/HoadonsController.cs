@@ -141,11 +141,11 @@ namespace AppAPI.Controllers
             try
             {
                 // Lấy thông tin hóa đơn
-                var hoadon = await _repository.GetByIdAsync(id);
+                var hoadon = _context.hoadons.FirstOrDefault(a => a.Id == id);
                 if (hoadon == null) return NotFound(new { message = "Hóa đơn không tồn tại" });
 
                 // Lấy thông tin khách hàng
-                var khachhang = await _KHrepository.GetByIdAsync(hoadon.Idkh ?? 0);
+                var khachhang = _context.khachhangs.FirstOrDefault(a => a.Id == hoadon.Idkh);
                 if (khachhang == null) return NotFound(new { message = "Khách hàng không tồn tại" });
 
                 // Lấy danh sách hóa đơn chi tiết
@@ -194,7 +194,7 @@ namespace AppAPI.Controllers
                     var size = await _Sizerepository.GetByIdAsync(spct.IdSize);
                     var chatlieu = await _Chatlieurepository.GetByIdAsync(spct.IdChatLieu);
 
-                    string imageUrl = $"{baseUrl}/api/Sanphamchitiets/GetImageById/{spct.Id}";
+                    string imageUrl = $"{baseUrl}/picture/{spct.UrlHinhanh}";
                     var imageBytes = await new HttpClient().GetByteArrayAsync(imageUrl);
                     var linkedResource = new LinkedResource(new MemoryStream(imageBytes), "image/jpeg")
                     {
@@ -207,66 +207,41 @@ namespace AppAPI.Controllers
                         : $"<td><del>{ct.Giasp:#,##0 VNĐ}</del> {ct.Giamgia:#,##0 VNĐ}</td>";
 
                     productListHtml.Append($@"
-            <tr>
-                <td><img src='cid:image{spct.Id}' width='50' height='50'></td>
-                <td>{sp.TenSanpham}</td>
-                <td>{mau?.Tenmau ?? "N/A"}</td>
-                <td>{size?.Sosize ?? 0}</td>
-                <td>{chatlieu?.Tenchatlieu ?? "N/A"}</td>
-                <td>{ct.Soluong}</td>
-                {priceHtml}
-                <td>{ct.Soluong * (ct.Giasp - (ct.Giamgia ?? 0)):#,##0 VNĐ}</td>
-            </tr>");
+                    <tr>
+                        <td><img src='cid:image{spct.Id}' width='50' height='50'></td>
+                        <td>{sp.TenSanpham}</td>
+                        <td>{mau?.Tenmau ?? "N/A"}</td>
+                        <td>{size?.Sosize ?? 0}</td>
+                        <td>{chatlieu?.Tenchatlieu ?? "N/A"}</td>
+                        <td>{ct.Soluong}</td>
+                        {priceHtml}
+                        <td>{ct.Soluong * (ct.Giasp - (ct.Giamgia ?? 0)):#,##0 VNĐ}</td>
+                    </tr>");
                 }
 
-                // Nội dung email
-                var body = $@"
-<html>
-<head>
-    <style>
-        body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
-        .container {{ width: 100%; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }}
-        .header {{ text-align: center; font-size: 20px; font-weight: bold; color: #4CAF50; }}
-        .content {{ margin-top: 20px; font-size: 16px; }}
-        .footer {{ margin-top: 30px; font-size: 14px; color: #777; text-align: center; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
-        th, td {{ padding: 10px; border: 1px solid #ddd; text-align: left; }}
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='header'>Cảm ơn bạn đã mua hàng tại cửa hàng chúng tôi!</div>
-        <div class='content'>
-            <p>Xin chào <b>{khachhang.Ten}</b>,</p>
-            <p>Chúng tôi rất vui thông báo rằng đơn hàng của bạn đã được đặt thành công.</p>
-            <p><b>Mã đơn hàng:</b> {hoadon.Id}</p>
-            <p><b>Ngày đặt hàng:</b> {hoadon.Thoigiandathang:dd/MM/yyyy}</p>
-            <p><b>Tổng tiền sản phẩm:</b> {hoadon.Tongtiensanpham:#,##0 VNĐ}</p>
-            <p><b>Số tiền giảm:</b> {hoadon.Tonggiamgia:#,##0 VNĐ}</p>
-            <p><b>Phí vận chuyển:</b> {hoadon.Phivanchuyen:#,##0 VNĐ}</p>
-            <p><b>Tổng tiền hóa đơn:</b> {hoadon.Tongtiencantra:#,##0 VNĐ}</p>
-            <p><b>Chi tiết đơn hàng:</b></p>
-            <table>
-                <tr>
-                    <th>Ảnh</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Màu</th>
-                    <th>Size</th>
-                    <th>Chất liệu</th>
-                    <th>Số lượng</th>
-                    <th>Giá</th>
-                    <th>Thành tiền</th>
-                </tr>
-                {productListHtml}
-            </table>
-            <p>Chúng tôi sẽ sớm liên hệ để xác nhận đơn hàng của bạn.</p>
-            <p>Trân trọng,</p>
-            <p><b>Đội ngũ hỗ trợ</b></p>
-        </div>
-        <div class='footer'>Mọi thắc mắc, vui lòng liên hệ hotline: 1800-xxxx</div>
-    </div>
-</body>
-</html>";
+                // Đọc template từ file HTML
+                // Get the path to the template file in wwwroot/Templates
+                var templatePath = Path.Combine(_env.WebRootPath, "Templates", "order_success_template.html");
+
+                // Read the template content
+                if (!System.IO.File.Exists(templatePath))
+                {
+                    return StatusCode(500, new { message = "Email template not found" });
+                }
+
+                var templateContent = await System.IO.File.ReadAllTextAsync(templatePath);
+
+                // Thay thế các placeholder trong template
+                var body = templateContent
+                    .Replace("{khachhang.Ten}", khachhang.Ten)
+                    .Replace("{hoadon.Id}", hoadon.Id.ToString())
+                    .Replace("{hoadon.Thoigiandathang:dd/MM/yyyy}", hoadon.Thoigiandathang.ToString("dd/MM/yyyy"))
+                    .Replace("{hoadon.Tongtiensanpham:#,##0 VNĐ}", hoadon.Tongtiensanpham.ToString("#,##0 VNĐ"))
+                    .Replace("{hoadon.Tonggiamgia:#,##0 VNĐ}", (hoadon.Tonggiamgia ?? 0).ToString("#,##0") + " VNĐ")
+                    .Replace("{hoadon.Phivanchuyen:#,##0 VNĐ}", hoadon.Phivanchuyen.ToString("#,##0 VNĐ"))
+                    .Replace("{hoadon.Tongtiencantra:#,##0 VNĐ}", hoadon.Tongtiencantra.ToString("#,##0 VNĐ"))
+                    .Replace("{productListHtml}", productListHtml.ToString())
+                    .Replace("{DateTime.Now.Year}", DateTime.Now.ToString("dd/MM/yyyy"));
 
                 // Gửi email
                 var mailMessage = new MailMessage
@@ -280,7 +255,12 @@ namespace AppAPI.Controllers
                 mailMessage.AlternateViews.Add(htmlView);
                 mailMessage.To.Add(khachhang.Email);
 
-                using var smtpClient = new SmtpClient(smtpServer) { Port = smtpPort, Credentials = new NetworkCredential(senderEmail, senderPassword), EnableSsl = true };
+                using var smtpClient = new SmtpClient(smtpServer)
+                {
+                    Port = smtpPort,
+                    Credentials = new NetworkCredential(senderEmail, senderPassword),
+                    EnableSsl = true
+                };
                 await smtpClient.SendMailAsync(mailMessage);
 
                 return Ok(new { message = "Email xác nhận đã được gửi thành công!" });
@@ -441,7 +421,58 @@ namespace AppAPI.Controllers
                 return NotFound(new { message = "Nhân viên không tìm thấy" });
             }
 
-            // ... (các logic voucher, cập nhật điểm giữ nguyên)
+            if (existingHoadon.Idgg != null && trangthai == 4)
+            {
+                var voucher = await _context.giamgias.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idgg);
+                if (voucher == null)
+                {
+                    return NotFound(new { message = "Voucher không tìm thấy" });
+                }
+                // Giảm số lượng mã giảm giá
+                voucher.Soluong += 1;
+                _context.giamgias.Update(voucher);
+                await _context.SaveChangesAsync();
+            }
+
+            if (existingHoadon.Trangthai == 4)
+            {
+                await _HDCTservice.ReturnProductAsync(id);
+            }
+
+            // Cập nhật điểm khách hàng nếu trạng thái là 3 và có sử dụng điểm
+            if (trangthai == 3)
+            {
+                var khachhang = await _context.khachhangs.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idkh);
+                if (khachhang == null)
+                {
+                    return NotFound(new { message = "Khách hàng không tìm thấy" });
+                }
+
+                // Tính điểm từ hoá đơn và cập nhật điểm khách hàng
+                decimal diemGoc = (decimal)existingHoadon.Tongtiencantra / 100; // 100 VND = 1 điểm
+
+                khachhang.Tichdiem += diemGoc;                    // Tích điểm giữ nguyên số thực
+                khachhang.Diemsudung += (int)Math.Floor(diemGoc); // Điểm sử dụng chỉ lấy phần nguyên
+
+                // Kiểm tra và cập nhật rank khách hàng
+                var currentRank = await _context.ranks.FirstOrDefaultAsync(r => r.Id == khachhang.Idrank);
+                if (currentRank != null && khachhang.Tichdiem > currentRank.MaxMoney)
+                {
+                    // Tìm rank tiếp theo phù hợp với điểm hiện tại
+                    var nextRank = await _context.ranks
+                        .Where(r => r.MinMoney <= khachhang.Tichdiem)
+                        .OrderByDescending(r => r.MinMoney)
+                        .FirstOrDefaultAsync();
+
+                    if (nextRank != null && nextRank.Id != currentRank.Id)
+                    {
+                        khachhang.Idrank = nextRank.Id; // Cập nhật rank mới
+                    }
+                }
+
+                _context.khachhangs.Update(khachhang);
+                await _context.SaveChangesAsync();
+            }
 
             try
             {

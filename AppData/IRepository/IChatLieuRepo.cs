@@ -13,6 +13,7 @@ namespace AppData.IRepository
         Task<ChatLieu> GetByIdAsync(int id);
         Task<ChatLieu> AddAsync(ChatLieu entity);
         Task<ChatLieu> UpdateAsync(ChatLieu entity);
+        Task<List<ChatLieu>> GetListByIdsAsync();
         Task<bool> DeleteAsync(int id);
     }
 }
