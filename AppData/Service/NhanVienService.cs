@@ -145,6 +145,7 @@ namespace AppData.Service
             nhanvien.Gioitinh = nhanvienDto.Gioitinh;
             nhanvien.Sdt = nhanvienDto.Sdt;
             nhanvien.Email = nhanvienDto.Email;
+            nhanvien.Role = nhanvienDto.Role;
             nhanvien.Avatar = nhanvienDto.Avatar;
             await _repository.UpdateAsync(nhanvien);
         }
