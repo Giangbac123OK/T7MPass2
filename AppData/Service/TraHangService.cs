@@ -39,7 +39,8 @@ namespace AppData.Service
                 Tentaikhoan = trahang.Tentaikhoan != null ? trahang.Tentaikhoan : null,
                 Hinhthucxuly = trahang.Hinhthucxuly != null ? trahang.Hinhthucxuly : null,
                 Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null,
-                Diachiship = trahang.Diachiship
+                Diachiship = trahang.Diachiship,
+                Trangthaihoantien = trahang.Trangthaihoantien
             };
             await _repos.Add(a);
 
@@ -70,7 +71,8 @@ namespace AppData.Service
                 Tentaikhoan = x.Tentaikhoan,
                 Hinhthucxuly = x.Hinhthucxuly,
                 Diachiship = x.Diachiship,
-                Ngaytrahangthucte = x.Ngaytrahangthucte
+                Ngaytrahangthucte = x.Ngaytrahangthucte,
+                Trangthaihoantien = x.Trangthaihoantien
             }).ToList();
         }
         public async Task<TrahangDTO> GetById(int id)
@@ -92,7 +94,8 @@ namespace AppData.Service
                 Tentaikhoan = x.Tentaikhoan,
                 Hinhthucxuly = x.Hinhthucxuly,
                 Diachiship = x.Diachiship,
-                Ngaytrahangthucte = x.Ngaytrahangthucte
+                Ngaytrahangthucte = x.Ngaytrahangthucte,
+                Trangthaihoantien = x.Trangthaihoantien
             };
         }
 
@@ -119,6 +122,7 @@ namespace AppData.Service
                 a.Hinhthucxuly = trahang.Hinhthucxuly;
                 a.Diachiship = trahang.Diachiship;
                 a.Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null;
+                a.Trangthaihoantien = trahang.Trangthaihoantien;
                 await _repos.Update(a);
             }
         }
