@@ -46,7 +46,7 @@ namespace AppData.Models
         
         public string Phuongthuchoantien {  get; set; }
 		public string? Chuthich {  get; set; }
-
+        public int Trangthaihoantien { get; set; } // 0: chưa hoàn tiền, 1: đã hoàn tiền
         public string? Hinhthucxuly { get; set; }
         public string? Tennganhang { get; set; }
         public string? Sotaikhoan { get; set; }
