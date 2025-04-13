@@ -1,10 +1,13 @@
 ﻿using AppData;
 using AppData.IRepository;
 using AppData.IService;
+using AppData.IService_Admin;
 using AppData.Repository;
 using AppData.Service;
+using AppData.Service_Admin;
 using Microsoft.EntityFrameworkCore;
 using Net.payOS;
+using SaleService = AppData.Service.SaleService;
 
 var builder = WebApplication.CreateBuilder(args);
 // 🔹 Thêm cấu hình CORS
@@ -34,7 +37,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IPhuongThucThanhToanRepo, PhuongThucThanhToanRepo>();
 builder.Services.AddScoped<IPhuongThucThanhToanService, PhuongThucThanhToanService>();
 builder.Services.AddScoped<ISaleRepo, SaleRepo>();
-builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<AppData.IService.ISaleService, SaleService>();
 builder.Services.AddScoped<ISanPhamChiTietRepo, SanPhamChiTietRepo>();
 builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IColorRepo, ColorRepo>();
@@ -79,6 +82,12 @@ builder.Services.AddScoped<ITraHangChiTietRepo, TraHangChiTietRepo>();
 builder.Services.AddScoped<ITraHangChiTietService, TraHangChiTietService>();
 builder.Services.AddScoped<IThongKeSanPhamRepo, ThongKeSanPhamRepo>();
 builder.Services.AddScoped<IThongkeService, ThongkeService>();
+builder.Services.AddScoped<IsaleRepos, SaleRepos>();
+builder.Services.AddScoped<IsalechitietRepos , SaleechitietRepos>();
+builder.Services.AddScoped<IsanphamRepos, SanphamRepos>();
+builder.Services.AddScoped<ISanphamchitietRepository, SanphamchitietRepository>();
+builder.Services.AddScoped<AppData.IService_Admin.ISaleService, AppData.Service_Admin.SaleService>();
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
