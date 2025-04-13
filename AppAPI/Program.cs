@@ -87,6 +87,7 @@ builder.Services.AddScoped<IsalechitietRepos , SaleechitietRepos>();
 builder.Services.AddScoped<IsanphamRepos, SanphamRepos>();
 builder.Services.AddScoped<ISanphamchitietRepository, SanphamchitietRepository>();
 builder.Services.AddScoped<AppData.IService_Admin.ISaleService, AppData.Service_Admin.SaleService>();
+builder.Services.AddScoped<AppData.IService_Admin.ISanPhamservice, AppData.Service_Admin.SanphamService>();
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
