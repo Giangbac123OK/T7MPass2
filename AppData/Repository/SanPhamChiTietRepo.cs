@@ -1,6 +1,5 @@
 ﻿using AppData.DTO;
 using AppData.IRepository;
-using AppData.Migrations;
 using AppData.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
