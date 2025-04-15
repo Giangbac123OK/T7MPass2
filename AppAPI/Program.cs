@@ -88,7 +88,13 @@ builder.Services.AddScoped<IsanphamRepos, SanphamRepos>();
 builder.Services.AddScoped<ISanphamchitietRepository, SanphamchitietRepository>();
 builder.Services.AddScoped<AppData.IService_Admin.ISaleService, AppData.Service_Admin.SaleService>();
 builder.Services.AddScoped<AppData.IService_Admin.ISanPhamservice, AppData.Service_Admin.SanphamService>();
-
+builder.Services.AddScoped<AppData.IService_Admin.IHoadonService, AppData.Service_Admin.HoadonService>();
+builder.Services.AddScoped<AppData.IService_Admin.IKhackhangservice, AppData.Service_Admin.Khachhangservice>();
+builder.Services.AddScoped<IHoadonRepository, HoadonRepository>();
+builder.Services.AddScoped<Ikhachhangrepository, KhachhangRepostory>();
+builder.Services.AddScoped<IGiamgiaRepos, GiamgiaRepos>();
+builder.Services.AddScoped<IRankRepository, RankRepository>();
+builder.Services.AddScoped<AppData.IService_Admin.IGiamgiaService, AppData.Service_Admin.GiamgiaService> ();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

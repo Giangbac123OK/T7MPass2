@@ -12,6 +12,8 @@ using AppData.IService;
 using AppData.IRepository;
 using AppData.Dto;
 using Microsoft.Extensions.Hosting;
+using AppData.IService_Admin;
+using AppData.Dto_Admin;
 
 namespace AppAPI.Controllers
 {
@@ -22,11 +24,14 @@ namespace AppAPI.Controllers
         private readonly IKhachHangService _Service;
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _environment;
-        public KhachhangsController(IKhachHangService ser, AppDbContext context, IWebHostEnvironment environment)
+
+		private readonly IKhackhangservice _service;
+		public KhachhangsController(IKhachHangService ser, AppDbContext context, IWebHostEnvironment environment, IKhackhangservice service)
         {
             _Service = ser;
             _context = context;
             _environment = environment;
+            _service = service;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -326,5 +331,116 @@ namespace AppAPI.Controllers
                 return StatusCode(500, $"Lỗi khi xử lý file: {ex.Message}");
             }
         }
-    }
+		[HttpGet("{id}/Admin")]
+		public async Task<ActionResult<KhachhangDto>> GetByIdAdmin(int id)
+		{
+			try
+			{
+				var khachhang = await _service.GetByIdAsyncThao(id);
+				return Ok(khachhang);
+			}
+			catch (Exception ex)
+			{
+				return NotFound(ex.Message);
+			}
+		}
+
+		// GET: api/khachhang
+		[HttpGet("Admin")]
+		public async Task<ActionResult<IEnumerable<Khachhang>>> GetAll()
+		{
+			var khachhangs = await _service.GetAllAsyncThao();
+			return Ok(khachhangs);
+		}
+
+		// POST: api/khachhang
+		[HttpPost("Admin")]
+		public async Task<ActionResult> Create(KhachhangDto dto)
+		{
+			try
+			{
+				await _service.CreateAsyncThao(dto);
+				return CreatedAtAction(nameof(GetById), new { id = dto.Ten }, dto);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+		[HttpPut("Toggle/Admin")]
+		public async Task<IActionResult> ToggleTrangthaiAsync(int id)  // Thêm async
+		{
+
+
+			try
+			{
+				await _service.ToggleTrangthaiAsync(id);
+				return Ok(new { Message = "Cập nhật trạng thái thành công." });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
+
+		// PUT: api/khachhang/{id}
+		[HttpPut("{id}/Admin")]
+		public async Task<ActionResult> Update(int id, KhachhangDto dto)
+		{
+			try
+			{
+				await _service.UpdateAsyncThao(id, dto);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return NotFound(ex.Message);
+			}
+		}
+
+		// DELETE: api/khachhang/{id}
+		[HttpDelete("{id}/Admin")]
+		public async Task<ActionResult> DeleteAdmin(int id)
+		{
+			var result = await _service.DeleteKhachhangAsyncThao(id);
+			if (result)
+			{
+				return Ok(new { message = "Thực hiện thành công." });
+			}
+			else
+			{
+				return NotFound(new { message = "Không tìm thấy khách hàng với Id này." });
+			}
+		}
+
+		// Tìm kiếm theo tên
+		[HttpGet("searchByName/Admin")]
+		public async Task<ActionResult<IEnumerable<KhachhangDto>>> SearchByName(string name)
+		{
+			var results = await _service.SearchByNameAsyncThao(name);
+			return Ok(results);
+		}
+
+		// Tìm kiếm theo số điện thoại
+		[HttpGet("searchBySdt/Admin")]
+		public async Task<ActionResult<IEnumerable<KhachhangDto>>> SearchBySdt(string sdt)
+		{
+			var results = await _service.SearchBySdtAsyncThao(sdt);
+			return Ok(results);
+		}
+
+		// Tìm kiếm theo email
+		[HttpGet("searchByEmail/Admin")]
+		public async Task<ActionResult<IEnumerable<KhachhangDto>>> SearchByEmail(string email)
+		{
+			var results = await _service.SearchByEmailAsyncThao(email);
+			return Ok(results);
+		}
+		[HttpGet("searchByEmailSdtTen/Admin")]
+		public async Task<ActionResult<IEnumerable<Khachhang>>> SearchByEmailSdtTen(string keyword)
+		{
+			var results = await _service.SearchByEmailTenSdtAsync(keyword);
+			return Ok(results);
+		}
+	}
 }

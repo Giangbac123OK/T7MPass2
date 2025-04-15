@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
+using AppData.IService_Admin;
+using AppData.Dto_Admin;
 
 namespace AppAPI.Controllers
 {
@@ -39,8 +41,9 @@ namespace AppAPI.Controllers
         private readonly IKhachHangRepo _KHrepository;
         private readonly IWebHostEnvironment _env;
         private readonly string _filePath;
+		private readonly IHoadonService _hoadonService;
 
-        public HoadonsController(IHoaDonService service, AppDbContext context, IHoaDonChiTietService HDCTservice, IHoaDonRepo repository, INhanVienRepo NVrepository, IKhachHangRepo KHrepository, IHoaDonChiTietService hoaDonChiTietService, IConfiguration configuration, ISanPhamChiTietRepo sPCTrepository, ISanPhamRepo sPrepository, ISizeRepo sizeRepo, IColorRepo colorRepo, IChatLieuRepo chatLieuRepo, IWebHostEnvironment env)
+		public HoadonsController(IHoaDonService service, AppDbContext context, IHoaDonChiTietService HDCTservice, IHoaDonRepo repository, INhanVienRepo NVrepository, IKhachHangRepo KHrepository, IHoaDonChiTietService hoaDonChiTietService, IConfiguration configuration, ISanPhamChiTietRepo sPCTrepository, ISanPhamRepo sPrepository, ISizeRepo sizeRepo, IColorRepo colorRepo, IChatLieuRepo chatLieuRepo, IWebHostEnvironment env, IHoadonService hoadonService)
         {
             _Service = service;
             _context = context;
@@ -57,6 +60,7 @@ namespace AppAPI.Controllers
             _KHrepository = KHrepository;
             _env = env;
             _filePath = Path.Combine(_env.WebRootPath, "data", "read_orders.json");
+            _hoadonService = hoadonService;
 
             // Đảm bảo thư mục tồn tại
             var directory = Path.GetDirectoryName(_filePath);
@@ -793,5 +797,164 @@ namespace AppAPI.Controllers
 
             return Ok(new { success = true });
         }
-    }
+		[HttpGet("oln/Admin")]
+		public async Task<ActionResult<IEnumerable<Hoadon>>> GetAllHoadonsOln()
+		{
+			try
+			{
+				var hoadons = await _hoadonService.GetAllHoadonsOlnAsync();
+				if (hoadons == null || !hoadons.Any())
+				{
+					return NotFound("Không tìm thấy hóa đơn nào.");
+				}
+				return Ok(hoadons);
+			}
+			catch (Exception ex)
+			{
+				// Ghi log lỗi hoặc trả về mã lỗi thích hợp
+				return StatusCode(500, "Lỗi server: " + ex.Message);
+			}
+		}
+		[HttpPost("create/khtt")]
+		public async Task<IActionResult> CreateHoaDonkhtt([FromBody] HoadonoffKhachhangthanthietDto dto, [FromQuery] int diemSuDung)
+		{
+			try
+			{
+				// Gọi service với `diemSuDung`
+				var hoadon = await _hoadonService.AddHoaDonKhachhangthanthietoff(dto, diemSuDung);
+				return Ok(hoadon);
+			}
+			catch (Exception ex)
+			{
+				// Log chi tiết inner exception
+				return BadRequest(new { message = ex.Message, innerException = ex.InnerException?.Message });
+			}
+		}
+		[HttpGet("getall/Admin")]
+		public List<Hoadon> GetAllHoadons()
+		{
+			var hoadons = _hoadonService.GetAllHoadons();
+
+
+			return hoadons;
+
+		}
+		[HttpPut("ChuyenTrangThai/Admin")]
+		public async Task<IActionResult> ChuyenTrangThai(int id, int huy)
+		{
+			try
+			{
+				var result = await _hoadonService.ChuyenTrangThaiAsync(id, huy);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
+		[HttpPut("RestoreState/Admin")]
+		public async Task<IActionResult> RestoreState(int id, int trangthai)
+		{
+			try
+			{
+				var result = await _hoadonService.RestoreStateAsync(id, trangthai);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
+		[HttpGet("Admin")]
+		public async Task<IActionResult> GetByIdAdmin(int id)
+		{
+			try
+			{
+				var result = await _hoadonService.GetByIdAsync(id);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+		}
+		
+		[HttpGet("all/Admin")]
+		public async Task<ActionResult<IEnumerable<Hoadon>>> GetAllHoadonsThongke()
+		{
+			try
+			{
+				var hoadons = await _hoadonService.GetAllHoadonsAsync();
+				if (hoadons == null || !hoadons.Any())
+				{
+					return NotFound("Không tìm thấy hóa đơn nào.");
+				}
+				return Ok(hoadons);
+			}
+			catch (Exception ex)
+			{
+				// Ghi log lỗi hoặc trả về mã lỗi thích hợp
+				return StatusCode(500, "Lỗi server: " + ex.Message);
+			}
+		}
+		[HttpGet("Admin/Off")]
+		public async Task<ActionResult<IEnumerable<Hoadon>>> GetAllOffHoadons()
+		{
+			try
+			{
+				var hoadons = await _hoadonService.GetAllOffHoadonsAsync();
+				if (hoadons == null || !hoadons.Any())
+				{
+					return NotFound("Không tìm thấy hóa đơn nào.");
+				}
+				return Ok(hoadons);
+			}
+			catch (Exception ex)
+			{
+				// Ghi log lỗi hoặc trả về mã lỗi thích hợp
+				return StatusCode(500, "Lỗi server: " + ex.Message);
+			}
+		}
+		[HttpGet("daily-report/Admin")]
+		public async Task<IActionResult> GetDailyReport([FromQuery] DateTime? date = null)
+		{
+			date ??= DateTime.Now; // Nếu không có ngày truyền vào, mặc định là ngày hôm nay
+			var report = await _hoadonService.GetDailyReportAsync(date.Value);
+
+			return Ok(new
+			{
+				Date = date.Value.ToString("yyyy-MM-dd"),
+				TongTienThanhToan = report.TongTienThanhToan,
+				TongSoLuongDonHang = report.TongSoLuongDonHang
+			});
+		}
+		[HttpGet("order-summary/Admin")]
+		public IActionResult GetOrderSummary([FromQuery] string timeUnit)
+		{
+			try
+			{
+				var summary = _hoadonService.GetOrderSummary(timeUnit);
+				return Ok(summary);
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
+	
+		
+		[HttpGet("oln-orders/Admin")]
+		public async Task<IActionResult> GetOlnOrdersByWeek()
+		{
+			var result = await _hoadonService.GetOlnOrdersByWeekAsync();
+			return Ok(result);
+		}
+
+		[HttpGet("off-orders/Admin")]
+		public async Task<IActionResult> GetOffOrdersByWeek()
+		{
+			var result = await _hoadonService.GetOffOrdersByWeekAsync();
+			return Ok(result);
+		}
+	}
 }
