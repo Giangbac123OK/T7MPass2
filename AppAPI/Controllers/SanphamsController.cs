@@ -200,23 +200,23 @@ namespace AppAPI.Controllers
 			var products = await _service1.GetAllActiveProductsWithAttributesAsync(id);
 			return Ok(products);
 		}
-		[HttpPost("Admin")]
-		public async Task<IActionResult> Add1(AppData.Dto_Admin.SanphamDTO sanphamDto)
-		{
-			// Kiểm tra tính hợp lệ của model
-			if (!ModelState.IsValid)
-			{
-				var errorMessages = ModelState.Values
-								   .SelectMany(v => v.Errors)
-								   .Select(e => e.ErrorMessage)
-								   .ToList();
+		//[HttpPost("Admin")]
+		//public async Task<IActionResult> Add1(AppData.Dto_Admin.SanphamDTO sanphamDto)
+		//{
+		//	// Kiểm tra tính hợp lệ của model
+		//	if (!ModelState.IsValid)
+		//	{
+		//		var errorMessages = ModelState.Values
+		//						   .SelectMany(v => v.Errors)
+		//						   .Select(e => e.ErrorMessage)
+		//						   .ToList();
 
-				return BadRequest(errorMessages);
-			}
+		//		return BadRequest(errorMessages);
+		//	}
 
-			await _service1.AddAsync(sanphamDto);
-			return CreatedAtAction(nameof(GetById), new { id = sanphamDto.Tensp }, sanphamDto);
-		}
+		//	await _service1.AddAsync(sanphamDto);
+		//	return CreatedAtAction(nameof(GetById), new { id = sanphamDto.Tensp }, sanphamDto);
+		//}
 
 		[HttpGet("details/Admin")]
 		public async Task<ActionResult<IEnumerable<SanphamDetailDto>>> GetSanphamDetails()
@@ -246,36 +246,36 @@ namespace AppAPI.Controllers
 
 			return NoContent(); // HTTP 204 No Content
 		}
-		[HttpPut("{id}/Admin")]
-		public async Task<IActionResult> UpdateSanpham(int id, [FromBody] SanphamDTO sanphamDto)
-		{
-			if (sanphamDto == null)
-			{
-				return BadRequest("Dữ liệu sản phẩm không được null.");
-			}
+		//[HttpPut("{id}/Admin")]
+		//public async Task<IActionResult> UpdateSanpham(int id, [FromBody] SanphamDTO sanphamDto)
+		//{
+		//	if (sanphamDto == null)
+		//	{
+		//		return BadRequest("Dữ liệu sản phẩm không được null.");
+		//	}
 
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+		//	if (!ModelState.IsValid)
+		//	{
+		//		return BadRequest(ModelState);
+		//	}
 
-			try
-			{
-				var isUpdated = await _service1.UpdateAsync(id, sanphamDto);
-				if (!isUpdated)
-				{
-					return NotFound($"Không tìm thấy sản phẩm với ID = {id}.");
-				}
+		//	try
+		//	{
+		//		var isUpdated = await _service1.UpdateAsync(id, sanphamDto);
+		//		if (!isUpdated)
+		//		{
+		//			return NotFound($"Không tìm thấy sản phẩm với ID = {id}.");
+		//		}
 
-				return Ok(new { message = "Cập nhật sản phẩm thành công." });
-			}
-			catch (Exception ex)
-			{
-				// Log lỗi nếu cần
-				return StatusCode(StatusCodes.Status500InternalServerError,
-					$"Đã xảy ra lỗi trong quá trình cập nhật sản phẩm: {ex.Message}");
-			}
-		}
+		//		return Ok(new { message = "Cập nhật sản phẩm thành công." });
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		// Log lỗi nếu cần
+		//		return StatusCode(StatusCodes.Status500InternalServerError,
+		//			$"Đã xảy ra lỗi trong quá trình cập nhật sản phẩm: {ex.Message}");
+		//	}
+		//}
 		[HttpPut("{id}/cancel/Admin")]
 		public async Task<IActionResult> UpdateStatusToCancelledAdmin(int id)
 		{
