@@ -39,7 +39,7 @@ namespace AppData
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=HOANGTHANHGIANG\\SQLEXPRESS;Initial Catalog=T7M123;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
+                optionsBuilder.UseSqlServer("Server=THAODTPPH43287\\SQLEXPRESS;Database=Pass2Be;Trusted_Connection=True;TrustServerCertificate=True");
 
             }
         }

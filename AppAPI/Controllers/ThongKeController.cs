@@ -1,4 +1,5 @@
-﻿using AppData.IService;
+﻿
+using AppData.IService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,16 +10,18 @@ namespace AppAPI.Controllers
     public class ThongKeController : ControllerBase
     {
         private readonly IThongkeService _thongkeService;
+        private readonly AppData.IService_Admin.IThongkeService _thongkeService_Admin;
 
-        public ThongKeController(IThongkeService thongkeService)
+		public ThongKeController(IThongkeService thongkeService, AppData.IService_Admin.IThongkeService thongkeService_Admin )
         {
             _thongkeService = thongkeService;
+            _thongkeService_Admin = thongkeService_Admin;
         }
 
         [HttpGet("top-selling-products/Admin")]
         public async Task<IActionResult> GetTopSellingProductsByTimeAsync([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
-            var topSellingProducts = await _thongkeService.GetTopSellingProductsByTimeAsync(startDate, endDate);
+            var topSellingProducts = await _thongkeService_Admin.GetTopSellingProductsByTimeAsync(startDate, endDate);
             return Ok(topSellingProducts);
         }
 
