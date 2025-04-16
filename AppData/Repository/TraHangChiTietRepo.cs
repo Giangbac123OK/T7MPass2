@@ -69,7 +69,7 @@ namespace AppData.Repository
                     Giasp = x.hdct.Giasp,
                     Giamgia = x.hdct.Giamgia,
                     Soluong = x.hdct.Soluong,
-                    Trangthaihd = x.hd.Trangthai,
+                    Trangthaihd = x.hd.Trangthaidonhang,
                     Mau = x.mau.Tenmau,
                     Size = x.size.Sosize,
                     Chatlieu = chatlieu.Tenchatlieu

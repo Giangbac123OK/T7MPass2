@@ -153,7 +153,7 @@ namespace AppData.Repository
             var a = await _context.hoadons.FirstOrDefaultAsync(x => x.Id == id);
             if (a != null)
             {
-                a.Trangthai = 3;
+                a.Trangthaidonhang = 3;
                 a.Ngaygiaothucte = DateTime.Now;
                 _context.hoadons.Update(a);
                 await _context.SaveChangesAsync();

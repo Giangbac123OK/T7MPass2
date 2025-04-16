@@ -348,7 +348,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthai == 4)
+            if (existingHoadon.Trangthaidonhang == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -389,7 +389,7 @@ namespace AppAPI.Controllers
 
             try
             {
-                existingHoadon.Trangthai = trangthai;
+                existingHoadon.Trangthaidonhang = trangthai;
 
                 _context.hoadons.Update(existingHoadon);
                 await _context.SaveChangesAsync();
@@ -438,7 +438,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthai == 4)
+            if (existingHoadon.Trangthaidonhang == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -480,7 +480,7 @@ namespace AppAPI.Controllers
 
             try
             {
-                existingHoadon.Trangthai = trangthai;
+                existingHoadon.Trangthaidonhang = trangthai;
                 existingHoadon.Idnv = idnv;
 
                 // ➕ Gán ngày giao hàng nếu có
@@ -538,7 +538,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthai == 4)
+            if (existingHoadon.Trangthaidonhang == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -579,7 +579,7 @@ namespace AppAPI.Controllers
 
             try
             {
-                existingHoadon.Trangthai = trangthai;
+                existingHoadon.Trangthaidonhang = trangthai;
                 existingHoadon.Idnv = idnv;
 
                 _context.hoadons.Update(existingHoadon);
@@ -613,7 +613,7 @@ namespace AppAPI.Controllers
 
             try
             {
-                existingHoadon.Trangthai = trangthai;
+                existingHoadon.Trangthaidonhang = trangthai;
 
                 _context.hoadons.Update(existingHoadon);
                 await _context.SaveChangesAsync();
