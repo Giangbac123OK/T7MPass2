@@ -39,7 +39,7 @@ namespace AppData
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=THAODTPPH43287\\SQLEXPRESS;Database=Pass2Be;Trusted_Connection=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=MEO-U-LAPTOP;Initial Catalog=SneakerT7M;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
 
             }
         }

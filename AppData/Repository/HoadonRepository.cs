@@ -86,7 +86,7 @@ namespace AppData.Repository
 		public async Task<List<HoadonReportDto>> GetOlnOrdersByWeekAsync()
 		{
 			var data = await _context.Set<Hoadon>()
-				.Where(h => h.Trangthai == 0 && h.Trangthaidonhang == 3)
+				.Where(h => h.Trangthaidonhang == 0 && h.Trangthai == 3)
 				.ToListAsync(); // Tải toàn bộ dữ liệu vào bộ nhớ
 
 			return data
@@ -107,7 +107,7 @@ namespace AppData.Repository
 		public async Task<List<HoadonReportDto>> GetOffOrdersByWeekAsync()
 		{
 			var data = await _context.Set<Hoadon>()
-				.Where(h => h.Trangthaidonhang == 1 && h.Trangthaidonhang == 3)
+				.Where(h => h.Trangthaidonhang == 1 && h.Trangthai == 3)
 				.ToListAsync(); // Tải toàn bộ dữ liệu vào bộ nhớ
 
 			return data
@@ -156,7 +156,7 @@ namespace AppData.Repository
 		public async Task<(decimal TongTienThanhToan, int TongSoLuongDonHang)> GetDailyReportAsync(DateTime date)
 		{
 			var result = await _context.hoadons
-				.Where(h => h.Thoigiandathang.Date == date.Date  && h.Trangthai == 1&& h.Trangthai ==3) // Chỉ lấy các hóa đơn đã thanh toán
+				.Where(h => h.Thoigiandathang.Date == date.Date  && h.Trangthaidonhang == 1&& h.Trangthaidonhang ==3) // Chỉ lấy các hóa đơn đã thanh toán
 				.GroupBy(h => 1)
 				.Select(g => new
 				{
@@ -173,7 +173,7 @@ namespace AppData.Repository
 		public IEnumerable<HoadonSummaryDto> GetOrderSummaryByTime(string timeUnit)
 		{
 			var query = _context.hoadons
-				.Where(hd => hd.Trangthai == 1 && hd.Trangthai == 3);
+				.Where(hd => hd.Trangthaidonhang == 1 && hd.Trangthaidonhang == 3);
 
 			var result = timeUnit.ToLower() switch
 			{
