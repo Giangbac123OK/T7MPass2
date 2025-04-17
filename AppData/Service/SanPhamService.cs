@@ -43,9 +43,21 @@ namespace AppData.Service
 
             foreach (var item in sanphams)
             {
-                var tongSoLuong = sanphamchitiets
-                    .Where(spct => spct.Idsp == item.Id)
+                var chiTiets = sanphamchitiets.Where(spct => spct.Idsp == item.Id).ToList();
+
+                var tongSoLuong = chiTiets
                     .Sum(spct => spct.Soluong);
+                if (item.Trangthai == 2)
+                {
+                    foreach (var spct in chiTiets)
+                    {
+                        if (spct.Trangthai != 2)
+                        {
+                            spct.Trangthai = 2;
+                            await _sanPhamChiTietRepo.UpdateAsync(spct);
+                        }
+                    }
+                }
 
                 item.Soluong = tongSoLuong;
 
@@ -57,6 +69,7 @@ namespace AppData.Service
                 {
                     item.Trangthai = 0;
                 }
+               
 
                 await _repository.UpdateAsync(item);
 
