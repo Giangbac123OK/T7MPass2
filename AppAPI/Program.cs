@@ -81,7 +81,9 @@ builder.Services.AddScoped<ITraHangService, TraHangService>();
 builder.Services.AddScoped<ITraHangChiTietRepo, TraHangChiTietRepo>();
 builder.Services.AddScoped<ITraHangChiTietService, TraHangChiTietService>();
 builder.Services.AddScoped<IThongKeSanPhamRepo, ThongKeSanPhamRepo>();
-builder.Services.AddScoped<IThongkeService, ThongkeService>();
+builder.Services.AddScoped<IThongkesanphamRepository, ThongkeRepository>();
+
+builder.Services.AddScoped<AppData.IService_Admin.IThongkeService, AppData.Service_Admin.ThongkeService>();
 builder.Services.AddScoped<IsaleRepos, SaleRepos>();
 builder.Services.AddScoped<IsalechitietRepos , SaleechitietRepos>();
 builder.Services.AddScoped<IsanphamRepos, SanphamRepos>();

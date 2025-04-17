@@ -87,8 +87,8 @@ namespace AppData.Repository
 		}
 		public async Task<IEnumerable<SanphamDetailDto>> GetSanphamDetailsAsync()
 		{
-
-			var query = _context.sanphams
+			// Step 1: Load data from the database
+			var query = await _context.sanphams
 				.Where(sp => sp.Trangthai == 0)
 				.Join(_context.Sanphamchitiets.Where(spct => spct.Trangthai == 0),
 					  sp => sp.Id,
@@ -103,9 +103,12 @@ namespace AppData.Repository
 					x.spct.Color,
 					x.spct.ChatLieu,
 					x.spct.Size
-					
 				})
-				.GroupBy(x => new { x.TenSanpham, x.Id , x.GiaBan, x.Soluong, x.Color, x.ChatLieu, x.Size })
+				.ToListAsync(); // Load all results into memory first
+
+			// Step 2: Group the results in memory
+			var groupedResults = query
+				.GroupBy(x => new { x.TenSanpham, x.Id, x.GiaBan, x.Soluong, x.Color, x.ChatLieu, x.Size })
 				.Select(g => new SanphamDetailDto
 				{
 					Tensp = g.Key.TenSanpham,
@@ -115,9 +118,10 @@ namespace AppData.Repository
 					TenThuocTinhSpct = $"{g.Key.Color.Tenmau} - {g.Key.ChatLieu.Tenchatlieu} - {g.Key.Size.Sosize}"
 				});
 
-			return await query.ToListAsync();
+			return groupedResults;
 		}
-		
+
+
 		public async Task UpdateAsync(Sanpham sanpham)
 		{
 			_context.sanphams.Update(sanpham);
