@@ -17,10 +17,12 @@ namespace AppData.Service
     {
         private readonly ITraHangRepo _repos;
         private readonly IHoaDonRepo _HDrepos;
-        public TraHangService(ITraHangRepo repos, IHoaDonRepo hDrepos)
+        private readonly IKhachHangRepo _KHrepos;
+        public TraHangService(ITraHangRepo repos, IHoaDonRepo hDrepos, IKhachHangRepo kHrepos)
         {
             _repos = repos;
             _HDrepos = hDrepos;
+            _KHrepos = kHrepos;
         }
         public async Task Add(TrahangDTO trahang)
         {
@@ -50,6 +52,17 @@ namespace AppData.Service
         public async Task DeleteById(int id)
         {
             await _repos.DeleteById(id);
+        }
+
+        public async Task Doidiem(int idkh, decimal tien)
+        {
+            var a = await _KHrepos.GetByIdAsync(idkh);
+            if (a == null)
+                throw new KeyNotFoundException("Không tồn tại khách hàng.");
+
+            a.Diemsudung += (int)Math.Round(tien, MidpointRounding.AwayFromZero);
+
+            await _KHrepos.UpdateAsync(a);
         }
 
         public async Task<List<TrahangDTO>> GetAll()

@@ -106,5 +106,18 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPut("DoiDiem")]
+        public async Task<IActionResult> Doidiem(int idkh, decimal tien)
+        {
+            try
+            {
+                await _ser.Doidiem(idkh, tien);
+                return Ok("Đổi điểm thành công");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
