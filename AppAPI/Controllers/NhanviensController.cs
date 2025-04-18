@@ -234,6 +234,115 @@ namespace AppAPI.Controllers
             }
         }
 
+        [HttpPut("Updatethongtin/{id}")]
+        public async Task<IActionResult> Updatethongtin(int id, [FromForm] ThongTinNhanVienDTO nhanvienDto, IFormFile? avatarFile)
+        {
+            try
+            {
+                var nhanvien = await _Service.GetNhanvienByIdAsync(id);
+                if (nhanvien == null)
+                    return NotFound("Nhân viên không tồn tại.");
+
+                string fileName = nhanvien.Avatar; // giữ ảnh cũ nếu không thay đổi
+                var uploadPath = Path.Combine(_environment.WebRootPath, "picture");
+
+                if (!Directory.Exists(uploadPath))
+                    Directory.CreateDirectory(uploadPath);
+
+                // Xử lý khi có upload file ảnh
+                if (avatarFile != null && avatarFile.Length > 0)
+                {
+                    // Xoá ảnh cũ (nếu không phải là ảnh mặc định)
+                    if (!string.IsNullOrEmpty(nhanvien.Avatar) && nhanvien.Avatar != "AnhNhanVien.png")
+                    {
+                        var oldPath = Path.Combine(uploadPath, nhanvien.Avatar);
+                        if (System.IO.File.Exists(oldPath))
+                            System.IO.File.Delete(oldPath);
+                    }
+
+                    var allowedExtensions = new[] { ".png", ".jpg", ".jpeg" };
+                    var extension = Path.GetExtension(avatarFile.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(extension))
+                        return BadRequest("Chỉ chấp nhận ảnh định dạng .png, .jpg, .jpeg");
+
+                    if (avatarFile.Length > 10 * 1024 * 1024)
+                        return BadRequest("Kích thước ảnh tối đa là 10MB");
+
+                    fileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await avatarFile.CopyToAsync(stream);
+                    }
+                }
+                // Xử lý khi nhận URL cụ thể
+                else if (nhanvienDto.Avatar == "https://i.pinimg.com/736x/11/5e/8a/115e8a22e7ee37d2c662d1a1714a90bf.jpg")
+                {
+                    // Xoá ảnh cũ nếu có và không phải là ảnh mặc định
+                    if (!string.IsNullOrEmpty(nhanvien.Avatar) && nhanvien.Avatar != "AnhNhanVien.png")
+                    {
+                        var oldPath = Path.Combine(uploadPath, nhanvien.Avatar);
+                        if (System.IO.File.Exists(oldPath))
+                            System.IO.File.Delete(oldPath);
+                    }
+
+                    // Set về ảnh mặc định
+                    fileName = "AnhNhanVien.png";
+                }
+
+                nhanvienDto.Avatar = fileName;
+                await _Service.UpdateThongTinNhanvienAsync(id, nhanvienDto);
+
+                return Ok(new { Success = true, Message = "Cập nhật thành công" });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Nhân viên không tồn tại.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
+            }
+        }
+
+        [HttpPost("doimatkhau")]
+        public async Task<IActionResult> ChangePassword([FromBody] DoimkKhachhang changePasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var khachHang = await _context.nhanviens.FirstOrDefaultAsync(kh => kh.Email == changePasswordDto.Email);
+                if (khachHang == null)
+                {
+                    return NotFound(new { message = "Tài khoản không tồn tại" });
+                }
+
+                // Kiểm tra mật khẩu cũ
+                bool isOldPasswordValid = BCrypt.Net.BCrypt.Verify(changePasswordDto.OldPassword, khachHang.Password);
+                if (!isOldPasswordValid)
+                {
+                    return Unauthorized(new { message = "Mật khẩu cũ không chính xác" });
+                }
+
+                // Hash mật khẩu mới
+                khachHang.Password = BCrypt.Net.BCrypt.HashPassword(changePasswordDto.NewPassword);
+
+                _context.nhanviens.Update(khachHang);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Đổi mật khẩu thành công" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình đổi mật khẩu", error = ex.Message });
+            }
+        }
 
         [HttpPut("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
