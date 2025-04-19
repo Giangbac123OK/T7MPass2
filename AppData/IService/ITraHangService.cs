@@ -18,5 +18,6 @@ namespace AppData.IService
         Task DeleteById(int id);
         Task UpdateTrangThaiHd(int id);
         Task Doidiem(int idkh, decimal tien);
+        Task Huydon(int id, string? chuthich);
     }
 }

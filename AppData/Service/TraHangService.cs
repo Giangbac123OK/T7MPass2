@@ -112,6 +112,29 @@ namespace AppData.Service
             };
         }
 
+        public async Task Huydon(int id, string? chuthich)
+        {
+            try
+            {
+                var a = await _repos.GetById(id);
+                if (a == null) 
+                { 
+                    throw new KeyNotFoundException("Mã hóa đơn không tồn tại"); 
+                }
+                if (a.Trangthai != 0)
+                {
+                    throw new KeyNotFoundException("Hóa đơn này đã được xác nhận hoặc trả hàng thành công!");
+                }
+                a.Chuthich = chuthich ?? null;
+                a.Trangthai = 2;
+                await _repos.Update(a);
+            }
+            catch (Exception e) 
+            {
+                throw new KeyNotFoundException(e.Message);
+            }
+        }
+
         public async Task Update(int id, TrahangDTO trahang)
         {
             var a = await _repos.GetById(id);
