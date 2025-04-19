@@ -119,5 +119,18 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPut("Huydon")]
+        public async Task<IActionResult> Huydon(int id, string? chuthich)
+        {
+            try
+            {
+                await _ser.Huydon(id, chuthich);
+                return Ok("Hủy đơn thành công!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
