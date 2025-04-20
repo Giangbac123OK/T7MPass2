@@ -65,10 +65,10 @@ namespace AppData.Service
             await _KHrepos.UpdateAsync(a);
         }
 
-        public async Task<List<TrahangDTO>> GetAll()
+        public async Task<IEnumerable<Trahang>> GetAll()
         {
             var a = await _repos.GetAll();
-            return a.Select(x => new TrahangDTO
+            return a.Select(x => new Trahang
             {
                 Id = x.Id,
                 Tenkhachhang = x.Tenkhachhang,
@@ -86,12 +86,12 @@ namespace AppData.Service
                 Diachiship = x.Diachiship,
                 Ngaytrahangthucte = x.Ngaytrahangthucte,
                 Trangthaihoantien = x.Trangthaihoantien
-            }).ToList();
+            });
         }
-        public async Task<TrahangDTO> GetById(int id)
+        public async Task<Trahang> GetById(int id)
         {
             var x = await _repos.GetById(id);
-            return new TrahangDTO
+            return new Trahang
             {
                 Id = x.Id,
                 Tenkhachhang = x.Tenkhachhang,

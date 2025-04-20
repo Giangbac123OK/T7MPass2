@@ -10,7 +10,7 @@ namespace AppData.IRepository
 {
     public interface ITraHangRepo
     {
-        Task<List<Trahang>> GetAll();
+        Task<IEnumerable<Trahang>> GetAll();
         Task<Trahang> GetById(int id);
         Task Add(Trahang trhang);
         Task Update(Trahang trhang);

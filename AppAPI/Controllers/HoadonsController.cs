@@ -503,6 +503,64 @@ namespace AppAPI.Controllers
             }
         }
 
+        [HttpPut("trangthaiNVHuy/{id}")]
+        public async Task<IActionResult> UpdatetrangthaiNVHuy(int id, int trangthai, int idnv, string ghichu)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingHoadon = await _context.hoadons.FirstOrDefaultAsync(kh => kh.Id == id);
+            if (existingHoadon == null)
+            {
+                return NotFound(new { message = "Hoá đơn không tìm thấy" });
+            }
+
+            var existingNV = await _context.nhanviens.FirstOrDefaultAsync(kh => kh.Id == idnv);
+            if (existingNV == null)
+            {
+                return NotFound(new { message = "Nhân viên không tìm thấy" });
+            }
+
+            if (existingHoadon.Idgg != null && trangthai == 4)
+            {
+                var voucher = await _context.giamgias.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idgg);
+                if (voucher == null)
+                {
+                    return NotFound(new { message = "Voucher không tìm thấy" });
+                }
+                // Giảm số lượng mã giảm giá
+                voucher.Soluong += 1;
+                _context.giamgias.Update(voucher);
+                await _context.SaveChangesAsync();
+            }
+
+            if (existingHoadon.Trangthaidonhang == 4)
+            {
+                await _HDCTservice.ReturnProductAsync(id);
+            }
+
+            try
+            {
+                existingHoadon.Trangthaidonhang = trangthai;
+                existingHoadon.Idnv = idnv;
+                existingHoadon.Ghichu = ghichu;
+
+                _context.hoadons.Update(existingHoadon);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi khi cập nhật hoá đơn",
+                    error = ex.Message
+                });
+            }
+        }
+
 
         // API để cập nhật hoá đơn
         [HttpPut("trangthaiNV/{id}")]
@@ -749,6 +807,7 @@ namespace AppAPI.Controllers
         private IQueryable<OrderNotificationDto> GetBaseOrdersQuery()
         {
             return _context.hoadons
+                .Where(x => x.Trangthaidonhang <= 4)
                 .OrderByDescending(o => o.Thoigiandathang)
                 .Select(o => new OrderNotificationDto
                 {

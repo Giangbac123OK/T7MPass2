@@ -48,6 +48,20 @@ namespace AppData.Service
             await _repository.UpdateAsync(entity);
         }
 
+        public async Task UpdateTrangThaiChechOutAsync(int orderCode, int status, int trangthaiTT)
+        {
+            var entity = await _repository.GetByIdAsync(orderCode);
+            if (entity == null) throw new KeyNotFoundException("Hoá đơn không tồn tại");
+
+            entity.Trangthaidonhang = status;
+            if (status == 4)
+            {
+                entity.Ghichu = "Khách hàng huỷ hoá đơn chuyển khoản";
+            }
+            entity.Trangthaithanhtoan = trangthaiTT;
+            await _repository.UpdateAsync(entity);
+        }
+
 
         public async Task<IEnumerable<Hoadon>> GetAllAsync()
         {
