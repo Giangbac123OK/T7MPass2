@@ -80,6 +80,70 @@ namespace AppData.Repository
             return data ?? new List<HoadonchitietViewModel>(); // Tránh trả về null
         }
 
+        public async Task<List<TraHangchitietViewModel>> ListSanPhamByIdth(int id)
+        {
+            // Bước 1: Lấy danh sách trahangchitiet theo Idth
+            var traHangChiTiets = await _context.trahangchitiets
+                .Where(thct => thct.Idth == id)
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (!traHangChiTiets.Any())
+                return new List<TraHangchitietViewModel>();
+
+            // Chuyển sang Dictionary để lookup nhanh ở bước 3
+            var traHangDict = traHangChiTiets.ToDictionary(t => t.Idhdct);
+
+            // Bước 2 + 3: Lấy hoadonchitiet theo danh sách Idhdct, join các bảng liên quan
+            var raw = await _context.hoadonchitiets
+                .Where(hdct => traHangDict.Keys.Contains(hdct.Id))              
+                .Join(_context.Sanphamchitiets,
+                      hdct => hdct.Idspct, spct => spct.Id,
+                      (hdct, spct) => new { hdct, spct })
+                .Join(_context.sanphams,
+                      x => x.spct.Idsp, sp => sp.Id,
+                      (x, sp) => new { x.hdct, x.spct, sp })
+                .Join(_context.colors,
+                      x => x.spct.IdMau, mau => mau.Id,
+                      (x, mau) => new { x.hdct, x.spct, x.sp, mau })
+                .Join(_context.sizes,
+                      x => x.spct.IdSize, size => size.Id,
+                      (x, size) => new { x.hdct, x.spct, x.sp, x.mau, size })
+                .Join(_context.thuonghieus,
+                      x => x.sp.Idth, th => th.Id,
+                      (x, th) => new { x.hdct, x.spct, x.sp, x.mau, x.size, th })
+                .Join(_context.chatLieus,
+                      x => x.spct.IdChatLieu, chatlieu => chatlieu.Id,
+                      (x, chatlieu) => new { x.hdct, x.spct, x.sp, x.mau, x.size, x.th, chatlieu })
+                .AsNoTracking()
+                .ToListAsync();
+
+            // Map về ViewModel, lấy Id và Soluong từ trahangchitiets
+            var result = raw
+                .Select(x =>
+                {
+                    var thct = traHangDict[x.hdct.Id]; 
+                    return new TraHangchitietViewModel
+                    {
+                        Id = thct.Id,                                     
+                        Idsp = x.sp.Id,
+                        Idspct = x.spct.Id,
+                        Tensp = $"[{x.th.Tenthuonghieu}] - {x.sp.TenSanpham}",
+                        urlHinhanh = x.spct.UrlHinhanh,
+                        Giasp = x.hdct.Giasp,
+                        Giamgia = x.hdct.Giamgia,
+                        Soluong = thct.Soluong,                               
+                        Mau = x.mau.Tenmau,
+                        Size = x.size.Sosize,
+                        Chatlieu = x.chatlieu.Tenchatlieu
+                    };
+                })
+                .ToList();
+
+            return result;
+        }
+
+
         public async Task Update(Trahangchitiet ct)
         {
             _context.trahangchitiets.Update(ct);

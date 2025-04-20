@@ -13,6 +13,7 @@ namespace AppData.IService
     {
         Task<IEnumerable<Hoadon>> GetAllAsync();
         Task UpdateTrangThaiAsync(int orderCode, int status, int trangthaiTT);
+        Task UpdateTrangThaiChechOutAsync(int orderCode, int status, int trangthaiTT);
 
         Task<HoadonDTO> GetByIdAsync(int id);
         Task AddAsync(HoadonDTO dto);

@@ -18,5 +18,6 @@ namespace AppData.IService
         Task<List<SanPhamTraHang>> SanphamByThct();
         Task Delete(int id);
         Task<List<HoadonchitietViewModel>> ListSanPhamByIdhd(int id);
+        Task<List<TraHangchitietViewModel>> ListSanPhamByIdth(int id);
     }
 }

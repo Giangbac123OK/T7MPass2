@@ -42,23 +42,24 @@ namespace AppAPI.Controllers
             public int Price { get; set; }
         }
 
-        // API xử lý thành côngok
         [HttpGet("/success")]
         public async Task<IActionResult> Success(int orderCode)
         {
             try
             {
                 // Cập nhật trạng thái hoá đơn
-                await _hoaDonService.UpdateTrangThaiAsync(orderCode, 1, 1);
+                await _hoaDonService.UpdateTrangThaiChechOutAsync(orderCode, 1, 1);
 
-                Response.Redirect("http://127.0.0.1:5501/#!/donhangcuaban");
-                return new EmptyResult();
+                // Trả về redirect chuẩn bằng RedirectResult với status 302 (đảm bảo không dính 303)
+                return Redirect("http://127.0.0.1:5501/TemplateCustomer/donhangcuaban-redirect.html");
             }
             catch (Exception ex)
             {
+                // Có thể log lỗi tại đây nếu cần
                 return BadRequest(new { message = "Lỗi xử lý thành công", error = ex.Message });
             }
         }
+
 
         // API xử lý thất bại
         [HttpGet("/cancel")]
@@ -67,11 +68,10 @@ namespace AppAPI.Controllers
             try
             {
                 // Cập nhật trạng thái hoá đơn
-                await _hoaDonService.UpdateTrangThaiAsync(orderCode, 4, 0);
+                await _hoaDonService.UpdateTrangThaiChechOutAsync(orderCode, 4, 0);
                 await _hoaDonChiTietService.ReturnProductAsync(orderCode);
 
-                Response.Redirect("http://127.0.0.1:5501/#!/donhangcuaban");
-                return new EmptyResult();
+                return Redirect("http://127.0.0.1:5501/TemplateCustomer/donhangcuaban-redirect.html");
             }
             catch (Exception ex)
             {
