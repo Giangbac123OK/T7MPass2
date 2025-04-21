@@ -106,13 +106,13 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("DoiDiem")]
-        public async Task<IActionResult> Doidiem(int idkh, decimal tien)
+        [HttpPut("Xacnhan")]
+        public async Task<IActionResult> Xacnhan(int idth, string hinhthuc, decimal tien, string? ghichu)
         {
             try
             {
-                await _ser.Doidiem(idkh, tien);
-                return Ok("Đổi điểm thành công");
+                await _ser.Xacnhan(idth, hinhthuc, tien,ghichu);
+                return Ok("Xác nhận thành công");
             }
             catch (Exception ex)
             {

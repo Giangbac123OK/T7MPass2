@@ -106,7 +106,6 @@ namespace AppData.Service
                 throw new KeyNotFoundException(ex.Message);
             }
         }
-
         public async Task Update(int id, TrahangchitietDTO ct)
         {
 

@@ -54,15 +54,30 @@ namespace AppData.Service
             await _repos.DeleteById(id);
         }
 
-        public async Task Doidiem(int idkh, decimal tien)
+        public async Task Xacnhan(int idth, string hinhthuc, decimal tien, string? ghichu)
         {
-            var a = await _KHrepos.GetByIdAsync(idkh);
+            var a = await _repos.GetById(idth);
             if (a == null)
+                throw new KeyNotFoundException("Không tồn tại hóa đơn.");
+            if (a.Trangthai!=0)
+                throw new KeyNotFoundException("Hóa đơn này đã được xác nhận hoặc đã bị hủy");
+            var kh = await _KHrepos.GetByIdAsync(a.Idkh);
+            if (kh == null)
                 throw new KeyNotFoundException("Không tồn tại khách hàng.");
-
-            a.Diemsudung += (int)Math.Round(tien, MidpointRounding.AwayFromZero);
-
-            await _KHrepos.UpdateAsync(a);
+            if(a.Phuongthuchoantien == "Đổi điểm")
+            {
+                kh.Diemsudung += (int)Math.Round(tien, MidpointRounding.AwayFromZero);
+                await _KHrepos.UpdateAsync(kh);
+                a.Trangthaihoantien = 1;
+            }
+            if (a.Phuongthuchoantien == "Thẻ tín dụng/ghi nợ/Tài khoản ngân hàng")
+            {
+                
+            }
+            a.Chuthich = ghichu??"s";
+            a.Hinhthucxuly = hinhthuc;
+            a.Trangthai = 1;
+            await _repos.Update(a);
         }
 
         public async Task<IEnumerable<Trahang>> GetAll()
