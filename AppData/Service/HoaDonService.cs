@@ -43,7 +43,21 @@ namespace AppData.Service
             var entity = await _repository.GetByIdAsync(orderCode);
             if (entity == null) throw new KeyNotFoundException("Hoá đơn không tồn tại");
 
-            entity.Trangthai = status;
+            entity.Trangthaidonhang = status;
+            entity.Trangthaithanhtoan = trangthaiTT;
+            await _repository.UpdateAsync(entity);
+        }
+
+        public async Task UpdateTrangThaiChechOutAsync(int orderCode, int status, int trangthaiTT)
+        {
+            var entity = await _repository.GetByIdAsync(orderCode);
+            if (entity == null) throw new KeyNotFoundException("Hoá đơn không tồn tại");
+
+            entity.Trangthaidonhang = status;
+            if (status == 4)
+            {
+                entity.Ghichu = "Khách hàng huỷ hoá đơn chuyển khoản";
+            }
             entity.Trangthaithanhtoan = trangthaiTT;
             await _repository.UpdateAsync(entity);
         }
@@ -72,7 +86,7 @@ namespace AppData.Service
                 Tonggiamgia = hoaDon.Tonggiamgia,
                 Ghichu = hoaDon.Ghichu,
                 Idgg = hoaDon.Idgg,
-                Trangthai = hoaDon.Trangthai,
+                Trangthai = hoaDon.Trangthaidonhang,
             });
         }
 
@@ -133,7 +147,7 @@ namespace AppData.Service
                 Tonggiamgia = entity.Tonggiamgia,
                 Ghichu = entity.Ghichu,
                 Idgg = entity.Idgg,
-                Trangthai = entity.Trangthai,
+                Trangthai = entity.Trangthaidonhang,
             };
         }
 
@@ -165,7 +179,7 @@ namespace AppData.Service
                 Idpttt = HoadonDTO.Idpttt,
                 Tonggiamgia = HoadonDTO.Tonggiamgia,
                 Idgg = HoadonDTO.Idgg == 0 ? (int?)null : HoadonDTO.Idgg,  // Nếu Idgg = 0, gán null
-                Trangthai = HoadonDTO.Trangthai,
+                Trangthai = HoadonDTO.Trangthaidonhang,
             };
 
             // Thêm hóa đơn vào cơ sở dữ liệu
@@ -236,7 +250,7 @@ namespace AppData.Service
                 Tongtiensanpham = hd.Tongtiensanpham,
                 Sdt = hd.Sdt,
                 Idgg = hd.Idgg,
-                Trangthai = hd.Trangthai,
+                Trangthai = hd.Trangthaidonhang,
                 Phivanchuyen = hd.Phivanchuyen,
                 Idpttt = hd.Idpttt,
                 Ghichu = hd.Ghichu,

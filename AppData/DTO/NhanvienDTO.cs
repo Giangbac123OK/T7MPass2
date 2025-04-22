@@ -37,4 +37,15 @@ namespace AppData.DTO
         public int Role { get; set; }
         public string? Avatar { get; set; }
     }
+    public class ThongTinNhanVienDTO
+    {
+        public int Id { get; set; }
+        public string Hovaten { get; set; }
+        public DateTime Ngaysinh { get; set; }
+        public string Diachi { get; set; }
+        public bool Gioitinh { get; set; }
+        public string Sdt { get; set; }
+        public string Email { get; set; }
+        public string? Avatar { get; set; }
+    }
 }

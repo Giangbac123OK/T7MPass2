@@ -49,7 +49,7 @@ namespace AppData.Repository
             }
         }
 
-        public async Task<List<Trahang>> GetAll()
+        public async Task<IEnumerable<Trahang>> GetAll()
         {
             return await _context.trahangs.ToListAsync();
         }
