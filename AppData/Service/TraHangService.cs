@@ -77,10 +77,10 @@ namespace AppData.Service
                 Ngaytaodon = x.Ngaytaodon
             }).ToList();
         }
-        public async Task<Trahang> GetById(int id)
+        public async Task<TrahangDTO> GetById(int id)
         {
             var x = await _repos.GetById(id);
-            return new Trahang
+            return new TrahangDTO
             {
                 Id = x.Id,
                 Tenkhachhang = x.Tenkhachhang,
