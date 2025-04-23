@@ -120,7 +120,20 @@ namespace AppAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("ListSanPhamByIdhd/{id}")]
+        public async Task<IActionResult> ListSanPhamByIdhd(int id)
+        {
+
+            try
+            {
+                return Ok(await _service.ListSanPhamByIdhd(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

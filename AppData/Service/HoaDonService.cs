@@ -61,8 +61,6 @@ namespace AppData.Service
             entity.Trangthaithanhtoan = trangthaiTT;
             await _repository.UpdateAsync(entity);
         }
-
-
         public async Task<IEnumerable<Hoadon>> GetAllAsync()
         {
 
@@ -250,7 +248,7 @@ namespace AppData.Service
                 Tongtiensanpham = hd.Tongtiensanpham,
                 Sdt = hd.Sdt,
                 Idgg = hd.Idgg,
-                Trangthai = hd.Trangthaidonhang,
+                Trangthai = hd.Trangthai,
                 Phivanchuyen = hd.Phivanchuyen,
                 Idpttt = hd.Idpttt,
                 Ghichu = hd.Ghichu,

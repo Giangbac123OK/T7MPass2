@@ -88,7 +88,16 @@ namespace AppData.Service
 
         public async Task<List<TraHangchitietViewModel>> ListSanPhamByIdth(int id)
         {
-            return await _repos.ListSanPhamByIdth(id);
+
+            try
+            {
+                var a = await _repos.ListSanPhamByIdth(id);
+                return a;
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
         }
 
         public async Task<List<SanPhamTraHang>> SanphamByThct()
