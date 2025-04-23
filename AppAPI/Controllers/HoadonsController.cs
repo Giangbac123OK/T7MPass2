@@ -536,14 +536,14 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthaidonhang == 4)
+            if (existingHoadon.Trangthai == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
 
             try
             {
-                existingHoadon.Trangthaidonhang = trangthai;
+                existingHoadon.Trangthai = trangthai;
                 existingHoadon.Idnv = idnv;
                 existingHoadon.Ghichu = ghichu;
 
@@ -807,7 +807,7 @@ namespace AppAPI.Controllers
         private IQueryable<OrderNotificationDto> GetBaseOrdersQuery()
         {
             return _context.hoadons
-                .Where(x => x.Trangthaidonhang <= 4)
+                .Where(x => x.Trangthai <= 4)
                 .OrderByDescending(o => o.Thoigiandathang)
                 .Select(o => new OrderNotificationDto
                 {
