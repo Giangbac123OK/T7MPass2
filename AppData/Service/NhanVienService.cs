@@ -150,7 +150,7 @@ namespace AppData.Service
             await _repository.UpdateAsync(nhanvien);
         }
 
-        public async Task UpdateThongTinNhanvienAsync(int id, ThongTinNhanVienDTO nhanvienDto)
+        public async Task UpdateThongTinNhanvienAsync(int id, NhanvienUpdateDTO nhanvienDto)
         {
             var nhanvien = await _repository.GetByIdAsync(id);
             if (nhanvien == null) throw new KeyNotFoundException("Nhân viên không tồn tại.");
