@@ -48,7 +48,7 @@ namespace AppData.Models
 		public string Password { get; set; }
 
         [Required(ErrorMessage = "Vai trò không được để trống")]
-		[Range(0, 1, ErrorMessage = "Vai trò là nhân viên hoặc quản lý")]
+		[Range(0, 2, ErrorMessage = "Vai trò là nhân viên hoặc quản lý")]
 		public int Role { get; set; }// 0: Quản lý, 1: Nhân viên
 
         public DateTime Ngaytaotaikhoan { get; set; }

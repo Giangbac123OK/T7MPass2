@@ -37,7 +37,9 @@ namespace AppAPI.Controllers
         public async Task<IActionResult> Get()
         {
             var result = await _Service.GetAllKhachhangsAsync();
-            return Ok(result.Select(kh => new
+            return Ok(result
+                .Where(kh => kh.Trangthai != 3)
+                .Select(kh => new
             {
                 kh.Id,
                 kh.Ten,
@@ -50,7 +52,8 @@ namespace AppAPI.Controllers
                 Trangthai = kh.Trangthai == 0 ? "Hoạt động" : "Tài khoản bị khoá",
                 kh.Idrank,
                 kh.Gioitinh,
-                kh.Avatar
+                kh.Avatar,
+                kh.Ngaytaotaikhoan
             }));
         }
         [HttpGet("{id}")]
@@ -61,7 +64,7 @@ namespace AppAPI.Controllers
                 var kh = await _Service.GetKhachhangByIdAsync(id);
                 return Ok(new
                 {
-
+                    kh.Id,
                     kh.Ten,
                     kh.Sdt,
                     kh.Ngaysinh,
@@ -83,9 +86,44 @@ namespace AppAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(KhachhangDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            // Xử lý avatar mặc định
+            string avatarPath;
+            const string defaultAvatarName = "AnhKhachHang.png";
+            string physicalAvatarPath = Path.Combine(_environment.WebRootPath, "picture", defaultAvatarName);
 
+            // Kiểm tra xem ảnh đã tồn tại trong thư mục chưa
+            if (System.IO.File.Exists(physicalAvatarPath))
+            {
+                avatarPath = $"{defaultAvatarName}";
+            }
+            else
+            {
+                try
+                {
+                    // Thử tải ảnh từ URL dự phòng và lưu vào server
+                    string imageUrl = "https://i.imgur.com/3jY5r9s.png"; // URL dự phòng bạn cung cấp
+                    using (HttpClient client = new HttpClient())
+                    {
+                        // Tải ảnh từ URL
+                        byte[] imageBytes = await client.GetByteArrayAsync(imageUrl);
+
+                        // Đảm bảo thư mục tồn tại
+                        Directory.CreateDirectory(Path.Combine(_environment.WebRootPath, "picture"));
+
+                        // Lưu ảnh vào server
+                        await System.IO.File.WriteAllBytesAsync(physicalAvatarPath, imageBytes);
+
+                        avatarPath = $"{defaultAvatarName}";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Nếu không tải được, sử dụng URL trực tiếp
+                    avatarPath = "https://i.imgur.com/3jY5r9s.png";
+                }
+            }
+            dto.Avatar = avatarPath;
+       
             await _Service.AddKhachhangAsync(dto);
             return CreatedAtAction(nameof(Get), new { id = dto.Ten }, dto);
         }

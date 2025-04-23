@@ -12,6 +12,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using AppData.Dto;
+using AppData.Repository;
 
 namespace AppData.Service
 {
@@ -20,11 +21,14 @@ namespace AppData.Service
         private readonly IKhachHangRepo _repos;
         private readonly IConfiguration _configuration;
         private readonly IGioHangRepo _GHrepos;
-        public KhachHangService(IKhachHangRepo repos, IConfiguration configuration, IGioHangRepo gHrepos)
+        private readonly IRankRepository _rankrepository;
+
+        public KhachHangService(IKhachHangRepo repos, IConfiguration configuration, IGioHangRepo gHrepos, IRankRepository rankrepository)
         {
-            _configuration = configuration;
             _repos = repos;
+            _configuration = configuration;
             _GHrepos = gHrepos;
+            _rankrepository = rankrepository;
         }
 
         public async Task AddKhachhangAsync(KhachhangDTO dto)
@@ -36,21 +40,36 @@ namespace AppData.Service
                 Ngaysinh = dto.Ngaysinh,
                 Tichdiem = 0,
                 Email = dto.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Password = dto.Password,
                 Diemsudung = 0,
                 Trangthai = 0,
                 Idrank = dto.Idrank,
                 Avatar = dto.Avatar,
-                Gioitinh = dto.Gioitinh
-            };
-            await _repos.AddAsync(kh);
+                Gioitinh = dto.Gioitinh,
+                Ngaytaotaikhoan = dto.Ngaytaotaikhoan
 
-            var gh = new Giohang()
-            {
-                Soluong = 0,
-                Idkh = kh.Id
             };
-            await _GHrepos.AddAsync(gh);
+            var ranks = await _rankrepository.GetAllRanksAsync();
+            var selectedRank = ranks.FirstOrDefault(r => kh.Tichdiem >= r.MinMoney && kh.Tichdiem <= r.MaxMoney && r.Trangthai == 0);
+
+            if (selectedRank == null)
+            {
+                throw new Exception("Không tìm thấy Rank phù hợp với Tích điểm.");
+            }
+            kh.Idrank = selectedRank.Id;
+            await _repos.AddAsync(kh);
+            if (dto.Password != null)
+            {
+
+                var gh = new Giohang()
+                {
+                    Soluong = 0,
+                    Idkh = kh.Id
+                };
+
+                await _GHrepos.AddAsync(gh);
+            }
+           
         }
 
         public async Task<bool> ChangePasswordAsync(DoimkKhachhang changePasswordDto)
@@ -95,7 +114,8 @@ namespace AppData.Service
                 Trangthai = x.Trangthai,
                 Idrank = x.Idrank,
                 Avatar = x.Avatar,
-                Gioitinh = x.Gioitinh
+                Gioitinh = x.Gioitinh,
+                Ngaytaotaikhoan = x.Ngaytaotaikhoan
             });
         }
 
@@ -104,6 +124,7 @@ namespace AppData.Service
             var x = await _repos.GetByIdAsync(id);
             return new KhachhangDTO()
             {
+                Id =x.Id,
                 Ten = x.Ten,
                 Sdt = x.Sdt,
                 Ngaysinh = x.Ngaysinh,

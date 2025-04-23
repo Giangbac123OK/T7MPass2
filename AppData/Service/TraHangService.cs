@@ -56,7 +56,7 @@ namespace AppData.Service
         public async Task<List<TrahangDTO>> GetAll()
         {
             var a = await _repos.GetAll();
-            return a.Select(x => new TrahangDTO
+            return a.Select(x => new Trahang
             {
                 Id = x.Id,
                 Tenkhachhang = x.Tenkhachhang,
@@ -77,10 +77,10 @@ namespace AppData.Service
                 Ngaytaodon = x.Ngaytaodon
             }).ToList();
         }
-        public async Task<TrahangDTO> GetById(int id)
+        public async Task<Trahang> GetById(int id)
         {
             var x = await _repos.GetById(id);
-            return new TrahangDTO
+            return new Trahang
             {
                 Id = x.Id,
                 Tenkhachhang = x.Tenkhachhang,
@@ -164,7 +164,7 @@ namespace AppData.Service
                 }
                 else
                 {
-                    a.Trangthai = 5;
+                    a.Trangthaidonhang = 5;
                     await _HDrepos.UpdateAsync(a);
                 }
             }

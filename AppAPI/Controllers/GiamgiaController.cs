@@ -18,11 +18,6 @@ namespace AppAPI.Controllers
 
 		private readonly IGiamgiaService _service;
 		private readonly ILogger<GiamgiaController> _logger;
-		public GiamgiaController(IGiamGiaService service)
-        {
-            _Service = service;
-
-        }
 
 		public GiamgiaController(IGiamGiaService Service, AppDbContext context, IGiamgiaService service, ILogger<GiamgiaController> logger)
 		{

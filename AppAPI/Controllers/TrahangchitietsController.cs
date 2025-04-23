@@ -98,12 +98,12 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("ListSanPhamByIdhd/{id}")]
-        public async Task<IActionResult> ListSanPhamByIdhd(int id)
+        [HttpGet("ListSanPhamByIdth/{id}")]
+        public async Task<IActionResult> ListSanPhamByIdth(int id)
         {
             try
             {
-                return Ok(await _service.ListSanPhamByIdhd(id));
+                return Ok(await _service.ListSanPhamByIdth(id));
             }
             catch (Exception ex)
             {

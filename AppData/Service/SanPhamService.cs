@@ -43,10 +43,22 @@ namespace AppData.Service
 
             foreach (var item in sanphams)
             {
-                var tongSoLuong = sanphamchitiets
-                    .Where(spct => spct.Idsp == item.Id)
-                    .Sum(spct => spct.Soluong);
+                var chiTiets = sanphamchitiets.Where(spct => spct.Idsp == item.Id).ToList();
 
+                var tongSoLuong = chiTiets
+                    .Sum(spct => spct.Soluong);
+                if (item.Trangthai == 2)
+                {
+                    foreach (var spct in chiTiets)
+                    {
+                        if (spct.Trangthai != 2)
+                        {
+                            spct.Trangthai = 2;
+                            await _sanPhamChiTietRepo.UpdateAsync(spct);
+                        }
+                    }
+                }
+     
                 item.Soluong = tongSoLuong;
 
                 if (item.Soluong <= 0 && item.Trangthai != 1 && item.Trangthai != 2 && item.Trangthai != 3)
@@ -57,6 +69,7 @@ namespace AppData.Service
                 {
                     item.Trangthai = 0;
                 }
+               
 
                 await _repository.UpdateAsync(item);
 
@@ -152,21 +165,26 @@ namespace AppData.Service
         {
 
             var sale = await _repository.GetByIdAsync(id);
+           
+
             if (sale == null)
             {
                 throw new KeyNotFoundException("Sản phẩm không tồn tại");
             }
+            var sanphamchitiets = (await _sanPhamChiTietRepo.GetAllAsync())
+             .Where(spct => spct.Idsp == id)
+             .ToList();
+
             if (sale.Trangthai != 3)
             {
-                // Cập nhật trạng thái dựa trên ngày bắt đầu và ngày kết thúc
-                if (sale.Soluong > 0)
-                {
-                    sale.Trangthai = 0; // Đang diễn ra
-                }
-                else if (sale.Soluong == 0)
-                {
-                    sale.Trangthai = 1; // Chuẩn bị diễn ra
-                }
+                
+                sale.Trangthai = 0; // Đang diễn ra
+                  foreach (var item in sanphamchitiets)
+                  {
+                   item.Trangthai = 0;
+                   await _sanPhamChiTietRepo.UpdateAsync(item);
+
+                  }
             }
 
 

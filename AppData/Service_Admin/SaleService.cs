@@ -312,7 +312,7 @@ namespace AppData.Service_Admin
 			{
 				throw new KeyNotFoundException($"Không tìm thấy chương trình Sale với ID = {id}.");
 			}
-			sale.Ten = saleDto.Ten ?? sale.Ten; // Giữ nguyên nếu giá trị mới là null
+			sale.Ten = saleDto.Ten ?? sale.Ten;
 			sale.Mota = saleDto.Mota ?? sale.Mota;
 			sale.Ngaybatdau = saleDto.Ngaybatdau;
 			sale.Ngayketthuc = saleDto.Ngayketthuc;

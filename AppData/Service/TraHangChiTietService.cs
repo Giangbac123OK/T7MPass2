@@ -86,6 +86,11 @@ namespace AppData.Service
             return await _repos.ListSanPhamByIdhd(id);
         }
 
+        public async Task<List<TraHangchitietViewModel>> ListSanPhamByIdth(int id)
+        {
+            return await _repos.ListSanPhamByIdth(id);
+        }
+
         public async Task<List<SanPhamTraHang>> SanphamByThct()
         {
 

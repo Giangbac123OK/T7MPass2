@@ -11,13 +11,13 @@ namespace AppData.Models
 {
     public enum TraHangStatus
     {
-        [Description("Đơn hàng chờ trả hàng")]
+        [Description("Chờ trả hàng")]
         DonhangChoTraHang = 0,
 
-        [Description("Trả hàng thành công")]
+        [Description("Hoàn thành")]
         TraHangThanhCong = 1,
 
-        [Description("Trả hàng không thành công")]
+        [Description("Đã hủy")]
         TraHangKhongThanhCong = 2,
     }
     public class Trahang
@@ -56,9 +56,19 @@ namespace AppData.Models
 		public virtual ICollection<Trahangchitiet> Trahangchitiets { get; set; }
 
         // Trạng thái hiển thị dưới dạng chuỗiaaaa
-        public string TrangthaiStr => GetEnumDescription((TraHangStatus)Trangthai);
+        [NotMapped]
+        public string TrangthaiStr
+        {
+            get
+            {
+                if (Enum.IsDefined(typeof(TraHangStatus), Trangthai))
+                {
+                    return GetEnumDescription((TraHangStatus)Trangthai);
+                }
+                return "Trạng thái không xác định";
+            }
+        }
 
-        // Phương thức để lấy giá trị mô tả từ enum
         private string GetEnumDescription(TraHangStatus status)
         {
             var field = status.GetType().GetField(status.ToString());

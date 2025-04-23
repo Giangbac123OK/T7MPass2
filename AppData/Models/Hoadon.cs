@@ -82,7 +82,7 @@ namespace AppData.Models
 
         [ForeignKey("Idgg")]
         public virtual Giamgia? Giamgia { get; set; }
-        public int Trangthai { get; set; }
+        public int Trangthai { get; set; } // 0 : bán on, 1 : bán off
 
         public decimal Phivanchuyen { get; set; }
 
@@ -96,7 +96,7 @@ namespace AppData.Models
         public virtual ICollection<Hoadonchitiet> Hoadonchitiets { get; set; }
 
         // Trạng thái hiển thị dưới dạng chuỗi
-        public string TrangthaiStr => GetEnumDescription((OrderStatus)Trangthai);
+        public string TrangthaiStr => GetEnumDescription((OrderStatus)Trangthaidonhang);
         private string GetEnumDescription(OrderStatus status)
         {
             var field = status.GetType().GetField(status.ToString());

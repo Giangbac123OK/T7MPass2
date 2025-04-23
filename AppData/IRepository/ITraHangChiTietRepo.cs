@@ -17,5 +17,6 @@ namespace AppData.IRepository
         Task Delete(int id);
         Task<List<SanPhamTraHang>> SanphamByThct();
         Task< List<HoadonchitietViewModel>> ListSanPhamByIdhd(int id);
+        Task<List<TraHangchitietViewModel>> ListSanPhamByIdth(int id);
     }
 }
