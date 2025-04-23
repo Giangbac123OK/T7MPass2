@@ -164,7 +164,7 @@ namespace AppData.Service
                 }
                 else
                 {
-                    a.Trangthaidonhang = 5;
+                    a.Trangthai = 5;
                     await _HDrepos.UpdateAsync(a);
                 }
             }
@@ -173,7 +173,7 @@ namespace AppData.Service
                 throw new KeyNotFoundException(ex.Message);
             }
         }
-
+        
         public async Task Huydon(int id, int idnv, string? chuthich)
         {
             try

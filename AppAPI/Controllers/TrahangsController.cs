@@ -10,6 +10,7 @@ using AppData.Models;
 using AppData.DTO;
 using AppData.IService;
 using AppData.IRepository;
+using AppData.ViewModel;
 
 namespace AppAPI.Controllers
 {

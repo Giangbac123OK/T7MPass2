@@ -27,6 +27,7 @@ namespace AppData.Service
             _hoaDonChiTietRepo = hoaDonChiTietRepo;
             _sanPhamChiTietRepo = sanPhamChiTietRepo;
             _danhGiaRepo = danhGiaRepo;
+            _thuonghieuRepo = thuonghieuRepo;
         }
 
         public async Task<IEnumerable<SanphamDTO>> GetAllAsync()
