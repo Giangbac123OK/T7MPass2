@@ -103,7 +103,6 @@ namespace AppData.Repository
                                                     Idth = thct.Idth,
                                                     Soluong = thct.Soluong,
                                                     Tinhtrang = thct.Tinhtrang,
-                                                    Ghichu = thct.Ghichu,
                                                     Idsp = sp.Id,
                                                     UrlAnh = spct.UrlHinhanh,
                                                     Tensp = sp.TenSanpham,

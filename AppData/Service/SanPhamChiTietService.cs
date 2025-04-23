@@ -47,12 +47,12 @@ namespace AppData.Service
             });
         }
 
-        public async Task<Sanphamchitiet> GetByIdAsync(int id)
+        public async Task<SanphamchitietDTO> GetByIdAsync(int id)
         {
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null) return null;
 
-            return new Sanphamchitiet
+            return new SanphamchitietDTO
             {
                 Id = entity.Id,
                 Trangthai = entity.Trangthai,
