@@ -12,7 +12,7 @@ namespace AppData.IService
     public interface ITraHangService
     {
         Task<List<TrahangDTO>> GetAll();
-        Task<Trahang> GetById(int id);
+        Task<TrahangDTO> GetById(int id);
         Task Add(TrahangDTO trahang);
         Task Update(int id, TrahangDTO trahang);
         Task DeleteById(int id);
