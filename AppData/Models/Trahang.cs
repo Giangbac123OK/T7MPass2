@@ -38,9 +38,10 @@ namespace AppData.Models
 		[ForeignKey("Idkh")]
 		public virtual Khachhang Khachhang { get; set; }
 
-		public decimal? Sotienhoan {  get; set; }
+		public decimal Sotienhoan {  get; set; }
+        public DateTime Ngaytaodon { get; set; }
 
-		public string? Lydotrahang {  get; set; }
+        public string? Lydotrahang {  get; set; }
 
 		public int Trangthai {  get; set; }
         

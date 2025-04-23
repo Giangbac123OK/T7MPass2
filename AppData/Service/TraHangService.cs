@@ -17,12 +17,10 @@ namespace AppData.Service
     {
         private readonly ITraHangRepo _repos;
         private readonly IHoaDonRepo _HDrepos;
-        private readonly IKhachHangRepo _KHrepos;
-        public TraHangService(ITraHangRepo repos, IHoaDonRepo hDrepos, IKhachHangRepo kHrepos)
+        public TraHangService(ITraHangRepo repos, IHoaDonRepo hDrepos)
         {
             _repos = repos;
             _HDrepos = hDrepos;
-            _KHrepos = kHrepos;
         }
         public async Task Add(TrahangDTO trahang)
         {
@@ -42,7 +40,8 @@ namespace AppData.Service
                 Hinhthucxuly = trahang.Hinhthucxuly != null ? trahang.Hinhthucxuly : null,
                 Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null,
                 Diachiship = trahang.Diachiship,
-                Trangthaihoantien = trahang.Trangthaihoantien
+                Trangthaihoantien = trahang.Trangthaihoantien,
+                Ngaytaodon = trahang.Ngaytaodon
             };
             await _repos.Add(a);
 
@@ -54,36 +53,10 @@ namespace AppData.Service
             await _repos.DeleteById(id);
         }
 
-        public async Task Xacnhan(int idth, string hinhthuc, decimal tien, string? ghichu)
-        {
-            var a = await _repos.GetById(idth);
-            if (a == null)
-                throw new KeyNotFoundException("Không tồn tại hóa đơn.");
-            if (a.Trangthai!=0)
-                throw new KeyNotFoundException("Hóa đơn này đã được xác nhận hoặc đã bị hủy");
-            var kh = await _KHrepos.GetByIdAsync(a.Idkh);
-            if (kh == null)
-                throw new KeyNotFoundException("Không tồn tại khách hàng.");
-            if(a.Phuongthuchoantien == "Đổi điểm")
-            {
-                kh.Diemsudung += (int)Math.Round(tien, MidpointRounding.AwayFromZero);
-                await _KHrepos.UpdateAsync(kh);
-                a.Trangthaihoantien = 1;
-            }
-            if (a.Phuongthuchoantien == "Thẻ tín dụng/ghi nợ/Tài khoản ngân hàng")
-            {
-                
-            }
-            a.Chuthich = ghichu??"s";
-            a.Hinhthucxuly = hinhthuc;
-            a.Trangthai = 1;
-            await _repos.Update(a);
-        }
-
-        public async Task<IEnumerable<Trahang>> GetAll()
+        public async Task<List<TrahangDTO>> GetAll()
         {
             var a = await _repos.GetAll();
-            return a.Select(x => new Trahang
+            return a.Select(x => new TrahangDTO
             {
                 Id = x.Id,
                 Tenkhachhang = x.Tenkhachhang,
@@ -100,8 +73,9 @@ namespace AppData.Service
                 Hinhthucxuly = x.Hinhthucxuly,
                 Diachiship = x.Diachiship,
                 Ngaytrahangthucte = x.Ngaytrahangthucte,
-                Trangthaihoantien = x.Trangthaihoantien
-            });
+                Trangthaihoantien = x.Trangthaihoantien,
+                Ngaytaodon = x.Ngaytaodon
+            }).ToList();
         }
         public async Task<Trahang> GetById(int id)
         {
@@ -123,30 +97,30 @@ namespace AppData.Service
                 Hinhthucxuly = x.Hinhthucxuly,
                 Diachiship = x.Diachiship,
                 Ngaytrahangthucte = x.Ngaytrahangthucte,
-                Trangthaihoantien = x.Trangthaihoantien
+                Trangthaihoantien = x.Trangthaihoantien,
+                Ngaytaodon = x.Ngaytaodon
             };
         }
-
-        public async Task Huydon(int id, string? chuthich)
+        public async Task UpdateTrangThaiTh(int id, string? chuthich, int trangthai, int idnv)
         {
             try
             {
                 var a = await _repos.GetById(id);
-                if (a == null) 
-                { 
-                    throw new KeyNotFoundException("Mã hóa đơn không tồn tại"); 
-                }
-                if (a.Trangthai != 0)
+                if (a == null)
                 {
-                    throw new KeyNotFoundException("Hóa đơn này đã được xác nhận hoặc trả hàng thành công!");
+                    throw new KeyNotFoundException("Không tồn tại!");
                 }
-                a.Chuthich = chuthich ?? null;
-                a.Trangthai = 2;
-                await _repos.Update(a);
+                else
+                {
+                    a.Idnv = idnv;
+                    a.Chuthich = chuthich;
+                    a.Trangthai = trangthai;
+                    await _repos.Update(a);
+                }
             }
-            catch (Exception e) 
+            catch (Exception ex)
             {
-                throw new KeyNotFoundException(e.Message);
+                throw new KeyNotFoundException(ex.Message);
             }
         }
 
@@ -174,6 +148,7 @@ namespace AppData.Service
                 a.Diachiship = trahang.Diachiship;
                 a.Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null;
                 a.Trangthaihoantien = trahang.Trangthaihoantien;
+                a.Ngaytaodon = trahang.Ngaytaodon;
                 await _repos.Update(a);
             }
         }
@@ -192,6 +167,26 @@ namespace AppData.Service
                     a.Trangthaidonhang = 5;
                     await _HDrepos.UpdateAsync(a);
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
+        }
+
+        public async Task Huydon(int id, int idnv, string? chuthich)
+        {
+            try
+            {
+                var a = await _repos.GetById(id);
+                if(a == null)
+                {
+                    throw new KeyNotFoundException("Không tồn tại hóa đơn!");
+                }
+                a.Idnv = idnv;
+                a.Chuthich = chuthich;
+                a.Trangthai = 2;
+                await _repos.Update(a);
             }
             catch (Exception ex)
             {

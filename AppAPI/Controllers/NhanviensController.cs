@@ -162,7 +162,7 @@ namespace AppAPI.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] NhanvienUpdateDTO nhanvienDto, IFormFile? avatarFile)
+        public async Task<IActionResult> Update(int id, [FromForm] NhanvienDTO nhanvienDto, IFormFile? avatarFile)
         {
             try
             {
@@ -235,7 +235,7 @@ namespace AppAPI.Controllers
         }
 
         [HttpPut("Updatethongtin/{id}")]
-        public async Task<IActionResult> Updatethongtin(int id, [FromForm] ThongTinNhanVienDTO nhanvienDto, IFormFile? avatarFile)
+        public async Task<IActionResult> Updatethongtin(int id, [FromForm] NhanvienDTO nhanvienDto, IFormFile? avatarFile)
         {
             try
             {
@@ -293,7 +293,7 @@ namespace AppAPI.Controllers
                 }
 
                 nhanvienDto.Avatar = fileName;
-                await _Service.UpdateThongTinNhanvienAsync(id, nhanvienDto);
+                await _Service.UpdateNhanvienAsync(id, nhanvienDto);
 
                 return Ok(new { Success = true, Message = "Cập nhật thành công" });
             }

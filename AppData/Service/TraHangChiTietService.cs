@@ -43,7 +43,6 @@ namespace AppData.Service
                 Idth = ct.Idth,
                 Soluong = ct.Soluong,
                 Tinhtrang = ct.Tinhtrang,
-                Ghichu = ct.Ghichu,
                 Idhdct = ct.Idhdct
             };
             await _repos.Add(a);
@@ -65,7 +64,6 @@ namespace AppData.Service
                 Idth = x.Idth,
                 Soluong = x.Soluong,
                 Tinhtrang = x.Tinhtrang,
-                Ghichu = x.Ghichu,
                 Idhdct = x.Idhdct
             }).ToList();
         }
@@ -79,7 +77,6 @@ namespace AppData.Service
                 Idth = x.Idth,
                 Soluong = x.Soluong,
                 Tinhtrang = x.Tinhtrang,
-                Ghichu = x.Ghichu,
                 Idhdct = x.Idhdct
             };
         }
@@ -128,7 +125,6 @@ namespace AppData.Service
                 a.Idth = ct.Idth;
                 a.Soluong = ct.Soluong;
                 a.Tinhtrang = ct.Tinhtrang;
-                a.Ghichu = ct.Ghichu;
                 a.Idhdct = ct.Idhdct;
                 await _repos.Update(a);
             }
