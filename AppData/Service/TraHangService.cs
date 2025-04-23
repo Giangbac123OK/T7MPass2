@@ -56,7 +56,7 @@ namespace AppData.Service
         public async Task<List<TrahangDTO>> GetAll()
         {
             var a = await _repos.GetAll();
-            return a.Select(x => new Trahang
+            return a.Select(x => new TrahangDTO
             {
                 Id = x.Id,
                 Tenkhachhang = x.Tenkhachhang,
