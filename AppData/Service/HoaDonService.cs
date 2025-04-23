@@ -86,7 +86,7 @@ namespace AppData.Service
                 Tonggiamgia = hoaDon.Tonggiamgia,
                 Ghichu = hoaDon.Ghichu,
                 Idgg = hoaDon.Idgg,
-                Trangthai = hoaDon.Trangthaidonhang,
+                Trangthai = hoaDon.Trangthai
             });
         }
 
@@ -147,7 +147,7 @@ namespace AppData.Service
                 Tonggiamgia = entity.Tonggiamgia,
                 Ghichu = entity.Ghichu,
                 Idgg = entity.Idgg,
-                Trangthai = entity.Trangthaidonhang,
+                Trangthai = entity.Trangthai,
             };
         }
 
@@ -179,7 +179,7 @@ namespace AppData.Service
                 Idpttt = HoadonDTO.Idpttt,
                 Tonggiamgia = HoadonDTO.Tonggiamgia,
                 Idgg = HoadonDTO.Idgg == 0 ? (int?)null : HoadonDTO.Idgg,  // Nếu Idgg = 0, gán null
-                Trangthai = HoadonDTO.Trangthaidonhang,
+                Trangthai = HoadonDTO.Trangthai,
             };
 
             // Thêm hóa đơn vào cơ sở dữ liệu
