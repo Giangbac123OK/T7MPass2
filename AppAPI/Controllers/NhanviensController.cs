@@ -296,6 +296,12 @@ namespace AppAPI.Controllers
                 return StatusCode(500, "Đã xảy ra lỗi trong quá trình đăng nhập");
             }
         }
+		[HttpGet("tong-trangthai-0")]
+		public async Task<IActionResult> TongTrangThai0()
+		{
+			int tong = await _Service.GetTongNhanVienTrangThai0Async();
+			return Ok(tong);    
+		}
 
-    }
+	}
 }

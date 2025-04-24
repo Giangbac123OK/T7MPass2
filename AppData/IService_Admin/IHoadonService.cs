@@ -26,5 +26,8 @@ namespace AppData.IService_Admin
 		IEnumerable<HoadonSummaryDto> GetOrderSummary(string timeUnit);
 		Task<List<HoadonReportDto>> GetOlnOrdersByWeekAsync();
 		Task<List<HoadonReportDto>> GetOffOrdersByWeekAsync();
+		Task<int> GetSoDonAsync();
+		Task<decimal> GetDoanhThuThanhCongAsync();
+		Task<List<LatestInvoiceDto>> Get10LatestInvoicesAsync();
 	}
 }

@@ -315,6 +315,12 @@ namespace AppAPI.Controllers
 		public async Task<IActionResult> SearchByNameAdmin(string name) => Ok(await _service1.SearchByNameAsync(name));
 		[HttpGet("searchhd/Admin")]
 		public async Task<IActionResult> SearchByNameHd(string name) => Ok(await _service1.SearchByNameHdAsync(name));
+		[HttpGet("tong-trangthai-0-1")]
+		public async Task<IActionResult> TongTrangThai01()
+		{
+			int tong = await _service1.GetTongTrangThai0or1Async();
+			return Ok(tong);       
+		}
 	}
 
 }

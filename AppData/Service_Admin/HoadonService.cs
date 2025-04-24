@@ -83,9 +83,8 @@ namespace AppData.Service_Admin
 			var hoadon = new Hoadon
 			{
 				Idnv = dto.Idnv,
-				Idkh = null,
+				Idkh = 2,
 				Idgg = null,
-
 				Diachiship = "",
 				Ngaygiaothucte = null,
 				Sdt = "",
@@ -297,9 +296,11 @@ namespace AppData.Service_Admin
 				Trangthai = hoadon.Trangthai
 			};
 		}
-	
+		public Task<int> GetSoDonAsync() => _hoadonRepository.CountDonHangAsync();
+		public Task<decimal> GetDoanhThuThanhCongAsync() => _hoadonRepository.SumDoanhThuThanhCongAsync();
 
-		
-		
+		public Task<List<LatestInvoiceDto>> Get10LatestInvoicesAsync()
+		 => _hoadonRepository.Get10LatestInvoicesAsync();
+
 	}
 }

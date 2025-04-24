@@ -144,5 +144,12 @@ namespace AppData.Repository
 		public async Task<IEnumerable<Sanpham>> SearchByNameHdAsync(string name) =>
 			
 			await _context.sanphams.Where(sp => sp.TenSanpham.Contains(name) && sp.Trangthai==0).ToListAsync();
+		public async Task<int> CountTrangThai0or1Async()
+		{
+			return await _context.sanphams
+								 .AsNoTracking()
+								 .CountAsync(sp => sp.Trangthai == 0 || sp.Trangthai == 1);
+		}
+
 	}
 }

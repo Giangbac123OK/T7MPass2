@@ -32,5 +32,8 @@ namespace AppData.IRepository
 
 		Task<List<HoadonReportDto>> GetOlnOrdersByWeekAsync();
 		Task<List<HoadonReportDto>> GetOffOrdersByWeekAsync();
+		Task<int> CountDonHangAsync();
+		Task<decimal> SumDoanhThuThanhCongAsync();
+		Task<List<LatestInvoiceDto>> Get10LatestInvoicesAsync();
 	}
 }

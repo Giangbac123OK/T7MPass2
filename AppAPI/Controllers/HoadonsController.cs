@@ -815,7 +815,21 @@ namespace AppAPI.Controllers
 				return StatusCode(500, "Lỗi server: " + ex.Message);
 			}
 		}
-		[HttpPost("create/khtt")]
+        [HttpPost("create/Admin")]
+        public async Task<IActionResult> CreateHoaDon([FromBody] CreateHoadonDTO dto)
+        {
+            try
+            {
+                var hoadon = await _hoadonService.AddHoaDon(dto);
+                return Ok(hoadon);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(new { message = ex.Message, innerException = ex.InnerException?.Message });
+            }
+        }
+        [HttpPost("create/khtt")]
 		public async Task<IActionResult> CreateHoaDonkhtt([FromBody] HoadonoffKhachhangthanthietDto dto, [FromQuery] int diemSuDung)
 		{
 			try
@@ -893,7 +907,6 @@ namespace AppAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				// Ghi log lỗi hoặc trả về mã lỗi thích hợp
 				return StatusCode(500, "Lỗi server: " + ex.Message);
 			}
 		}
@@ -955,6 +968,25 @@ namespace AppAPI.Controllers
 		{
 			var result = await _hoadonService.GetOffOrdersByWeekAsync();
 			return Ok(result);
+		}
+		[HttpGet("tong-so-don")]
+		public async Task<IActionResult> TongSoDonThanhCong()
+		{
+			int total = await _hoadonService.GetSoDonAsync();
+			return Ok(total);    
+		}
+
+		[HttpGet("tong-doanh-thu-thanh-cong")]
+		public async Task<IActionResult> TongDoanhThuThanhCong()
+		{
+			decimal revenue = await _hoadonService.GetDoanhThuThanhCongAsync();
+			return Ok(revenue);      
+		}
+		[HttpGet("latest-10")]
+		public async Task<IActionResult> GetLatest10()
+		{
+			var data = await _hoadonService.Get10LatestInvoicesAsync();
+			return Ok(data);     
 		}
 	}
 }

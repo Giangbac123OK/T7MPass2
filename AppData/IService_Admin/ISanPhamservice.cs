@@ -23,5 +23,6 @@ namespace AppData.IService_Admin
 	
 		Task<IEnumerable<SanphamDTO>> SearchByNameAsync(string name);
 		Task<IEnumerable<SanphamDetailDto>> GetSanphamDetailsAsync();
+		Task<int> GetTongTrangThai0or1Async();
 	}
 }

@@ -231,13 +231,42 @@ namespace AppData.Repository
 		public async Task DeleteHoadonchitietsAsync(IEnumerable<Hoadonchitiet> hoadonchitiets)
 		{
 			_context.Set<Hoadonchitiet>().RemoveRange(hoadonchitiets);
-			await Task.CompletedTask; // Placeholder for consistency
+			await Task.CompletedTask;
 		}
 
-		
+		public async Task<int> CountDonHangAsync()
+		{
+			return await _context.hoadons
+								 .AsNoTracking()
+								 .CountAsync();
+		}
+		public async Task<decimal> SumDoanhThuThanhCongAsync()
+		{
+			return await _context.hoadons
+								 .AsNoTracking()
+								 .Where(hd => hd.Trangthaidonhang == 3)
+								 .SumAsync(hd => hd.Tongtiencantra);
+		}
+		public async Task<List<LatestInvoiceDto>> Get10LatestInvoicesAsync()
+		{
+			return await _context.hoadons
+								 .AsNoTracking()
+								 .Include(h => h.Khachhang)       
+								 .OrderByDescending(h => h.Id)      
+								 .Take(10)
+								 .Select(h => new LatestInvoiceDto
+								 {
+									 MaHoaDon = $"HD{h.Id:D3}",
+									 TenKhachHang = h.Idkh == null
+													? "Khách lẻ"
+													: h.Khachhang!.Ten,
+									 TongTien = h.Tongtiencantra,
+									 TrangThai = h.Trangthaidonhang
+								 })
+								 .ToListAsync();
+		}
 
-		
-	}
 
 	}
+}
 
