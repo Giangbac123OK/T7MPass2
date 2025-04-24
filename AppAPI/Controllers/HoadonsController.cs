@@ -348,7 +348,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthaidonhang == 4)
+            if (trangthai == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -438,7 +438,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthaidonhang == 4)
+            if (trangthai == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -536,14 +536,14 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthai == 4)
+            if (trangthai == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
 
             try
             {
-                existingHoadon.Trangthai = trangthai;
+                existingHoadon.Trangthaidonhang = trangthai;
                 existingHoadon.Idnv = idnv;
                 existingHoadon.Ghichu = ghichu;
 
@@ -596,7 +596,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (existingHoadon.Trangthaidonhang == 4)
+            if (trangthai == 4)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
