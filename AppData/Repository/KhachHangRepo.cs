@@ -27,16 +27,37 @@ namespace AppData.Repository
         public async Task DeleteAsync(int id)
         {
             var a = await GetByIdAsync(id);
-            if (a != null)
+            var khachhang = await _context.khachhangs.FindAsync(id);
+
+            bool isReferenced = await _context.hoadons.AnyAsync(x => x.Idkh == id)
+                || await _context.giohangs.AnyAsync(x => x.Idkh == id)
+                || await _context.trahangs.AnyAsync(x => x.Idkh == id)
+                || await _context.danhgias.AnyAsync(x => x.Idkh == id);
+
+            if (isReferenced)
             {
-                _context.khachhangs.Remove(a);
-                await _context.SaveChangesAsync();
+                
+                khachhang.Trangthai = 3;
+                _context.khachhangs.Update(khachhang);
             }
             else
             {
-                throw new KeyNotFoundException("Không tìm thấy nhân viên");
+                var diachis = _context.diachis.Where(d => d.Idkh == id);
+                _context.diachis.RemoveRange(diachis); 
+
+                if (a != null)
+                {
+                    _context.khachhangs.Remove(a);
+                }
+                else
+                {
+                    throw new KeyNotFoundException("Không tìm thấy Khách hàng");
+                }
             }
+
+            await _context.SaveChangesAsync();
         }
+
 
         public async Task<IEnumerable<Khachhang>> GetAllAsync()
         {

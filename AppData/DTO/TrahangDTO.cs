@@ -17,11 +17,12 @@ namespace AppData.DTO
         public int Trangthaihoantien { get; set; }
         public int? Idnv { get; set; }
 		public int Idkh { get; set; }
-		public decimal? Sotienhoan {  get; set; }
+		public decimal Sotienhoan {  get; set; }
 		public string? Lydotrahang {  get; set; }
 		public int Trangthai {  get; set; }
 		public string Phuongthuchoantien {  get; set; }
-		public DateTime? Ngaytrahangthucte {  get; set; }
+        public DateTime Ngaytaodon { get; set; }
+        public DateTime? Ngaytrahangthucte {  get; set; }
 		public string? Chuthich {  get; set; }
         public string? Hinhthucxuly { get; set; }
 		public string? Tennganhang { get; set; }

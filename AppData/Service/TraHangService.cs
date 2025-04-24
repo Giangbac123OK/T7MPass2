@@ -29,7 +29,7 @@ namespace AppData.Service
                 Tenkhachhang = trahang.Tenkhachhang,
                 Idkh = trahang.Idkh,
                 Idnv = (trahang.Idnv != null && trahang.Idnv != 0) ? trahang.Idnv : (int?)null,
-                Sotienhoan = trahang.Sotienhoan != null ? trahang.Idnv : null,
+                Sotienhoan = trahang.Sotienhoan,
                 Lydotrahang = trahang.Lydotrahang != null ? trahang.Lydotrahang : null,
                 Trangthai = trahang.Trangthai,
                 Phuongthuchoantien = trahang.Phuongthuchoantien,
@@ -40,7 +40,8 @@ namespace AppData.Service
                 Hinhthucxuly = trahang.Hinhthucxuly != null ? trahang.Hinhthucxuly : null,
                 Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null,
                 Diachiship = trahang.Diachiship,
-                Trangthaihoantien = trahang.Trangthaihoantien
+                Trangthaihoantien = trahang.Trangthaihoantien,
+                Ngaytaodon = trahang.Ngaytaodon
             };
             await _repos.Add(a);
 
@@ -72,7 +73,8 @@ namespace AppData.Service
                 Hinhthucxuly = x.Hinhthucxuly,
                 Diachiship = x.Diachiship,
                 Ngaytrahangthucte = x.Ngaytrahangthucte,
-                Trangthaihoantien = x.Trangthaihoantien
+                Trangthaihoantien = x.Trangthaihoantien,
+                Ngaytaodon = x.Ngaytaodon
             }).ToList();
         }
         public async Task<TrahangDTO> GetById(int id)
@@ -95,8 +97,31 @@ namespace AppData.Service
                 Hinhthucxuly = x.Hinhthucxuly,
                 Diachiship = x.Diachiship,
                 Ngaytrahangthucte = x.Ngaytrahangthucte,
-                Trangthaihoantien = x.Trangthaihoantien
+                Trangthaihoantien = x.Trangthaihoantien,
+                Ngaytaodon = x.Ngaytaodon
             };
+        }
+        public async Task UpdateTrangThaiTh(int id, string? chuthich, int trangthai, int idnv)
+        {
+            try
+            {
+                var a = await _repos.GetById(id);
+                if (a == null)
+                {
+                    throw new KeyNotFoundException("Không tồn tại!");
+                }
+                else
+                {
+                    a.Idnv = idnv;
+                    a.Chuthich = chuthich;
+                    a.Trangthai = trangthai;
+                    await _repos.Update(a);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
         }
 
         public async Task Update(int id, TrahangDTO trahang)
@@ -123,6 +148,7 @@ namespace AppData.Service
                 a.Diachiship = trahang.Diachiship;
                 a.Ngaytrahangthucte = trahang.Ngaytrahangthucte != null ? trahang.Ngaytrahangthucte : null;
                 a.Trangthaihoantien = trahang.Trangthaihoantien;
+                a.Ngaytaodon = trahang.Ngaytaodon;
                 await _repos.Update(a);
             }
         }
@@ -141,6 +167,26 @@ namespace AppData.Service
                     a.Trangthai = 5;
                     await _HDrepos.UpdateAsync(a);
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
+        }
+        
+        public async Task Huydon(int id, int idnv, string? chuthich)
+        {
+            try
+            {
+                var a = await _repos.GetById(id);
+                if(a == null)
+                {
+                    throw new KeyNotFoundException("Không tồn tại hóa đơn!");
+                }
+                a.Idnv = idnv;
+                a.Chuthich = chuthich;
+                a.Trangthai = 2;
+                await _repos.Update(a);
             }
             catch (Exception ex)
             {
