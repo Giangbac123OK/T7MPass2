@@ -27,6 +27,10 @@ namespace AppData.Models
         [Description("Đơn hàng đã huỷ")]
         DonHangDaHuy = 4,
 
+
+        [Description("Đơn hàng giao thất bại")]
+        GiaoThatBai = 6,
+
         [Description("Trả hàng")]
         TraHangThanhCong = 5,
     }
@@ -97,6 +101,8 @@ namespace AppData.Models
 
         // Trạng thái hiển thị dưới dạng chuỗi
         public string TrangthaiStr => GetEnumDescription((OrderStatus)Trangthaidonhang);
+        public bool IsGiaoThatBai => Trangthaidonhang == (int)OrderStatus.GiaoThatBai && Ngaygiaothucte != null;
+
         private string GetEnumDescription(OrderStatus status)
         {
             var field = status.GetType().GetField(status.ToString());

@@ -275,9 +275,6 @@ namespace AppAPI.Controllers
             }
         }
 
-
-
-
         [HttpGet("voucher/{id}")]
         public async Task<IActionResult> Checkvoucher(int id)
         {
@@ -335,7 +332,7 @@ namespace AppAPI.Controllers
                 return NotFound(new { message = "Hoá đơn không tìm thấy" });
             }
 
-            if (existingHoadon.Idgg != null && trangthai == 4)
+            if (existingHoadon.Idgg != null && (trangthai == 4 || trangthai == 6))
             {
                 var voucher = await _context.giamgias.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idgg);
                 if (voucher == null)
@@ -348,7 +345,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (trangthai == 4)
+            if (trangthai == 4 || trangthai == 6)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -425,7 +422,7 @@ namespace AppAPI.Controllers
                 return NotFound(new { message = "Nhân viên không tìm thấy" });
             }
 
-            if (existingHoadon.Idgg != null && trangthai == 4)
+            if (existingHoadon.Idgg != null && (trangthai == 4 || trangthai == 6))
             {
                 var voucher = await _context.giamgias.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idgg);
                 if (voucher == null)
@@ -438,7 +435,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (trangthai == 4)
+            if (trangthai == 4 || trangthai == 6)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -523,7 +520,7 @@ namespace AppAPI.Controllers
                 return NotFound(new { message = "Nhân viên không tìm thấy" });
             }
 
-            if (existingHoadon.Idgg != null && trangthai == 4)
+            if (existingHoadon.Idgg != null && (trangthai == 4 || trangthai == 6))
             {
                 var voucher = await _context.giamgias.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idgg);
                 if (voucher == null)
@@ -536,7 +533,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (trangthai == 4)
+            if (trangthai == 4 || trangthai == 6)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
@@ -583,7 +580,7 @@ namespace AppAPI.Controllers
                 return NotFound(new { message = "Nhân viên không tìm thấy" });
             }
 
-            if (existingHoadon.Idgg != null && trangthai == 4)
+            if (existingHoadon.Idgg != null && (trangthai == 4 || trangthai == 6))
             {
                 var voucher = await _context.giamgias.FirstOrDefaultAsync(kh => kh.Id == existingHoadon.Idgg);
                 if (voucher == null)
@@ -596,7 +593,7 @@ namespace AppAPI.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            if (trangthai == 4)
+            if (trangthai == 4 || trangthai == 6)
             {
                 await _HDCTservice.ReturnProductAsync(id);
             }
