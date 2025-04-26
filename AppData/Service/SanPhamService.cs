@@ -493,7 +493,7 @@ namespace AppData.Service
 
             return hoaDonChiTiets
             .Where(hdct => hdct.Idspct == idSanphamChitiet &&
-                     hdct.Hoadon.Trangthai == 3)
+                     hdct.Hoadon.Trangthai == 0 && hdct.Hoadon.Trangthaidonhang == 3)
             .Select(hdct => hdct.Soluong)
             .DefaultIfEmpty(0) 
             .Sum();
