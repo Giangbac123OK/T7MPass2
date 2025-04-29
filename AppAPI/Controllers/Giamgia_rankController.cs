@@ -65,5 +65,19 @@ namespace AppAPI.Controllers
                 return StatusCode(500, new { message = "Lỗi khi thêm hoá đơn", error = ex.Message });
             }
         }
+
+        [HttpDelete("idgiamgia/{idgiamgia}/idrank/{idrank}")]
+        public async Task<IActionResult> Delete(int idgiamgia, int idrank)
+        {
+            await _Service.DeleteAsync(idgiamgia, idrank);
+            return NoContent();
+        }
+
+        [HttpDelete("idgg/{idgg}")]
+        public async Task<IActionResult> Deletegiamgia(int idgg)
+        {
+            await _Service.DeletegiamgiaAsync(idgg);
+            return NoContent();
+        }
     }
 }

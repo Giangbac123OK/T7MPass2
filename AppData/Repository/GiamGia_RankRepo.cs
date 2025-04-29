@@ -65,5 +65,36 @@ namespace AppData.Repository
                 throw new Exception("Lỗi khi thêm giảm giá - rank: " + ex.InnerException?.Message ?? ex.Message);
             }
         }
+
+        public async Task DeleteAsync(int idgiamgia, int idrank)
+        {
+            var giamgia = _context.giamgia_Ranks.FirstOrDefault(x => x.IDgiamgia == idgiamgia && x.Idrank == idrank);
+            if (giamgia != null)
+            {
+                _context.giamgia_Ranks.Remove(giamgia);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException("Không tìm thấy mã giảm giá rank");
+            }
+        }
+
+        public async Task DeletegiamgiaAsync(int idgiamgia)
+        {
+            var giamgiaList = _context.giamgia_Ranks
+                .Where(x => x.IDgiamgia == idgiamgia)
+                .ToList();
+
+            if (giamgiaList.Any())
+            {
+                _context.giamgia_Ranks.RemoveRange(giamgiaList);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException("Không tìm thấy mã giảm giá rank");
+            }
+        }
     }
 }

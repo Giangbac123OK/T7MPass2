@@ -13,5 +13,7 @@ namespace AppData.IRepository
         Task<List<giamgia_rank>> GetByIdRankSPCTAsync(int idspct);
         Task<giamgia_rank> GetByIdAsync(int id);
         Task AddAsync(giamgia_rank giamgiarank);
+        Task DeleteAsync(int idgiamgia, int idrank);
+        Task DeletegiamgiaAsync(int idgiamgia);
     }
 }
