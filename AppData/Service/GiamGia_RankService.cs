@@ -92,5 +92,14 @@ namespace AppData.Service
             // Thêm hóa đơn vào cơ sở dữ liệu
             await _repository.AddAsync(hoaDon);
         }
+
+        public async Task DeleteAsync(int idgiamgia, int idrank)
+        {
+            await _repository.DeleteAsync(idgiamgia, idrank);
+        }
+        public async Task DeletegiamgiaAsync(int idgiamgia)
+        {
+            await _repository.DeletegiamgiaAsync(idgiamgia);
+        }
     }
 }

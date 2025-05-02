@@ -44,11 +44,18 @@ namespace AppData.Service
 
         }
 
-        public async Task UpdateAsync(int id, GiamgiaDTO dto)
+        public async Task UpdateAsync(int id, GiamgiaDTOupdate dto)
         {
             var existingGiamgia = await _repository.GetByIdAsync(id);
             if (existingGiamgia == null) throw new KeyNotFoundException("Không tìm thấy mã giảm giá.");
-            _mapper.Map(dto, existingGiamgia);
+
+            existingGiamgia.Mota = dto.Mota;
+            existingGiamgia.Donvi = dto.Donvi;
+            existingGiamgia.Giatri = dto.Giatri;
+            existingGiamgia.Ngaybatdau = dto.Ngaybatdau;
+            existingGiamgia.Soluong = dto.Soluong;
+            existingGiamgia.Ngayketthuc = dto.Ngayketthuc;
+            existingGiamgia.Trangthai = dto.Trangthai;
             await _repository.UpdateAsync(existingGiamgia);
 
         }
@@ -66,6 +73,7 @@ namespace AppData.Service
                 Donvi = dto.Donvi,
                 Giatri = dto.Giatri,
                 Ngaybatdau = dto.Ngaybatdau,
+                Soluong = dto.Soluong,
                 Ngayketthuc = dto.Ngayketthuc,
                 Trangthai = dto.Trangthai
             };
