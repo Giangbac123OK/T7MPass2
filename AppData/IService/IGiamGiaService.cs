@@ -13,7 +13,7 @@ namespace AppData.IService
         Task<IEnumerable<GiamgiaDTO>> GetAllAsync();
         Task<GiamgiaDTO> GetByIdAsync(int id);
         Task AddAsync(GiamgiaDTO dto);
-        Task UpdateAsync(int id, GiamgiaDTO dto);
+        Task UpdateAsync(int id, GiamgiaDTOupdate dto);
         Task AddRankToGiamgia(GiamgiaDTO dto);
         Task DeleteAsync(int id);
     }

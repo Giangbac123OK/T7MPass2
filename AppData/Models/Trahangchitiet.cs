@@ -22,8 +22,6 @@ namespace AppData.Models
 		public int Soluong {  get; set; }
 
 		public int Tinhtrang {  get; set; }
-
-		public string? Ghichu {  get; set; }
 		public int Idhdct { get; set; }
 		public  Hoadonchitiet Hoadonchitiet { get; set; }
 	}

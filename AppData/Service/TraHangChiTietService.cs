@@ -43,7 +43,6 @@ namespace AppData.Service
                 Idth = ct.Idth,
                 Soluong = ct.Soluong,
                 Tinhtrang = ct.Tinhtrang,
-                Ghichu = ct.Ghichu,
                 Idhdct = ct.Idhdct
             };
             await _repos.Add(a);
@@ -65,7 +64,6 @@ namespace AppData.Service
                 Idth = x.Idth,
                 Soluong = x.Soluong,
                 Tinhtrang = x.Tinhtrang,
-                Ghichu = x.Ghichu,
                 Idhdct = x.Idhdct
             }).ToList();
         }
@@ -79,7 +77,6 @@ namespace AppData.Service
                 Idth = x.Idth,
                 Soluong = x.Soluong,
                 Tinhtrang = x.Tinhtrang,
-                Ghichu = x.Ghichu,
                 Idhdct = x.Idhdct
             };
         }
@@ -87,6 +84,20 @@ namespace AppData.Service
         public async Task<List<HoadonchitietViewModel>> ListSanPhamByIdhd(int id)
         {
             return await _repos.ListSanPhamByIdhd(id);
+        }
+
+        public async Task<List<TraHangchitietViewModel>> ListSanPhamByIdth(int id)
+        {
+
+            try
+            {
+                var a = await _repos.ListSanPhamByIdth(id);
+                return a;
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
         }
 
         public async Task<List<SanPhamTraHang>> SanphamByThct()
@@ -101,7 +112,6 @@ namespace AppData.Service
                 throw new KeyNotFoundException(ex.Message);
             }
         }
-
         public async Task Update(int id, TrahangchitietDTO ct)
         {
 
@@ -124,7 +134,6 @@ namespace AppData.Service
                 a.Idth = ct.Idth;
                 a.Soluong = ct.Soluong;
                 a.Tinhtrang = ct.Tinhtrang;
-                a.Ghichu = ct.Ghichu;
                 a.Idhdct = ct.Idhdct;
                 await _repos.Update(a);
             }

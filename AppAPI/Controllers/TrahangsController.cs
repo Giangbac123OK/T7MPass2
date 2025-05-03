@@ -9,6 +9,8 @@ using AppData;
 using AppData.Models;
 using AppData.DTO;
 using AppData.IService;
+using AppData.IRepository;
+using AppData.ViewModel;
 
 namespace AppAPI.Controllers
 {
@@ -17,9 +19,19 @@ namespace AppAPI.Controllers
     public class TrahangsController : ControllerBase
     {
         private readonly ITraHangService _ser;
-        public TrahangsController(ITraHangService ser)
+        private readonly ITraHangChiTietService _chiTietService;
+        private readonly IHoaDonChiTietService _hdctSer;
+        private readonly ISanPhamChiTietService _spctSer;
+        private readonly ISanPhamService _spSer;
+        private readonly IKhachHangService _khSer;
+        public TrahangsController(ITraHangService ser, ITraHangChiTietService chiTietService, IHoaDonChiTietService hdctSer, ISanPhamChiTietService spctSer, ISanPhamService spSer, IKhachHangService khSer)
         {
             _ser = ser;
+            _chiTietService = chiTietService;
+            _hdctSer = hdctSer;
+            _spctSer = spctSer;
+            _spSer = spSer;
+            _khSer = khSer;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -87,6 +99,49 @@ namespace AppAPI.Controllers
             {
                 await _ser.DeleteById(id);
                 return Ok("Xóa thành công!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut("HuyDon")]
+        public async Task<IActionResult> Huydon(int id, int idnv, string? chuthich)
+        {
+            try
+            {
+                await _ser.Huydon(id,idnv,chuthich);
+                return Ok("Sửa thành công!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut("Doidiem")]
+        public async Task<IActionResult> DoiDiem(int id, int idnv, string? chuthich)
+        {
+            try
+            {
+                var th = await _ser.GetById(id);
+                if(th == null)
+                {
+                    return BadRequest("Không tồn tại đơn hàng");
+                }
+                if (th.Trangthai != 0)
+                {
+                    return BadRequest("Đơn hàng hàng đã bị hủy hoặc đã xác nhận thành công!");
+                }
+                var kh = await _khSer.GetKhachhangByIdAsync(th.Idkh);
+                if(kh == null)
+                {
+                    return BadRequest("Không tồn tại khách hàng");
+                }
+                kh.Diemsudung += Convert.ToInt32(Math.Round(th.Sotienhoan));
+                await _khSer.UpdateKhachhangAsync(th.Idkh, kh);
+                th.Idnv = idnv;
+                await _ser.Update(id, th);
+                return Ok("Đổi điểm thành công!");
             }
             catch (Exception ex)
             {

@@ -48,7 +48,19 @@ namespace AppData.Service
             await _repository.UpdateAsync(entity);
         }
 
+        public async Task UpdateTrangThaiChechOutAsync(int orderCode, int status, int trangthaiTT)
+        {
+            var entity = await _repository.GetByIdAsync(orderCode);
+            if (entity == null) throw new KeyNotFoundException("Hoá đơn không tồn tại");
 
+            entity.Trangthai = status;
+            if (status == 4)
+            {
+                entity.Ghichu = "Khách hàng huỷ hoá đơn chuyển khoản";
+            }
+            entity.Trangthaithanhtoan = trangthaiTT;
+            await _repository.UpdateAsync(entity);
+        }
         public async Task<IEnumerable<Hoadon>> GetAllAsync()
         {
 
@@ -72,7 +84,7 @@ namespace AppData.Service
                 Tonggiamgia = hoaDon.Tonggiamgia,
                 Ghichu = hoaDon.Ghichu,
                 Idgg = hoaDon.Idgg,
-                Trangthai = hoaDon.Trangthaidonhang,
+                Trangthai = hoaDon.Trangthai
             });
         }
 
@@ -133,7 +145,7 @@ namespace AppData.Service
                 Tonggiamgia = entity.Tonggiamgia,
                 Ghichu = entity.Ghichu,
                 Idgg = entity.Idgg,
-                Trangthai = entity.Trangthaidonhang,
+                Trangthai = entity.Trangthai,
             };
         }
 
@@ -165,7 +177,7 @@ namespace AppData.Service
                 Idpttt = HoadonDTO.Idpttt,
                 Tonggiamgia = HoadonDTO.Tonggiamgia,
                 Idgg = HoadonDTO.Idgg == 0 ? (int?)null : HoadonDTO.Idgg,  // Nếu Idgg = 0, gán null
-                Trangthai = HoadonDTO.Trangthaidonhang,
+                Trangthai = HoadonDTO.Trangthai,
             };
 
             // Thêm hóa đơn vào cơ sở dữ liệu
@@ -236,7 +248,7 @@ namespace AppData.Service
                 Tongtiensanpham = hd.Tongtiensanpham,
                 Sdt = hd.Sdt,
                 Idgg = hd.Idgg,
-                Trangthai = hd.Trangthaidonhang,
+                Trangthai = hd.Trangthai,
                 Phivanchuyen = hd.Phivanchuyen,
                 Idpttt = hd.Idpttt,
                 Ghichu = hd.Ghichu,

@@ -14,5 +14,7 @@ namespace AppData.IService
         Task<giamgia_rank> GetByIdAsync(int id);
         Task<List<giamgia_rankDTO>> GetByIdRankSPCTAsync(int idspct);
         Task AddAsync(giamgia_rankDTO dto);
+        Task DeleteAsync(int idgiamgia, int idrank);
+        Task DeletegiamgiaAsync(int idgiamgia);
     }
 }

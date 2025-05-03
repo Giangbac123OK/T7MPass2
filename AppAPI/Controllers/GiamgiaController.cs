@@ -84,7 +84,7 @@ namespace AppAPI.Controllers
         public async Task<IActionResult> Create(AppData.DTO.GiamgiaDTO dto)
         {
             await _Service.AddAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = dto.Mota }, dto);
+            return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
         }
         [HttpPost("AddRankToGiamgia")]
         public async Task<IActionResult> AddRankToGiamgia([FromBody] AppData.DTO.GiamgiaDTO dto)
@@ -101,10 +101,10 @@ namespace AppAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] AppData.DTO.GiamgiaDTO dto)
+        public async Task<IActionResult> Update(int id, [FromBody] AppData.DTO.GiamgiaDTOupdate dto)
         {
             await _Service.UpdateAsync(id, dto);
-            return NoContent();
+            return Ok(new { Message = "Cập nhật thành công" }); // Trả về 200 và message rõ ràng
         }
 
         [HttpDelete("{id}")]
