@@ -156,35 +156,26 @@ namespace AppAPI.Controllers
 			return NoContent();
 		}
 		[HttpPut("{id}/Admin")]
-		public async Task<IActionResult> UpdateGiamgiaRank(int id, [FromBody] AppData.Dto_Admin.Giamgia_RankDTO dto)
+		public async Task UpdateGiamgiaRankAsync(int id, Giamgia_RankDTO dto)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+			var entity = await _context.giamgias.FindAsync(id);
+			if (entity == null)
+				throw new KeyNotFoundException("Không tìm thấy mã giảm giá.");
 
-			try
-			{
-				await _service.UpdateGiamgiaRankAsync(id, dto);
-				return NoContent();
-			}
-			catch (KeyNotFoundException ex)
-			{
-				return NotFound(new { message = ex.Message });
-			}
-			catch (Exception ex)
-			{
-				// Log hoặc ghi lại lỗi chi tiết để kiểm tra
-				_logger.LogError(ex, "Lỗi xảy ra khi cập nhật giảm giá với ID: {id}", id);
+			// Cập nhật các trường
+			entity.Mota = dto.Mota;
+			entity.Donvi = dto.Donvi;
+			entity.Soluong = dto.Soluong;
+			entity.Giatri = dto.Giatri;
+			entity.Ngaybatdau = dto.Ngaybatdau;
+			entity.Ngayketthuc = dto.Ngayketthuc;
+			entity.Trangthai = dto.Trangthai;
 
-				return StatusCode(500, new
-				{
-					message = "Đã xảy ra lỗi khi cập nhật giảm giá.",
-					detail = ex.InnerException?.Message ?? ex.Message // Hiển thị lỗi chi tiết hơn
-				});
-			}
+			// Có thể xử lý cập nhật rank riêng hoặc ở đây nếu cần
 
+			await _context.SaveChangesAsync();
 		}
+
 		[HttpPost("AddRankToGiamgia/Admin")]
 		public async Task<IActionResult> AddRankToGiamgia([FromBody] AppData.Dto_Admin.Giamgia_RankDTO dto)
 		{
