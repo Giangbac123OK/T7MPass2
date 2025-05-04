@@ -4,6 +4,8 @@ using AppData.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -72,5 +74,39 @@ namespace AppData.Repository
             _context.trahangs.Update(trhang);
             await _context.SaveChangesAsync();
         }
+        private List<ViewTrahangchitiet> ViewTrahangchitiet(int id)
+        {
+            return (from trahangct in _context.trahangchitiets.Where(x=>x.Idth==id)
+                    join hdct in _context.hoadonchitiets on trahangct.Idhdct equals hdct.Id
+                    join spct in _context.Sanphamchitiets on hdct.Idspct equals spct.Id
+                    join sp in _context.sanphams on spct.Idsp equals sp.Id
+                    select new ViewTrahangchitiet
+                    {
+                        Id = trahangct.Id,
+                        Idth = trahangct.Id,
+                        Soluong = trahangct.Soluong,
+                        Idspct = spct.Id,
+                        Idsp = sp.Id
+                    }).ToList();
+        }
+        public async Task XacNhan(int id, string hinhthucxuly, int idnv)
+        {
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
+        }
+    }
+    internal class ViewTrahangchitiet
+    {
+        public int Id { get; set; }
+        public int Idth { get; set; }
+        public int Soluong { get; set; }
+        public int Idspct { get; set; }
+        public int Idsp {  get; set; }
     }
 }
