@@ -102,38 +102,12 @@ namespace AppData.Repository
 
                 var kh = await _context.khachhangs.FirstOrDefaultAsync(x => x.Id == datath.Idkh)
                     ?? throw new KeyNotFoundException("Không tồn tại khách hàng");
+
                 if (datath.Trangthaihoantien == 0)
                 {
                     if (hinhthucxuly == "Trả hàng không hoàn tiền" || hinhthucxuly == "Trả hàng và hoàn tiền")
                     {
-                        bool updateInventory = hinhthucxuly == "Trả hàng không hoàn tiền" || hinhthucxuly == "Trả hàng và hoàn tiền";
                         bool updatePoint = hinhthucxuly == "Trả hàng và hoàn tiền" && datath.Phuongthuchoantien == "Đổi điểm";
-
-                        if (updateInventory)
-                        {
-                            var idspcts = datathct.Select(x => x.Idspct).ToList();
-                            var idsps = datathct.Select(x => x.Idsp).ToList();
-
-                            var spcts = await _context.Sanphamchitiets
-                                .Where(p => idspcts.Contains(p.Id))
-                                .ToDictionaryAsync(p => p.Id);
-
-                            var sps = await _context.sanphams
-                                .Where(p => idsps.Contains(p.Id))
-                                .ToDictionaryAsync(p => p.Id);
-
-                            foreach (var ct in datathct)
-                            {
-                                if (!spcts.ContainsKey(ct.Idspct) || !sps.ContainsKey(ct.Idsp))
-                                    throw new KeyNotFoundException("Sản phẩm không tồn tại hoặc không khớp");
-
-                                spcts[ct.Idspct].Soluong += ct.Soluong;
-                                sps[ct.Idsp].Soluong += ct.Soluong;
-                            }
-
-                            _context.Sanphamchitiets.UpdateRange(spcts.Values);
-                            _context.sanphams.UpdateRange(sps.Values);
-                        }
 
                         if (updatePoint)
                         {
@@ -141,6 +115,7 @@ namespace AppData.Repository
                             _context.khachhangs.Update(kh);
                         }
                     }
+
                     datath.Trangthaihoantien = 1;
                     datath.Hinhthucxuly = hinhthucxuly;
                     datath.Idnv = idnv;
@@ -160,6 +135,7 @@ namespace AppData.Repository
                 throw new KeyNotFoundException(ex.Message);
             }
         }
+
     }
     internal class ViewTrahangchitiet
     {
