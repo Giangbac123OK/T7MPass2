@@ -195,5 +195,17 @@ namespace AppData.Service
                 throw new KeyNotFoundException(ex.Message);
             }
         }
+
+        public async Task XacNhan(int id, string hinhthucxuly, int idnv, string? chuthich)
+        {
+            try
+            {
+                await _repos.XacNhan(id, hinhthucxuly, idnv, chuthich);
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException(ex.Message);
+            }
+        }
     }
 }
