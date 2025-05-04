@@ -17,9 +17,11 @@ namespace AppData.Service
     {
         private readonly ITraHangRepo _repos;
         private readonly IHoaDonRepo _HDrepos;
-        public TraHangService(ITraHangRepo repos, IHoaDonRepo hDrepos)
+        private readonly ITraHangChiTietRepo _ThChiTietRepo;
+        public TraHangService(ITraHangRepo repos, IHoaDonRepo hDrepos, ITraHangChiTietRepo traHangChiTietRepo)
         {
             _repos = repos;
+            _ThChiTietRepo = traHangChiTietRepo;
             _HDrepos = hDrepos;
         }
         public async Task Add(TrahangDTO trahang)
