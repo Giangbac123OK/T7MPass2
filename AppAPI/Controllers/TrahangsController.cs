@@ -118,30 +118,13 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("Doidiem")]
-        public async Task<IActionResult> DoiDiem(int id, int idnv, string? chuthich)
+        [HttpPut("Xacnhan")]
+        public async Task<IActionResult> XacNhan(int id, string hinhthucxuly, int idnv, string? chuthich)
         {
             try
             {
-                var th = await _ser.GetById(id);
-                if(th == null)
-                {
-                    return BadRequest("Không tồn tại đơn hàng");
-                }
-                if (th.Trangthai != 0)
-                {
-                    return BadRequest("Đơn hàng hàng đã bị hủy hoặc đã xác nhận thành công!");
-                }
-                var kh = await _khSer.GetKhachhangByIdAsync(th.Idkh);
-                if(kh == null)
-                {
-                    return BadRequest("Không tồn tại khách hàng");
-                }
-                kh.Diemsudung += Convert.ToInt32(Math.Round(th.Sotienhoan));
-                await _khSer.UpdateKhachhangAsync(th.Idkh, kh);
-                th.Idnv = idnv;
-                await _ser.Update(id, th);
-                return Ok("Đổi điểm thành công!");
+                await _ser.XacNhan(id, hinhthucxuly, idnv, chuthich);
+                return Ok("Sửa thành công!");
             }
             catch (Exception ex)
             {

@@ -17,6 +17,7 @@ namespace AppData.IService
         Task Update(int id, TrahangDTO trahang);
         Task DeleteById(int id);
         Task Huydon(int id, int idnv, string? chuthich);
-        Task UpdateTrangThaiHd(int id);
+        Task UpdateTrangThaiHd(int id);  
+        Task XacNhan(int id, string hinhthucxuly, int idnv, string? chuthich);
     }
 }
