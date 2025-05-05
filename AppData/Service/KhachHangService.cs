@@ -176,6 +176,7 @@ namespace AppData.Service
             a.Email = dto.Email ?? a.Email;
             a.Avatar = dto.Avatar;
             a.Gioitinh = dto.Gioitinh;
+            a.Trangthai = dto.Trangthai;
 
             await _repos.UpdateAsync(a);
         }
