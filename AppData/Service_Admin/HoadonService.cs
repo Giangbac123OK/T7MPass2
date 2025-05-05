@@ -83,9 +83,9 @@ namespace AppData.Service_Admin
 			var hoadon = new Hoadon
 			{
 				Idnv = dto.Idnv,
+				Idpttt = dto.Idpttt,
 				Idkh = null,
 				Idgg = null,
-
 				Diachiship = "",
 				Ngaygiaothucte = null,
 				Sdt = "",
@@ -96,7 +96,8 @@ namespace AppData.Service_Admin
 				Tonggiamgia = 0,
 				Trangthaidonhang = 3,
 				Trangthaithanhtoan = 0,
-				Trangthai = 1
+				Trangthai = 1,
+				Phivanchuyen = 0,
 			};
 
 			var hoadonChiTiets = new List<Hoadonchitiet>();
@@ -104,6 +105,7 @@ namespace AppData.Service_Admin
 			{
 				var hoadonChiTiet = new Hoadonchitiet
 				{
+					Idhd = hoadon.Id,
 					Idspct = sp.Idspct,
 					Soluong = sp.Soluong,
 					Giasp = sp.Giasp,
@@ -144,9 +146,11 @@ namespace AppData.Service_Admin
 			// Tạo mới hóa đơn
 			var hoadon = new Hoadon
 			{
-				Idnv = dto.Idnv,
-				Idkh = dto.Idkh,
-				Idgg = dto.Idgg,
+				Idnv = dto.Idnv ?? null,
+				Idkh = dto.Idkh?? null,
+				Idgg = dto.Idgg?? null,
+				Idpttt = dto.Idpttt,
+
 				Diachiship = "",
 				Ngaygiaothucte = null,
 				Sdt = dto.Sdt,
@@ -297,9 +301,11 @@ namespace AppData.Service_Admin
 				Trangthai = hoadon.Trangthai
 			};
 		}
-	
+		public Task<int> GetSoDonAsync() => _hoadonRepository.CountDonHangAsync();
+		public Task<decimal> GetDoanhThuThanhCongAsync() => _hoadonRepository.SumDoanhThuThanhCongAsync();
 
-		
-		
+		public Task<List<LatestInvoiceDto>> Get10LatestInvoicesAsync()
+		 => _hoadonRepository.Get10LatestInvoicesAsync();
+
 	}
 }

@@ -72,5 +72,12 @@ namespace AppData.Repository
                 return await _context.nhanviens.Where(x => (x.Hovaten.StartsWith(search) || x.Sdt.StartsWith(search) || x.Diachi.StartsWith(search))&&(x.Trangthai==1||x.Trangthai==0)).ToListAsync();
             }
         }
-    }
+		public async Task<int> CountNhanVienTrangThai0Async()
+		{
+			// Truy vấn trực tiếp bảng Nhanviens và đếm
+			return await _context.nhanviens
+								 .AsNoTracking()
+								 .CountAsync(nv => nv.Trangthai == 0 && nv.Role == 1);
+		}
+	}
 }

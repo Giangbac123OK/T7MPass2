@@ -260,6 +260,15 @@ namespace AppAPI.Controllers
 
 			return Ok("Đang cập nhật trạng thái...");
 		}
+		[HttpGet("vouchers-by-customer/{customerId}/admin")]     // route gọn hơn
+		public async Task<ActionResult<IEnumerable<AppData.DTO.GiamgiaDTO>>>
+		GetVouchersByCustomerId_Admin(int customerId)     // tên khác
+		{
+			var vouchers = await _service.GetVouchersByCustomerIdAsync(customerId);
+			return vouchers.Any() ? Ok(vouchers)
+								  : NotFound("Không tìm thấy voucher phù hợp.");
+		}
+
 
 	}
 }

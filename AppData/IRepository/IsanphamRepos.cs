@@ -21,5 +21,6 @@ namespace AppData.IRepository
 		Task DeleteAsync(int id);
 		Task<IEnumerable<Sanpham>> SearchByNameAsync(string name);
 		Task<IEnumerable<Sanpham>> SearchByNameHdAsync(string name);
+		Task<int> CountTrangThai0or1Async();
 	}
 }

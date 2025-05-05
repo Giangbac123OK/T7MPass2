@@ -15,7 +15,7 @@ namespace AppData.Dto_Admin
 		public int? Idnv { get; set; }
 
 		public decimal Tongtiencantra { get; set; }
-
+		public int Idpttt { get; set; }
 		public decimal Tongtiensanpham { get; set; }
 
 		

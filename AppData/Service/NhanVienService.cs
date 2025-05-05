@@ -172,7 +172,9 @@ namespace AppData.Service
             a.Trangthai = 2;
             await _repository.UpdateAsync(a);
         }
-        public async Task<IEnumerable<NhanvienDTO>> TimKiemNhanvienAsync(string search)
+		public Task<int> GetTongNhanVienTrangThai0Async()
+	=> _repository.CountNhanVienTrangThai0Async();
+		public async Task<IEnumerable<NhanvienDTO>> TimKiemNhanvienAsync(string search)
         {
             var nhanviens = await _repository.TimKiemNhanvienAsync(search);
             return nhanviens.Select(n => new NhanvienDTO

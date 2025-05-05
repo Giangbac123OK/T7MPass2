@@ -173,5 +173,8 @@ namespace AppData.Service_Admin
 				NgayThemMoi = sanpham.NgayThemMoi
 			};
 		}
+		public Task<int> GetTongTrangThai0or1Async()
+			=> _repository.CountTrangThai0or1Async();
+
 	}
 }
