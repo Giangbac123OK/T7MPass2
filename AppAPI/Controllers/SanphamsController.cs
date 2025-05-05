@@ -167,10 +167,10 @@ namespace AppAPI.Controllers
         public async Task<IActionResult> SearchSanphams(
             
             [FromQuery] decimal? giaMin = null,
-             [FromQuery] decimal? giaMax = null,
-           [FromQuery] List<int> idThuongHieu = null,
-    [FromQuery] List<int> idSize = null,
-           [FromQuery] bool? coSale = null)
+            [FromQuery] decimal? giaMax = null,
+            [FromQuery] List<int> idThuongHieu = null,
+            [FromQuery] List<int> idSize = null,
+            [FromQuery] bool? coSale = null)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace AppAPI.Controllers
                 var sanphams = await _service.GetSanphamByThuocTinh(giaMin, giaMax, idThuongHieu, idSize, coSale);
                 if (sanphams == null || !sanphams.Any())
                 {
-                    return NotFound(new { message = "Không tìm thấy sản phẩm nào thỏa mãn tiêu chí. thanh" });
+                    return NotFound(new { message = "Không tìm thấy sản phẩm nào thỏa mãn tiêu chí." });
                 }
 
                 return Ok(sanphams);
