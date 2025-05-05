@@ -14,8 +14,8 @@ namespace AppData.IService
         Task<List<TrahangDTO>> GetAll();
         Task<TrahangDTO> GetById(int id);
         Task<TrahangDTO> GetById1(int id);
-        Task Add(TrahangDTO trahang);
-        Task Update(int id, TrahangDTO trahang);
+        Task Add(TrahangtaoDTO trahang);
+        Task Update(int id, TrahangtaoDTO trahang);
         Task DeleteById(int id);
         Task Huydon(int id, int idnv, string? chuthich);
         Task UpdateTrangThaiHd(int id);  

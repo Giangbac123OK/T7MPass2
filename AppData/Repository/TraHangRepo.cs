@@ -58,32 +58,34 @@ namespace AppData.Repository
             var trahangchitiets = await _context.trahangchitiets.ToListAsync();
             var hoadonchitiets = await _context.hoadonchitiets.ToListAsync();
 
-            // Join và lấy Idhd từ hoadonchitiets
             var result = (from trahang in trahangs
                           join chitiet in trahangchitiets on trahang.Id equals chitiet.Idth
                           join hdct in hoadonchitiets on chitiet.Idhdct equals hdct.Id
-                          group new { trahang, hdct.Idhd } by hdct.Idhd into g
+                          group new { trahang, hdct } by trahang.Id into g
+                          let first = g.First().trahang
                           select new TrahangDTO
                           {
-                              Idhd = g.Key,
-                              // Dưới đây là cách chọn dữ liệu từ trahang đầu tiên trong nhóm
-                              Id = g.First().trahang.Id,
-                              Tenkhachhang = g.First().trahang.Tenkhachhang,
-                              Idkh = g.First().trahang.Idkh,
-                              Idnv = g.First().trahang.Idnv,
-                              Sotienhoan = g.Sum(x => x.trahang.Sotienhoan),
-                              Lydotrahang = g.First().trahang.Lydotrahang,
-                              Trangthai = g.First().trahang.Trangthai,
-                              Phuongthuchoantien = g.First().trahang.Phuongthuchoantien,
-                              Chuthich = g.First().trahang.Chuthich,
-                              Tennganhang = g.First().trahang.Tennganhang,
-                              Sotaikhoan = g.First().trahang.Sotaikhoan,
-                              Tentaikhoan = g.First().trahang.Tentaikhoan,
-                              Hinhthucxuly = g.First().trahang.Hinhthucxuly,
-                              Diachiship = g.First().trahang.Diachiship,
-                              Ngaytrahangthucte = g.First().trahang.Ngaytrahangthucte,
-                              Trangthaihoantien = g.First().trahang.Trangthaihoantien,
-                              Ngaytaodon = g.First().trahang.Ngaytaodon
+                              Id = first.Id,
+                              // Gom danh sách các Idhd duy nhất (nếu cần hiển thị nhiều)
+                              // Nếu chỉ cần 1 mã hóa đơn, có thể dùng: g.Select(x => x.hdct.Idhd).Distinct().First()
+                              Idhd = g.Select(x => x.hdct.Idhd).Distinct().FirstOrDefault(),
+
+                              Tenkhachhang = first.Tenkhachhang,
+                              Idkh = first.Idkh,
+                              Idnv = first.Idnv,
+                              Sotienhoan = first.Sotienhoan, // Nếu mỗi trả hàng có sẵn tổng, không cần Sum()
+                              Lydotrahang = first.Lydotrahang,
+                              Trangthai = first.Trangthai,
+                              Phuongthuchoantien = first.Phuongthuchoantien,
+                              Chuthich = first.Chuthich,
+                              Tennganhang = first.Tennganhang,
+                              Sotaikhoan = first.Sotaikhoan,
+                              Tentaikhoan = first.Tentaikhoan,
+                              Hinhthucxuly = first.Hinhthucxuly,
+                              Diachiship = first.Diachiship,
+                              Ngaytrahangthucte = first.Ngaytrahangthucte,
+                              Trangthaihoantien = first.Trangthaihoantien,
+                              Ngaytaodon = first.Ngaytaodon
                           }).ToList();
 
             return result;
