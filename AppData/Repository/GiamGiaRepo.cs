@@ -17,21 +17,55 @@ namespace AppData.Repository
         {
             _context = context;
         }
-        public async Task<IEnumerable<Giamgia>> GetAllAsync()
-        {
-            return await _context.giamgias
-                .OrderBy(g => g.Donvi != 1) // Sắp xếp các bản ghi có Donvi == 1 lên đầu (Donvi != 1 sẽ được sắp xếp sau)
-                .ThenBy(g => g.Giatri) // Sắp xếp theo Giatri theo thứ tự tăng dần
-                .ToListAsync();
-        }
-
         public async Task<Giamgia> GetByIdAsync(int id)
         {
-            return await _context.giamgias
-                .OrderBy(g => g.Donvi != 1) // Sắp xếp các bản ghi có Donvi == 1 lên đầu (Donvi != 1 sẽ được sắp xếp sau)
-                .ThenBy(g => g.Giatri) // Sắp xếp theo Giatri theo thứ tự tăng dần
-                .FirstOrDefaultAsync(g => g.Id == id); // Lọc bản ghi có Id trùng với id truyền vào
+            var giamgia = await _context.giamgias
+                .OrderBy(g => g.Donvi != 1)
+                .ThenBy(g => g.Giatri)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (giamgia != null)
+            {
+                giamgia.Trangthai = GetTrangThai(giamgia);
+                await _context.SaveChangesAsync();
+            }
+
+            return giamgia;
         }
+
+        private int GetTrangThai(Giamgia g)
+        {
+            var now = DateTime.Now;
+
+            if (g.Soluong == 0)
+                return 2;
+            else if (g.Ngaybatdau > now)
+                return 1;
+            else if (g.Ngayketthuc < now)
+                return 2;
+
+            return g.Trangthai; // giữ nguyên nếu không rơi vào các điều kiện trên
+        }
+
+
+        public async Task<IEnumerable<Giamgia>> GetAllAsync()
+        {
+            var giamgias = await _context.giamgias
+                .OrderBy(g => g.Donvi != 1)
+                .ThenBy(g => g.Giatri)
+                .ToListAsync();
+
+            foreach (var g in giamgias)
+            {
+                g.Trangthai = GetTrangThai(g);
+            }
+
+            // Nếu muốn cập nhật trực tiếp vào DB (nếu có thay đổi):
+            await _context.SaveChangesAsync();
+
+            return giamgias;
+        }
+
 
         public async Task<Giamgia> AddAsync(Giamgia giamgia)
         {

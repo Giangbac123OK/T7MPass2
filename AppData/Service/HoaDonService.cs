@@ -53,7 +53,7 @@ namespace AppData.Service
             var entity = await _repository.GetByIdAsync(orderCode);
             if (entity == null) throw new KeyNotFoundException("Hoá đơn không tồn tại");
 
-            entity.Trangthai = status;
+            entity.Trangthaidonhang = status;
             if (status == 4)
             {
                 entity.Ghichu = "Khách hàng huỷ hoá đơn chuyển khoản";

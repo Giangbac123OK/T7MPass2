@@ -35,7 +35,7 @@ namespace AppAPI.Controllers
             {
                 gg.Id,
                 gg.Mota,
-                Donvi = gg.Donvi == 0 ? "VND" : "%",
+                Donvi = gg.Donvi == 0 ? "VNĐ" : "%",
                 gg.Giatri,
                 gg.Ngaybatdau,
                 gg.Ngayketthuc,
@@ -60,7 +60,7 @@ namespace AppAPI.Controllers
                 {
                     giamgia.Id,
                     giamgia.Mota,
-                    Donvi = giamgia.Donvi == 0 ? "VND" : "%",
+                    Donvi = giamgia.Donvi == 0 ? "VNĐ" : "%",
                     giamgia.Giatri,
                     giamgia.Ngaybatdau,
                     giamgia.Ngayketthuc,
