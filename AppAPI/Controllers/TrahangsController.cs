@@ -76,7 +76,7 @@ namespace AppAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(TrahangDTO dto)
+        public async Task<IActionResult> Post(TrahangtaoDTO dto)
         {
             try
             {
@@ -87,7 +87,8 @@ namespace AppAPI.Controllers
                 else
                 {
                     await _ser.Add(dto);
-                    return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
+                    // Chỉ trả về Id sau khi tạo thành công
+                    return Ok(new { id = dto.Id });
                 }
             }
             catch (Exception ex)
@@ -96,7 +97,7 @@ namespace AppAPI.Controllers
             }
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, TrahangDTO dto)
+        public async Task<IActionResult> Put(int id, TrahangtaoDTO dto)
         {
             try
             {

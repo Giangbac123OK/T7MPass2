@@ -24,7 +24,7 @@ namespace AppData.Service
             _ThChiTietRepo = traHangChiTietRepo;
             _HDrepos = hDrepos;
         }
-        public async Task Add(TrahangDTO trahang)
+        public async Task Add(TrahangtaoDTO trahang)
         {
             var a = new Trahang
             {
@@ -113,7 +113,7 @@ namespace AppData.Service
             }
         }
 
-        public async Task Update(int id, TrahangDTO trahang)
+        public async Task Update(int id, TrahangtaoDTO trahang)
         {
             var a = await _repos.GetById(id);
             if (a == null)
