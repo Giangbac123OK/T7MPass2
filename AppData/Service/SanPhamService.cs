@@ -482,10 +482,52 @@ namespace AppData.Service
             return await _repository.GetAllSanphamByThuongHieu(id);
         }
 
-        public async Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh( decimal? giaMin = null, decimal? giaMax = null, int? idThuongHieu = null)
+        public async Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(
+       decimal? giaMin = null,
+       decimal? giaMax = null,
+       List<int> idThuongHieu = null,
+       List<int> idSize = null,
+       bool? coSale = null)
         {
-            return await _repository.GetSanphamByThuocTinh( giaMin, giaMax, idThuongHieu);
+            var sanPhams = await GetAllSanphamViewModels();
+
+            var filteredSanPhams = sanPhams.Where(sp => sp.TrangThai != 3);
+
+            if (giaMin.HasValue)
+            {
+                filteredSanPhams = filteredSanPhams.Where(sp => sp.Giaban >= giaMin.Value);
+            }
+
+            if (giaMax.HasValue)
+            {
+                filteredSanPhams = filteredSanPhams.Where(sp => sp.Giaban <= giaMax.Value);
+            }
+
+            if (idThuongHieu != null && idThuongHieu.Any())
+            {
+                filteredSanPhams = filteredSanPhams.Where(sp => idThuongHieu.Contains(sp.idThuongHieu));
+            }
+
+            if (idSize != null && idSize.Any())
+            {
+                filteredSanPhams = filteredSanPhams.Where(sp => sp.Sanphamchitiets.Any(spct => idSize.Contains(spct.IdSize)));
+            }
+
+            if (coSale.HasValue)
+            {
+                if (coSale.Value)
+                {
+                    filteredSanPhams = filteredSanPhams.Where(sp => sp.Giasale < sp.Giaban);
+                }
+                else
+                {
+                    filteredSanPhams = filteredSanPhams.Where(sp => sp.Giasale == sp.Giaban);
+                }
+            }
+
+            return filteredSanPhams.ToList();
         }
+
 
         public async Task<int> GetTotalSoldQuantityAsync(int idSanphamChitiet)
         {

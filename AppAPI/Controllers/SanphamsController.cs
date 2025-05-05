@@ -12,6 +12,7 @@ using AppData.IService;
 using AppData.IService_Admin;
 using AppData.Dto_Admin;
 using SanphamDTO = AppData.Dto_Admin.SanphamDTO;
+using AppData.ViewModel;
 
 namespace AppAPI.Controllers
 {
@@ -167,12 +168,14 @@ namespace AppAPI.Controllers
             
             [FromQuery] decimal? giaMin = null,
              [FromQuery] decimal? giaMax = null,
-            [FromQuery] int? idThuongHieu = null)
+           [FromQuery] List<int> idThuongHieu = null,
+    [FromQuery] List<int> idSize = null,
+           [FromQuery] bool? coSale = null)
         {
             try
             {
                 
-                var sanphams = await _service.GetSanphamByThuocTinh(giaMin, giaMax, idThuongHieu);
+                var sanphams = await _service.GetSanphamByThuocTinh(giaMin, giaMax, idThuongHieu, idSize, coSale);
                 if (sanphams == null || !sanphams.Any())
                 {
                     return NotFound(new { message = "Không tìm thấy sản phẩm nào thỏa mãn tiêu chí. thanh" });
