@@ -26,10 +26,10 @@ namespace AppData.IService
         Task<int> GetTotalSoldQuantityAsync(int idSanphamChitiet);
         Task<float> TinhTrungBinhDanhGia(int idSanpham);
         Task<IEnumerable<SanphamViewModel>> GetSanphamByThuocTinh(
-        // Danh sách tên thuộc tính cần tìm
         decimal? giaMin = null,
         decimal? giaMax = null,
-        int? idThuongHieu = null);
+         List<int> idThuongHieu = null,
+     List<int> idSize = null, bool? coSale = null);
         Task<List<Sanpham>> GetListByIdsAsync(List<int> ids);
     }
 }
