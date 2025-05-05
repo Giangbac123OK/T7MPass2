@@ -1,4 +1,5 @@
-﻿using AppData.IRepository;
+﻿using AppData.Dto_Admin;
+using AppData.IRepository;
 using AppData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -56,5 +57,16 @@ namespace AppData.Repository
                 throw new KeyNotFoundException("Không tìm thấy Phương thức thanh toán");
             }
         }
-    }
+		public async Task<List<PaymentMethodDTO>> GetActiveAsync()
+		{
+			return await _context.phuongthucthanhtoans
+				.Where(p => p.Trangthai == 0)
+				.Select(p => new PaymentMethodDTO
+				{
+					Id = p.Id,
+					Tenpttt = p.Tenpttt
+				})
+				.ToListAsync();
+		}
+	}
 }

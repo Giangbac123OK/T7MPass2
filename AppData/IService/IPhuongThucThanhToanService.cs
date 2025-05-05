@@ -1,4 +1,5 @@
 ﻿using AppData.DTO;
+using AppData.Dto_Admin;
 using AppData.Models;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace AppData.IService
         Task AddAsync(PhuongthucthanhtoanDTO dto);
         Task UpdateAsync(int id, PhuongthucthanhtoanDTO dto);
         Task DeleteAsync(int id);
-    }
+		Task<List<PaymentMethodDTO>> GetActiveAsync();
+	}
 }

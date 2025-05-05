@@ -890,7 +890,6 @@ namespace AppAPI.Controllers
 		{
 			try
 			{
-				// Gọi service với `diemSuDung`
 				var hoadon = await _hoadonService.AddHoaDonKhachhangthanthietoff(dto, diemSuDung);
 				return Ok(hoadon);
 			}

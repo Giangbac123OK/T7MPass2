@@ -1,4 +1,5 @@
-﻿using AppData;
+﻿using System.Text.Json.Serialization;
+using AppData;
 using AppData.IRepository;
 using AppData.IService;
 using AppData.IService_Admin;
@@ -33,7 +34,11 @@ PayOS payOS = new PayOS(configuration["Environment:PAYOS_CLIENT_ID"] ?? throw ne
                     configuration["Environment:PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
 
 // Thêm các dịch vụ vào DI container
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+	opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+	
+});
 builder.Services.AddScoped<IPhuongThucThanhToanRepo, PhuongThucThanhToanRepo>();
 builder.Services.AddScoped<IPhuongThucThanhToanService, PhuongThucThanhToanService>();
 builder.Services.AddScoped<ISaleRepo, SaleRepo>();

@@ -1,4 +1,5 @@
 ﻿using AppData.DTO;
+using AppData.Dto_Admin;
 using AppData.IRepository;
 using AppData.IService;
 using AppData.Models;
@@ -81,5 +82,7 @@ namespace AppData.Service
         {
             await _repository.DeleteAsync(id);
         }
-    }
+		public async Task<List<PaymentMethodDTO>> GetActiveAsync()
+	   => await _repository.GetActiveAsync();
+	}
 }

@@ -36,41 +36,33 @@ namespace AppData.Repository
 			_context.sanphams.Update(sanpham);
 			await _context.SaveChangesAsync();
 		}
-	
+
 
 		public async Task<List<ProductWithAttributesDTO>> GetAllActiveProductsWithAttributesAsync(int id)
 		{
+			var result = await _context.Sanphamchitiets
+				.Where(spct => spct.Trangthai == 0                     // Chi tiết đang hoạt động
+							&& spct.Idsp == id)                        // Của sản phẩm cha cần tìm
+				.Join(_context.colors, spct => spct.IdMau, c => c.Id,
+					  (spct, c) => new { spct, c })
+				.Join(_context.chatLieus, sc => sc.spct.IdChatLieu, cl => cl.Id,
+					  (sc, cl) => new { sc.spct, sc.c, cl })
+				.Join(_context.sizes, scc => scc.spct.IdSize, s => s.Id,
+					  (scc, s) => new ProductWithAttributesDTO
+					  {
+						  Idsp = scc.spct.Idsp,
+						  Idspct = scc.spct.Id,
+						  Tensp = scc.spct.Sanpham.TenSanpham,   // navigation property
+						  Giaban = scc.spct.Sanpham.GiaBan,
+						  Giathoidiemhientai = scc.spct.Giathoidiemhientai,
+						  Soluong = scc.spct.Soluong,
+						  SPCTAttributes = $"{scc.c.Tenmau} - {scc.cl.Tenchatlieu} - {s.Sosize}"
+					  })
+				.ToListAsync();
 
-			var productDetail = await _context.Sanphamchitiets
-				.Where(pd => pd.Id == id)
-				.Join(_context.colors, pd => pd.IdMau, c => c.Id, (pd, c) => new { pd, c })
-				.Join(_context.chatLieus, pdc => pdc.pd.IdChatLieu, cl => cl.Id, (pdc, cl) => new { pdc.pd, pdc.c, cl })
-				.Join(_context.sizes, pdcl => pdcl.pd.IdSize, s => s.Id, (pdcl, s) => new ProductWithAttributesDTO
-				{
-
-					SPCTAttributes = $"{pdcl.c.Tenmau} - {pdcl.cl.Tenchatlieu} - {s.Sosize}"
-				})
-				.FirstOrDefaultAsync();
-			var result = await _context.sanphams
-		   .Where(p => p.Trangthai == 0)  // Lọc sản phẩm có trạng thái hoạt động
-		   .SelectMany(p => p.Sanphamchitiets  // Lấy tất cả Sanphamchitiet của sản phẩm
-			   .Where(spct => spct.Trangthai == 0)  // Lọc Sanphamchitiet có trạng thái hoạt động
-			   .Select(spct => new ProductWithAttributesDTO
-			   {
-				   Idsp = p.Id,
-				   Giaban = p.Id,
-				   Giathoidiemhientai =spct.Giathoidiemhientai,
-				   Tensp = p.TenSanpham,
-				   Soluong = spct.Soluong,
-				   Idspct = spct.Id,  
-				   SPCTAttributes = productDetail.SPCTAttributes
-			   })
-		   )
-		   .ToListAsync();
-			var x = result.Where(x=>x.Idsp==id).ToList();
-
-			return x;
+			return result;
 		}
+
 		public async Task<IEnumerable<Sanpham>> GetAllAsync() => await _context.sanphams.Where(x=>x.Trangthai==0|| x.Trangthai == 1|| x.Trangthai == 2).ToListAsync();
 
 		public async Task<Sanpham> GetByIdAsync(int id) => await _context.sanphams.FindAsync(id);

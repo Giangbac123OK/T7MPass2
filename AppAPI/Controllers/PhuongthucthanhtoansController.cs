@@ -10,6 +10,7 @@ using AppData.Models;
 using AppData.DTO;
 using AppData.IRepository;
 using AppData.IService;
+using AppData.Dto_Admin;
 
 namespace AppAPI.Controllers
 {
@@ -116,5 +117,11 @@ namespace AppAPI.Controllers
             await _Service_service.DeleteAsync(id);
             return NoContent();
         }
-    }
+		[HttpGet("active")]
+		public async Task<ActionResult<List<PaymentMethodDTO>>> GetActive()
+		{
+			var result = await _Service_service.GetActiveAsync();
+			return Ok(result);   
+		}
+	}
 }
