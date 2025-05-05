@@ -32,4 +32,14 @@ namespace AppData.DTO
         public DateTime Ngayketthuc { get; set; }
         public int Trangthai { get; set; }
     }
+    public class GiamgiaDTOadd
+    {
+        public int Id { get; set; }
+        public string? Mota { get; set; }
+        public int Donvi { get; set; }
+        public int Soluong { get; set; }
+        public int Giatri { get; set; }
+        public DateTime Ngaybatdau { get; set; }
+        public DateTime Ngayketthuc { get; set; }
+    }
 }

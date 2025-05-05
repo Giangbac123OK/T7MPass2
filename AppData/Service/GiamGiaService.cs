@@ -37,14 +37,32 @@ namespace AppData.Service
             return _mapper.Map<GiamgiaDTO>(giamgia);
         }
 
-        public async Task AddAsync(GiamgiaDTO dto)
+        private int GetTrangThai(Giamgia g)
         {
+            var now = DateTime.Now;
+
+            if (g.Ngaybatdau < now)
+                return 0;
+            else if (g.Ngaybatdau > now)
+                return 1;
+            else if (g.Ngayketthuc < now)
+                return 2;
+            else if (g.Soluong == 0)
+                return 2;
+
+            return g.Trangthai; // giữ nguyên nếu không rơi vào các điều kiện trên
+        }
+
+        public async Task AddAsync(GiamgiaDTOadd dto)
+        {
+            
             var giamgia = _mapper.Map<Giamgia>(dto);
+            giamgia.Trangthai = GetTrangThai(giamgia);
             await _repository.AddAsync(giamgia);
 
         }
 
-        public async Task UpdateAsync(int id, GiamgiaDTOupdate dto)
+        public async Task UpdateAsync(int id, GiamgiaDTOadd dto)
         {
             var existingGiamgia = await _repository.GetByIdAsync(id);
             if (existingGiamgia == null) throw new KeyNotFoundException("Không tìm thấy mã giảm giá.");
@@ -55,15 +73,22 @@ namespace AppData.Service
             existingGiamgia.Ngaybatdau = dto.Ngaybatdau;
             existingGiamgia.Soluong = dto.Soluong;
             existingGiamgia.Ngayketthuc = dto.Ngayketthuc;
-            existingGiamgia.Trangthai = dto.Trangthai;
+            existingGiamgia.Trangthai = GetTrangThai(existingGiamgia);
             await _repository.UpdateAsync(existingGiamgia);
 
         }
 
         public async Task DeleteAsync(int id)
         {
-            await _repository.DeleteAsync(id);
+            var gg = await _repository.GetByIdAsync(id); // <-- thêm await
+            if (gg == null)
+                throw new KeyNotFoundException("Không tìm thấy mã giảm giá.");
+
+            var data = _mapper.Map<Giamgia>(gg);
+            data.Trangthai = 4; // <-- cập nhật trạng thái
+            await _repository.UpdateAsync(data); // dùng Update thay vì Delete để giữ lại dữ liệu nhưng thay đổi trạng thái
         }
+
 
         public async Task AddRankToGiamgia(GiamgiaDTO dto)
         {

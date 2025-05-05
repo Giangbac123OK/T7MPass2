@@ -380,6 +380,7 @@ namespace AppAPI.Controllers
                     }
                 }
 
+                existingHoadon.Trangthaithanhtoan = 1;
                 _context.khachhangs.Update(khachhang);
                 await _context.SaveChangesAsync();
             }
@@ -471,6 +472,7 @@ namespace AppAPI.Controllers
                     }
                 }
 
+                existingHoadon.Trangthaithanhtoan = 1;
                 _context.khachhangs.Update(khachhang);
                 await _context.SaveChangesAsync();
             }
@@ -628,6 +630,7 @@ namespace AppAPI.Controllers
                     }
                 }
 
+                existingHoadon.Trangthaithanhtoan = 1;
                 _context.khachhangs.Update(khachhang);
                 await _context.SaveChangesAsync();
             }

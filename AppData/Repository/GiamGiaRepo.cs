@@ -81,18 +81,11 @@ namespace AppData.Repository
             return giamgia;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Giamgia giamgia)
         {
-            var giamgia = await _context.giamgias.FindAsync(id);
-            if (giamgia != null)
-            {
-                _context.giamgias.Remove(giamgia);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new KeyNotFoundException("Không tìm thấy mã giảm giá");
-            }
+            giamgia.Trangthai = 4;
+            _context.giamgias.Update(giamgia);
+            await _context.SaveChangesAsync();
         }
 
         public async Task AddRankToGiamgia(int giamgiaId, List<string> rankNames)
