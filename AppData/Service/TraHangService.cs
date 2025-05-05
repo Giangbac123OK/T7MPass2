@@ -58,27 +58,14 @@ namespace AppData.Service
         public async Task<List<TrahangDTO>> GetAll()
         {
             var a = await _repos.GetAll();
-            return a.Select(x => new TrahangDTO
-            {
-                Id = x.Id,
-                Tenkhachhang = x.Tenkhachhang,
-                Idkh = x.Idkh,
-                Idnv = x.Idnv,
-                Sotienhoan = x.Sotienhoan,
-                Lydotrahang = x.Lydotrahang,
-                Trangthai = x.Trangthai,
-                Phuongthuchoantien = x.Phuongthuchoantien,
-                Chuthich = x.Chuthich,
-                Tennganhang = x.Tennganhang,
-                Sotaikhoan = x.Sotaikhoan,
-                Tentaikhoan = x.Tentaikhoan,
-                Hinhthucxuly = x.Hinhthucxuly,
-                Diachiship = x.Diachiship,
-                Ngaytrahangthucte = x.Ngaytrahangthucte,
-                Trangthaihoantien = x.Trangthaihoantien,
-                Ngaytaodon = x.Ngaytaodon
-            }).ToList();
+            return a;
         }
+        public async Task<TrahangDTO> GetById1(int id)
+        {
+            var a = await _repos.GetById1(id);
+            return a;
+        }
+
         public async Task<TrahangDTO> GetById(int id)
         {
             var x = await _repos.GetById(id);

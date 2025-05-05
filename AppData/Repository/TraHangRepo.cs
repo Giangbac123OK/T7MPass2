@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AppData.DTO;
 
 namespace AppData.Repository
 {
@@ -51,10 +52,43 @@ namespace AppData.Repository
             }
         }
 
-        public async Task<IEnumerable<Trahang>> GetAll()
+        public async Task<List<TrahangDTO>> GetAll()
         {
-            return await _context.trahangs.ToListAsync();
+            var trahangs = await _context.trahangs.ToListAsync();
+            var trahangchitiets = await _context.trahangchitiets.ToListAsync();
+            var hoadonchitiets = await _context.hoadonchitiets.ToListAsync();
+
+            // Join và lấy Idhd từ hoadonchitiets
+            var result = (from trahang in trahangs
+                          join chitiet in trahangchitiets on trahang.Id equals chitiet.Idth
+                          join hdct in hoadonchitiets on chitiet.Idhdct equals hdct.Id
+                          group new { trahang, hdct.Idhd } by hdct.Idhd into g
+                          select new TrahangDTO
+                          {
+                              Idhd = g.Key,
+                              // Dưới đây là cách chọn dữ liệu từ trahang đầu tiên trong nhóm
+                              Id = g.First().trahang.Id,
+                              Tenkhachhang = g.First().trahang.Tenkhachhang,
+                              Idkh = g.First().trahang.Idkh,
+                              Idnv = g.First().trahang.Idnv,
+                              Sotienhoan = g.Sum(x => x.trahang.Sotienhoan),
+                              Lydotrahang = g.First().trahang.Lydotrahang,
+                              Trangthai = g.First().trahang.Trangthai,
+                              Phuongthuchoantien = g.First().trahang.Phuongthuchoantien,
+                              Chuthich = g.First().trahang.Chuthich,
+                              Tennganhang = g.First().trahang.Tennganhang,
+                              Sotaikhoan = g.First().trahang.Sotaikhoan,
+                              Tentaikhoan = g.First().trahang.Tentaikhoan,
+                              Hinhthucxuly = g.First().trahang.Hinhthucxuly,
+                              Diachiship = g.First().trahang.Diachiship,
+                              Ngaytrahangthucte = g.First().trahang.Ngaytrahangthucte,
+                              Trangthaihoantien = g.First().trahang.Trangthaihoantien,
+                              Ngaytaodon = g.First().trahang.Ngaytaodon
+                          }).ToList();
+
+            return result;
         }
+
 
         public async Task<Trahang> GetById(int id)
         {
@@ -67,6 +101,68 @@ namespace AppData.Repository
             {
                 throw new KeyNotFoundException("Không tồn tại!");
             }
+        }
+
+        public async Task<TrahangDTO> GetById1(int id)
+        {
+            // Lấy đơn trả hàng theo id
+            var trahang = await _context.trahangs.FirstOrDefaultAsync(x => x.Id == id);
+            if (trahang == null)
+                throw new KeyNotFoundException("Không tồn tại!");
+
+            // Tìm các chi tiết trả hàng liên quan
+            var trahangchitiets = await _context.trahangchitiets
+                .Where(x => x.Idth == id)
+                .ToListAsync();
+
+            // Lấy danh sách idhdct từ chi tiết trả hàng
+            var idhdcts = trahangchitiets.Select(x => x.Idhdct).Distinct().ToList();
+
+            // Lấy hoadonchitiets để xác định idhd
+            var hoadonchitiets = await _context.hoadonchitiets
+                .Where(x => idhdcts.Contains(x.Id))
+                .ToListAsync();
+
+            // Lấy idhd đầu tiên từ hoadonchitiets
+            var idhd = hoadonchitiets.FirstOrDefault()?.Idhd;
+
+            if (idhd == null)
+                throw new Exception("Không tìm thấy hóa đơn liên quan.");
+
+            // Tìm tất cả các trahang liên quan cùng idhd
+            var allTrahangs = await _context.trahangs.ToListAsync();
+            var allTrahangchitiets = await _context.trahangchitiets.ToListAsync();
+            var allHoadonchitiets = await _context.hoadonchitiets.ToListAsync();
+
+            var relatedTrahangs = (from t in allTrahangs
+                                   join ct in allTrahangchitiets on t.Id equals ct.Idth
+                                   join hdct in allHoadonchitiets on ct.Idhdct equals hdct.Id
+                                   where hdct.Idhd == idhd
+                                   select t).Distinct().ToList();
+
+            var result = new TrahangDTO
+            {
+                Idhd = idhd.Value,
+                Id = relatedTrahangs.First().Id,
+                Tenkhachhang = relatedTrahangs.First().Tenkhachhang,
+                Idkh = relatedTrahangs.First().Idkh,
+                Idnv = relatedTrahangs.First().Idnv,
+                Sotienhoan = relatedTrahangs.Sum(x => x.Sotienhoan),
+                Lydotrahang = relatedTrahangs.First().Lydotrahang,
+                Trangthai = relatedTrahangs.First().Trangthai,
+                Phuongthuchoantien = relatedTrahangs.First().Phuongthuchoantien,
+                Chuthich = relatedTrahangs.First().Chuthich,
+                Tennganhang = relatedTrahangs.First().Tennganhang,
+                Sotaikhoan = relatedTrahangs.First().Sotaikhoan,
+                Tentaikhoan = relatedTrahangs.First().Tentaikhoan,
+                Hinhthucxuly = relatedTrahangs.First().Hinhthucxuly,
+                Diachiship = relatedTrahangs.First().Diachiship,
+                Ngaytrahangthucte = relatedTrahangs.First().Ngaytrahangthucte,
+                Trangthaihoantien = relatedTrahangs.First().Trangthaihoantien,
+                Ngaytaodon = relatedTrahangs.First().Ngaytaodon
+            };
+
+            return result;
         }
 
         public async Task Update(Trahang trhang)
