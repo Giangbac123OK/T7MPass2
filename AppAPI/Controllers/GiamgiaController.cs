@@ -40,7 +40,8 @@ namespace AppAPI.Controllers
                 gg.Ngaybatdau,
                 gg.Ngayketthuc,
                 gg.Soluong,
-                Trangthai = gg.Trangthai switch
+                gg.Trangthai,
+                Trangthaistring = gg.Trangthai switch
                 {
                     0 => "Đang phát hành",
                     1 => "Chuẩn bị phát hành",
@@ -65,7 +66,8 @@ namespace AppAPI.Controllers
                     giamgia.Ngaybatdau,
                     giamgia.Ngayketthuc,
                     giamgia.Soluong,
-                    Trangthai = giamgia.Trangthai switch
+                    giamgia.Trangthai,
+                    Trangthaistring = giamgia.Trangthai switch
                     {
                         0 => "Đang phát hành",
                         1 => "Chuẩn bị phát hành",
@@ -81,7 +83,7 @@ namespace AppAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(AppData.DTO.GiamgiaDTO dto)
+        public async Task<IActionResult> Create(AppData.DTO.GiamgiaDTOadd dto)
         {
             await _Service.AddAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
@@ -101,7 +103,7 @@ namespace AppAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] AppData.DTO.GiamgiaDTOupdate dto)
+        public async Task<IActionResult> Update(int id, [FromBody] AppData.DTO.GiamgiaDTOadd dto)
         {
             await _Service.UpdateAsync(id, dto);
             return Ok(new { Message = "Cập nhật thành công" }); // Trả về 200 và message rõ ràng

@@ -14,6 +14,6 @@ namespace AppData.IRepository
         Task<Giamgia> AddAsync(Giamgia giamgia);
         Task<Giamgia> UpdateAsync(Giamgia giamgia);
         Task AddRankToGiamgia(int giamgiaId, List<string> rankNames);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(Giamgia giamgia);
     }
 }
