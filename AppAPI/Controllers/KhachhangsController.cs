@@ -130,7 +130,7 @@ namespace AppAPI.Controllers
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] KhachhangDTO dto)
-        {
+         {
             try
             {
                 await _Service.UpdateKhachhangAsync(id, dto);
