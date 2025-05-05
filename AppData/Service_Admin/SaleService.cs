@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,16 +35,19 @@ namespace AppData.Service_Admin
 			{
 				return false; // Sale không tồn tại
 			}
-
+			if(sale.Trangthai == 3)
+			{
+				sale.Trangthai = 3;
+			}
 			if (updateSaleDto.Ngaybatdau > DateTime.Now)
 			{
-				sale.Trangthai = 2;
+				sale.Trangthai =1;
 			}
 			else if (updateSaleDto.Ngaybatdau <= DateTime.Now && updateSaleDto.Ngaybatdau >= DateTime.Now)
 			{
 				sale.Trangthai = 0;
 			}
-			else
+			else if (updateSaleDto.Ngaybatdau <DateTime.Now && updateSaleDto.Ngaybatdau < DateTime.Now)
 			{
 				sale.Trangthai = 1;
 			}
@@ -51,7 +55,7 @@ namespace AppData.Service_Admin
 			sale.Mota = updateSaleDto.Mota;
 			sale.Ngaybatdau = updateSaleDto.Ngaybatdau;
 			sale.Ngayketthuc = updateSaleDto.Ngayketthuc;
-
+			
 			// Danh sách Salechitiet hiện có
 			var currentDetails = sale.Salechitiets.ToList();
 
@@ -63,7 +67,7 @@ namespace AppData.Service_Admin
 
 				if (existingDetail != null)
 				{
-					// Cập nhật chi tiết đã tồn tại
+					
 					existingDetail.Donvi = newDetail.Donvi;
 					existingDetail.Soluong = newDetail.Soluong;
 					existingDetail.Giatrigiam = newDetail.Giatrigiam;
@@ -76,7 +80,7 @@ namespace AppData.Service_Admin
 						Idsale = saleId,
 						Idspct = newDetail.Idspct,
 						Donvi = newDetail.Donvi,
-						Soluong = newDetail.Soluong,
+						Soluong = int.MaxValue,
 						Giatrigiam = newDetail.Giatrigiam
 					};
 					sale.Salechitiets.Add(saleDetail);
@@ -104,15 +108,15 @@ namespace AppData.Service_Admin
 			DateTime cs = DateTime.Now;
 			if(createSaleDto.Ngaybatdau> cs)
 			{
-				createSaleDto.Trangthai = 2;
+				createSaleDto.Trangthai = 1;
 			}
 			else if (createSaleDto.Ngaybatdau <= cs && createSaleDto.Ngayketthuc>= cs)
 			{
 				createSaleDto.Trangthai = 0;
 			}
-			else
+			else if (createSaleDto.Ngaybatdau < cs && createSaleDto.Ngayketthuc < cs)
 			{
-				createSaleDto.Trangthai = 1;
+				createSaleDto.Trangthai = 2;
 			}
 			var sale = new Sale
 			{
@@ -127,7 +131,7 @@ namespace AppData.Service_Admin
 				{
 					Idspct = d.Idspct,
 					Donvi = d.Donvi,
-					Soluong = d.Soluong,
+					Soluong = int.MaxValue,
 					Giatrigiam = d.Giatrigiam
 				}).ToList()
 			};
@@ -254,7 +258,7 @@ namespace AppData.Service_Admin
 				{
 					sale.Trangthai = 1; // Chuẩn bị diễn ra
 				}
-				else if (sale.Ngayketthuc < DateTime.Now)
+				else if (sale.Ngayketthuc < DateTime.Now )
 				{
 					sale.Trangthai = 2; // Đã diễn ra
 				}
