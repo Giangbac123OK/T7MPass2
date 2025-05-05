@@ -804,7 +804,7 @@ namespace AppAPI.Controllers
         private IQueryable<OrderNotificationDto> GetBaseOrdersQuery()
         {
             return _context.hoadons
-                .Where(x => x.Trangthai <= 4)
+                .Where(x => x.Trangthaidonhang <= 4 && x.Trangthai == 0)
                 .OrderByDescending(o => o.Thoigiandathang)
                 .Select(o => new OrderNotificationDto
                 {

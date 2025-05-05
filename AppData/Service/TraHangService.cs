@@ -153,7 +153,7 @@ namespace AppData.Service
                 }
                 else
                 {
-                    a.Trangthai = 5;
+                    a.Trangthaidonhang = 5;
                     await _HDrepos.UpdateAsync(a);
                 }
             }
