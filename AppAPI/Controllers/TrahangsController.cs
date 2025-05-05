@@ -59,6 +59,22 @@ namespace AppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("thongtinn/{id}")]
+        public async Task<IActionResult> Get1(int id)
+        {
+            try
+            {
+                var a = await _ser.GetById1(id);
+                if (a == null) return BadRequest("Không tồn tại");
+                return Ok(a);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(TrahangDTO dto)
         {

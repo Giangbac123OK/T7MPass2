@@ -1,4 +1,5 @@
-﻿using AppData.Models;
+﻿using AppData.DTO;
+using AppData.Models;
 using AppData.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,8 @@ namespace AppData.IRepository
 {
     public interface ITraHangRepo
     {
-        Task<IEnumerable<Trahang>> GetAll();
+        Task<List<TrahangDTO>> GetAll();
+        Task<TrahangDTO> GetById1(int id);
         Task<Trahang> GetById(int id);
         Task Add(Trahang trhang);
         Task Update(Trahang trhang);

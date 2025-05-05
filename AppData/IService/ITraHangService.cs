@@ -13,6 +13,7 @@ namespace AppData.IService
     {
         Task<List<TrahangDTO>> GetAll();
         Task<TrahangDTO> GetById(int id);
+        Task<TrahangDTO> GetById1(int id);
         Task Add(TrahangDTO trahang);
         Task Update(int id, TrahangDTO trahang);
         Task DeleteById(int id);
