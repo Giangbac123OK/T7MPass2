@@ -1,4 +1,5 @@
 ﻿using AppData.DTO;
+using AppData.Dto_Admin;
 using AppData.Models;
 using System;
 using System.Collections.Generic;
@@ -19,5 +20,10 @@ namespace AppData.IService
         Task<IEnumerable<NhanvienDTO>> TimKiemNhanvienAsync(string search);
         Task<int> GetTongNhanVienTrangThai0Async();
         Task UpdateThongTinNhanvienAsync(int id, NhanvienUpdateDTO nhanvienDto);
-    }
+
+		Task<bool> ChangePasswordAsync(ChangePasswordDto dto);
+
+		Task<(bool isSent, object otp)> SendOtpAsync(string email);
+        Task<bool> ResetPasswordAsync(ResetPasswordDto dto);
+	}
 }

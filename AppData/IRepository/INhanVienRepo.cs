@@ -16,6 +16,7 @@ namespace AppData.IRepository
         Task DeleteAsync(int id); 
         Task<IEnumerable<Nhanvien>> TimKiemNhanvienAsync(string search);
         Task<int> CountNhanVienTrangThai0Async();
-
+		Task<bool> ChangePasswordAsync(int id, string currentPwPlain, string newPwPlain);
+        Task<Nhanvien?> GetByEmailAsync(string email);
 	}
 }

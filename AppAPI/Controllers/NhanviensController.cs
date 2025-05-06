@@ -14,6 +14,7 @@ using AppData.Dto;
 using Aspose.Email.Clients.Activity;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using AppData.Dto_Admin;
 
 namespace AppAPI.Controllers
 {
@@ -411,6 +412,38 @@ namespace AppAPI.Controllers
 			int tong = await _Service.GetTongNhanVienTrangThai0Async();
 			return Ok(tong);    
 		}
+		[HttpPut("change-password")]
+		public async Task<IActionResult> ChangePassword( [FromBody] ChangePasswordDto dto)
+		{
+			
 
+			var ok = await _Service.ChangePasswordAsync(dto);
+			return ok ? Ok(new { message = "Đổi mật khẩu thành công." })
+					  : BadRequest(new { message = "Đổi mật khẩu thất bại. Kiểm tra mật khẩu cũ hoặc điều kiện chính sách." });
+		}
+		[HttpPost("send-otp")]
+		public async Task<IActionResult> SendOtpAsync(ForgotPasswordRequestKHDto dto)
+		{
+			var (isSent, otp) = await _Service.SendOtpAsync(dto.Email); 
+
+			if (!isSent)
+				return BadRequest("Gửi OTP không thành công.");
+
+			return Ok(new { success = true, message = "Mã OTP đã được gửi.", otp });
+		}
+
+		[HttpPost("reset-password")]
+		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+		{
+			if (!ModelState.IsValid)
+				return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
+
+			var result = await _Service.ResetPasswordAsync(dto);
+			if (!result)
+				return NotFound(new { success = false, message = "Không tìm thấy tài khoản." });
+
+			return Ok(new { success = true, message = "Đổi mật khẩu thành công." });
+		}
 	}
 }
+
