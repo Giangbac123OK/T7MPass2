@@ -156,7 +156,7 @@ namespace AppData.Repository
 		public async Task<(decimal TongTienThanhToan, int TongSoLuongDonHang)> GetDailyReportAsync(DateTime date)
 		{
 			var result = await _context.hoadons
-				.Where(h => h.Thoigiandathang.Date == date.Date  && h.Trangthaidonhang == 1&& h.Trangthaidonhang ==3) // Chỉ lấy các hóa đơn đã thanh toán
+				.Where(h => h.Thoigiandathang.Date == date.Date  && h.Trangthai == 1&& h.Trangthaidonhang ==3) // Chỉ lấy các hóa đơn đã thanh toán
 				.GroupBy(h => 1)
 				.Select(g => new
 				{
@@ -173,7 +173,7 @@ namespace AppData.Repository
 		public IEnumerable<HoadonSummaryDto> GetOrderSummaryByTime(string timeUnit)
 		{
 			var query = _context.hoadons
-				.Where(hd => hd.Trangthaidonhang == 1 && hd.Trangthaidonhang == 3);
+				.Where(hd => hd.Trangthai == 1 && hd.Trangthaidonhang == 3);
 
 			var result = timeUnit.ToLower() switch
 			{
