@@ -305,6 +305,11 @@ namespace AppAPI.Controllers
                 return NotFound(new { message = "Hoá đơn không tìm thấy" });
             }
 
+            if (dto.Trangthaidonhang == 4)
+            {
+                await _HDCTservice.ReturnProductAsync(id);
+            }
+
             try
             {
                 await _Service.UpdateAsync(dto, id);
