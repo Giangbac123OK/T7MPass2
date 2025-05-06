@@ -79,5 +79,26 @@ namespace AppData.Repository
 								 .AsNoTracking()
 								 .CountAsync(nv => nv.Trangthai == 0 && nv.Role == 1);
 		}
+		public async Task<Nhanvien?> GetByEmailAsync(string email)
+		{
+			return await _context.nhanviens
+							.FirstOrDefaultAsync(u => u.Email == email);
+		}
+		public async Task<bool> ChangePasswordAsync(int id, string currentPwPlain, string newPwPlain)
+		{
+			var nv = await GetByIdAsync(id);
+			if (nv == null) return false;
+
+			// So khớp mật khẩu cũ
+			var isMatch = BCrypt.Net.BCrypt.Verify(currentPwPlain, nv.Password);
+			if (!isMatch) return false;
+
+			// Hash & lưu mật khẩu mới
+			nv.Password = BCrypt.Net.BCrypt.HashPassword(newPwPlain);
+			nv.Ngaytaotaikhoan = DateTime.UtcNow;       // Ví dụ ghi log
+			_context.nhanviens.Update(nv);
+			await _context.SaveChangesAsync();
+			return true;
+		}
 	}
 }

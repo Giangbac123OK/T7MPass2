@@ -16,18 +16,27 @@ using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.PeopleService.v1;
 using Google.Apis.Services;
+using AppData.Dto_Admin;
+using System.Net;
+using Microsoft.Extensions.Configuration;
+using SmtpClient = System.Net.Mail.SmtpClient;
 
 namespace AppData.Service
 {
     public class NhanVienService : INhanVienService
     {
         private readonly INhanVienRepo _repository;
-        public NhanVienService(INhanVienRepo repository)
-        {
-            _repository = repository;
 
-        }
-        public async Task<IEnumerable<NhanvienDTO>> GetAllNhanviensAsync()
+		private readonly IConfiguration _configuration;
+		
+
+		public NhanVienService(INhanVienRepo repository, IConfiguration configuration)
+		{
+			_repository = repository;
+			_configuration = configuration;
+		}
+
+		public async Task<IEnumerable<NhanvienDTO>> GetAllNhanviensAsync()
         {
             var nhanviens = await _repository.GetAllAsync();
             return nhanviens.Where(x=>x.Trangthai==1||x.Trangthai==0).Select(n => new NhanvienDTO
@@ -192,5 +201,72 @@ namespace AppData.Service
                 Ngaytaotaikhoan = n.Ngaytaotaikhoan
             });
         }
-    }
+		public async Task<bool> ChangePasswordAsync(ChangePasswordDto dto)
+		{
+			if (dto.NewPassword != dto.ConfirmPassword) return false;          // Xác nhận sai
+			if (dto.NewPassword.Length < 6) return false;                      // Chính sách độ mạnh
+
+			return await _repository.ChangePasswordAsync(dto.UserId,
+												   dto.CurrentPassword,
+												   dto.NewPassword);
+		}
+		public string GenerateOtp()
+		{
+			var random = new Random();
+			var otp = random.Next(100000, 999999).ToString();
+			return otp;
+		}
+		public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
+		{
+			var user = await _repository.GetByEmailAsync(dto.Email);
+			if (user == null)
+				return false;
+
+			// Mã hóa mật khẩu mới
+			user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+
+			await _repository.UpdateAsync(user);
+			return true;
+		}
+
+		public async Task<(bool isSent, object otp)> SendOtpAsync(string email)
+		{
+			try
+			{
+				// Kiểm tra cấu hình
+				var senderEmail = _configuration["EmailSettings:SenderEmail"]
+					?? throw new InvalidOperationException("Sender email not configured");
+				var senderPassword = _configuration["EmailSettings:SenderPassword"]
+					?? throw new InvalidOperationException("Sender password not configured");
+				var smtpServer = _configuration["EmailSettings:SmtpServer"]
+					?? throw new InvalidOperationException("SMTP server not configured");
+				var smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"]
+					?? throw new InvalidOperationException("SMTP port not configured"));
+
+				var otp = GenerateOtp();
+				var subject = "Mã OTP xác thực quên mật khẩu";
+				var body = $"Mã OTP của bạn là: {otp}. Vui lòng không chia sẻ mã này với bất kỳ ai.";
+
+				using var client = new SmtpClient(smtpServer)
+				{
+					Port = smtpPort,
+					Credentials = new NetworkCredential(senderEmail, senderPassword),
+					EnableSsl = true,
+				};
+
+				MailMessage mailMessage = new MailMessage(senderEmail, email, subject, body);
+				using var message = mailMessage;
+				await client.SendMailAsync(message);
+
+				return (true, otp);
+			}
+			catch (Exception ex)
+			{
+				// Log lỗi ở đây
+				Console.WriteLine($"Error sending email: {ex.Message}");
+				return (false, string.Empty);
+			}
+		}
+	}
 }
+
